@@ -4,6 +4,7 @@ import { MaterialIcons, AntDesign } from '@expo/vector-icons';
 import axios from "axios";
 import OrderSummery from "./OrderSummery";
 import { baseUrl } from "../../api/const";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
@@ -35,9 +36,39 @@ const CustomSubmitButton = ({ title, onPress }) => {
 
 export default function ContactDetails({ route, navigation }) {
   const { item, product } = route.params;
-  console.log("Product prop:", product);
+  // console.log("Product prop:", product);
 
-  console.log("item",item)
+  // console.log("item",item)
+
+  // const[warehouseName,setWarehouseName]=useState('');
+  // const[warehouseId,setWarehouseId]=useState('');
+  const[user ,setUser]=useState('');
+
+  useEffect(()=>{
+      const fetchData = async()=>{
+
+        try {
+          const StoredData=await AsyncStorage.getItem('userData')
+
+          console.log("storedData:",StoredData);
+
+          if (StoredData!==null){
+            const userData=JSON.parse(StoredData)
+            setUser(userData);
+          }else{
+            setUser('No data Found')
+          }
+        } catch(error){
+          console.log('error fetching data',error)
+        }
+      }
+
+      fetchData();
+
+  },[])
+
+  console.log("Login user data",user.warehouse);
+  
 
   const CreateinvoiceUrl = `${baseUrl}/createCombinedInvoicePaymentReceived`
 
@@ -73,7 +104,7 @@ export default function ContactDetails({ route, navigation }) {
 
   const totalPriceSum = totalPrice.reduce((sum, value) => sum + value, 0);
 
-  const removeProduct = (productIDToRemove) => {
+  const removeProduct = (productIDToRemove,index) => {
     setAddedProducts(prevProducts => prevProducts.filter(p => p.productID !== productIDToRemove));
     setTotalprice(prevPrices => {
       const newPrices = [...prevPrices];
@@ -146,8 +177,8 @@ const formattedDate = `${year}-${month}-${day}`;
       "due_amount": 0,
       "customer_id": item._id,
       "customer_name": item.name,
-      "warehouse_id": null,
-      "warehouse_name": "",
+      "warehouse_id": user.warehouse.warehouse_id,
+      "warehouse_name":user.warehouse.warehouse_name,
       "pipeline_id": null,
       "payment_terms_id": null,
       "delivery_method_id": null,
@@ -202,6 +233,13 @@ const formattedDate = `${year}-${month}-${day}`;
     axios.post(CreateinvoiceUrl, payload).then(res => {
       // console.log("payload",payload)
       console.log("response-----------------------------------------",res.data);
+      if(res.data.success===true){
+        alert("Invoice Success")
+
+      } else{
+        alert("Invoice not Created")
+      }
+      
       // console.log("success");
       navigation.navigate('Contactsviewnav');
     }).catch(err => console.log(err))
@@ -261,22 +299,29 @@ const formattedDate = `${year}-${month}-${day}`;
 
           
           <View style={styles.bottomContainer}>
-            <View style={{ flexDirection: "column" }}>
-
-              <Text style={styles.productLabel}>Total Quantity: {addedProducts.length}</Text>
-              <View style={{ flexDirection: "row" }}>
-                <Text style={styles.productLabel}>Price items  </Text>
-                <Text style={styles.productText}> {totalPriceSum} AED</Text>
-              </View>
-            </View>
-            <View style={styles.submitButtonContainer}>
-
-              <CustomSubmitButton
-                title="Place Order"
-                onPress={handlesubmit}
-              />
-            </View>
+            {addedProducts.every(product => product.totalProductQuantity > 0) ? (
+              <>
+                <View style={{ flexDirection: "column" }}>
+                  <Text style={styles.productLabel}>Total Quantity: {addedProducts.length}</Text>
+                  <View style={{ flexDirection: "row" }}>
+                    <Text style={styles.productLabel}>Price items  </Text>
+                    <Text style={styles.productText}> {totalPriceSum} AED</Text>
+                  </View>
+                </View>
+                <View style={styles.submitButtonContainer}>
+                  <CustomSubmitButton
+                    title="Place Order"
+                    onPress={handlesubmit}
+                  />
+                </View>
+              </>
+            ) : (
+              <Text style={styles.productLabel}>Some products are out of stock</Text>
+            )}
           </View>
+
+          
+          
           
 
         </View>

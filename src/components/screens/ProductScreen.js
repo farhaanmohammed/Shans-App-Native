@@ -80,30 +80,30 @@ const ProductScreen = () => {
     };
 
     return (
-        <View style={styles.container}>
-         
-            <View>
-              <CustomButton title="Products" onPress={() => navigation.goBack()} />
+            <View style={styles.container}>
+            
+                <View>
+                <CustomButton title="Products" onPress={() => navigation.goBack()} />
+                </View>
+        
+            <View style={styles.searchContainer}>
+                <Searchbar
+                placeholder="Search Products"
+                value={searchQuery}
+                onChangeText={onChangeSearch}
+                style={styles.searchBox}
+                />
             </View>
-     
-          <View style={styles.searchContainer}>
-            <Searchbar
-              placeholder="Search Products"
-              value={searchQuery}
-              onChangeText={onChangeSearch}
-              style={styles.searchBox}
-            />
-          </View>
-          <View style={styles.productListContainer}>
-            <FlatList
-              data={filteredProducts}
-              keyExtractor={(item) => item._id}
-              renderItem={({ item }) => <ProductList item={item} contact={contact} />}
-              numColumns={numColumns}
-            />
-          </View>
-        </View>
-      );
+            <View style={styles.productListContainer}>
+                <FlatList
+                data={filteredProducts}
+                keyExtractor={(item) => item._id}
+                renderItem={({ item }) => <ProductList item={item} contact={contact} />}
+                numColumns={numColumns}
+                />
+            </View>
+            </View>
+        );
     }
 
 
@@ -139,7 +139,8 @@ const styles = StyleSheet.create({
     },
     productListContainer: {
         
-        alignItems: "center"
+        alignItems: "center",
+        flex:1,
     }
    
 });

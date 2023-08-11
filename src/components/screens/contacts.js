@@ -61,7 +61,7 @@ export default function Contacts({ navigation }) {
     // console.log(names)
 
     return (
-        <View>
+        <View style={styles.container}>
         <StatusBar backgroundColor={"#ffa600"} />
 
         <Searchbar
@@ -76,12 +76,15 @@ export default function Contacts({ navigation }) {
             
             }}
         />
+        <View style={styles.contactscroll}>
+            <FlatList
+                data={filteredNames}
+                keyExtractor={(item) => item._id}
+                renderItem={({ item }) => <ContactItem item={item} />}
+            />
 
-        <FlatList
-            data={filteredNames}
-            keyExtractor={(item) => item._id}
-            renderItem={({ item }) => <ContactItem item={item} />}
-        />
+        </View>
+        
 
         <FAB
             style={fab}
@@ -94,6 +97,9 @@ export default function Contacts({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+    container:{
+        flex:1,
+    },
     fab: {
         position: 'absolute',
         right: 28,
@@ -104,5 +110,9 @@ const styles = StyleSheet.create({
         height: 60,
         alignItems: 'center',
         justifyContent: 'center',
+    },
+
+    contactscroll:{
+        flex:1,
     },
 });
