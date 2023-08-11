@@ -8,7 +8,7 @@ export default function Scanner() {
     const navigation = useNavigation();
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
-    const [data, setData] = useState(null);
+    // const [data, setData] = useState(null);
     const [customerName, setCustomerName] = useState(null);
 
     useEffect(() => {
@@ -20,20 +20,19 @@ export default function Scanner() {
         getBarCodeScannerPermissions();
     }, []);
 
-   
+
 
     const handleBarCodeScanned = ({ type, data }) => {
+        console.log('daaaaaaaaaaaaaaaaaaata', data)
         setScanned(true);
-        setData(data); // Store the scanned data
-        // console.log(data)
+        // setData(data); // Store the scanned data
+        const sequenceParts = data.split('-'); // Split the data by "-"
+        // console.log('sequenceParts', sequenceParts)
+        const sequenceNumber = sequenceParts.slice(1).join('-'); // Join all parts except the first one
 
-        // Navigate to the NewCollection screen and pass the scanned data
-        navigation.navigate('NewCollection', { scannedData: data });
-
-        // // Assuming the scanned data is in the format: "sequence:number"
-        const [sequenceNumber] = data.split(':');
         console.log("sequence number:", sequenceNumber)
-        // fetchCustomerDetails(sequenceNumber);
+        // Navigate to the NewCollection screen and pass the scanned data
+        navigation.navigate('NewCollection', { scannedData: sequenceNumber });
     };
 
     if (hasPermission === null) {
@@ -51,8 +50,8 @@ export default function Scanner() {
             />
             {scanned && (
                 <View>
-                    <Text>Scanned Data: {data}</Text>
-                    {customerName && <Text>Customer Name: {customerName}</Text>}
+                    {/* <Text>Scanned Data: {data}</Text>
+                    {customerName && <Text>Customer Name: {customerName}</Text>} */}
                     <Button title={'Tap to Scan Again'} onPress={() => setScanned(false)} />
                 </View>
             )}

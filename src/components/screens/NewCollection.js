@@ -1,7 +1,14 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { Picker } from "@react-native-community/picker";
 import { useNavigation, useRoute } from '@react-navigation/native';
+import axios from 'axios';
+import { baseUrl } from "../../api/const";
+
+
+const collectionTypeUrl = `${baseUrl}/viewCollectionType/collection_type_list/collection_type_dropdown`
+const customerDetailsUrl = `${baseUrl}/viewInvoice?sequence_no=`
 
 
 const CustomButton = ({ title, onPress }) => {
@@ -25,29 +32,108 @@ const CustomSubmitButton = ({ title, onPress }) => {
     );
 };
 const NewCollection = () => {
+
+
     const route = useRoute();
     const navigation = useNavigation()
+
+    const [resData, setResData] = useState([])
     const [collectionType, setCollectionType] = useState('');
     // const [selectedCustomer, setSelectedCustomer] = useState('');
+    const [adminDetails, setAdminDetails] = useState({});
+    const [customer, setCustomer] = useState({})
 
+
+    //fetch details from scanner compnent
     const scannedData = route.params?.scannedData;
+
+    console.log("scannedData----------", scannedData)
+
+    useEffect(() => {
+        fetchAdminDetails();
+        axios.get(collectionTypeUrl).then((response) => {
+            console.log(response.data)
+            setResData(response.data)
+        })
+
+
+    }, []);
+
+    useEffect(() => {
+        if (scannedData) {
+            fetchCustomerDetails();
+        }
+    }, [scannedData]);
+
+    const fetchAdminDetails = async () => {
+        try {
+            const adminDetailsStr = await AsyncStorage.getItem('userData');
+            if (adminDetailsStr) {
+                const parsedAdminDetails = JSON.parse(adminDetailsStr);
+                setAdminDetails(parsedAdminDetails);
+                // console.log("adminDetails------", adminDetails);
+            }
+        } catch (error) {
+            console.error("Error fetching admin details:", error);
+        }
+    };
+
+    console.log("adminDetails--++----", adminDetails);
+    console.log("response----------", resData)
 
     const fetchCustomerDetails = async () => {
         try {
-            const response = await axios.get(`http://137.184.67.138:3016/viewInvoice?sequence_no=${scannedData}`);
-            const customerData = response.data; // Assuming the response contains the customer details
-            console.log(customerData);
+            const response = await axios.get(`${customerDetailsUrl}${scannedData}`);
+            const customerData = response.data.data[0] // Assuming the response contains the customer details
+
+            if (customerData) {
+                const customerDetails = {
+                    customerName: customerData.customer.customer_name,
+                    invoiceNumber: customerData.sequence_no,
+                    totalAmount: customerData.total_amount.toString()
+                }
+                console.log("customerDetails======+++", customerDetails)
+                setCustomer(customerDetails)
+            }
+
+
+            console.log("customerData", customerData);
             // setCustomerName(customerData.customer_name);
         } catch (error) {
             console.error('Error fetching customer details:', error);
         }
     };
 
-    useEffect(() => {
-        fetchCustomerDetails()
-    })
 
-    console.log("scannedData-----------", scannedData)
+    //formation date
+    function formatDate(date) {
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+
+        return `${day}-${month}-${year}`;
+    }
+
+    const currentDate = new Date();
+    const formattedDate = formatDate(currentDate);
+    console.log(formattedDate);
+
+    // const date = new Date().toDateString();
+    // console.log(date)
+    let collectionTypeOptions = null;
+
+    if (resData.data) {
+        collectionTypeOptions = resData.data.map((item) => (
+            <Picker.Item
+                key={item._id}
+                label={item.collection_type_name}
+                value={item.collection_type_name}
+            />
+        ));
+        console.log(collectionTypeOptions)
+    }
+
+
 
     return (
         <ScrollView>
@@ -56,54 +142,62 @@ const NewCollection = () => {
                 <View>
                     <Text style={styles.label}>Date:</Text>
                     <TextInput
+                        value={formattedDate}
                         style={styles.input}
                         editable={false}
                     />
                     <Text style={styles.label}>Sales Person:</Text>
                     <TextInput
+                        value={adminDetails.related_profile?.name}
                         style={styles.input}
                         editable={false}
                     />
                     <Text style={styles.label}>Shop:</Text>
                     <TextInput
+                        value={adminDetails.warehouse?.warehouse_name}
                         style={styles.input}
                         editable={false}
                     />
                     <Text style={styles.label}>Company:</Text>
                     <TextInput
+                        value={adminDetails.company?.name}
                         style={styles.input}
                         editable={false}
                     />
                     <Text style={styles.label}>Collection Type:</Text>
                 </View>
                 <View style={styles.dropdown}>
-
-                    <Picker
-                        collectionType={collectionType}
-                        onValueChange={(itemValue, itemIndex) => setCollectionType(itemValue)}
-                    >
-                        <Picker.Item label="Select a collection type" value="" />
-                        <Picker.Item label="Option 1" value="option1" />
-                        <Picker.Item label="Option 2" value="option2" />
-                        <Picker.Item label="Option 3" value="option3" />
-                    </Picker>
+                    {/* Dropdown collection type */}
+                    <View style={styles.dropdown}>
+                        <Picker
+                            style={styles.picker}
+                            selectedValue={collectionType}
+                            onValueChange={(itemValue) => setCollectionType(itemValue)}
+                        >
+                            <Picker.Item label="Select a collection type" value="" />
+                            {collectionTypeOptions}
+                        </Picker>
+                    </View>
                 </View>
                 <View style={styles.customerBorder}>
                     <View style={styles.customerContent}>
                         <Text style={styles.label}>Customer: </Text>
                         <TextInput
+                            value={customer.customerName}
                             style={styles.input}
                             editable={false}
                             placeholder='Enter Customer Name'
                         />
                         <Text style={styles.label}>Invoice Number :</Text>
                         <TextInput
+                            value={customer.invoiceNumber}
                             style={styles.input}
                             editable={false}
                             placeholder='Enter Invoice No'
                         />
                         <Text style={styles.label}>AMT :</Text>
                         <TextInput
+                            value={customer.totalAmount}
                             style={styles.input}
                             editable={false}
                             placeholder='Enter Total Amount'
@@ -118,7 +212,7 @@ const NewCollection = () => {
                 <Text style={styles.label}>Remarks :</Text>
                 <TextInput
                     style={styles.inputRemarks}
-                    editable={false}
+                    // editable={false}
                     placeholder='Enter Remarks'
                 />
                 {/* <Text style={styles.selectedValue}>Selected Value: {selectedValue}</Text> */}
@@ -152,16 +246,21 @@ const styles = StyleSheet.create({
         fontSize: 18,
         borderRadius: 6,
         fontSize: 13,
+        color: "black",
+        fontWeight: "600"
 
     },
+    picker: {
+        backgroundColor: '#f7f7f7',
+        paddingVertical: 10,
+        paddingHorizontal: 16,
+        fontSize: 16,
+    },
     dropdown: {
-        borderWidth: 0.9,
-        borderColor: 'gray',
-        paddingHorizontal: 10,
-        paddingVertical: 2,
-        fontSize: 18,
-        borderRadius: 6,
-
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 8,
+        overflow: 'hidden', // Clip any overflow content
     },
     customerBorder: {
         marginTop: 15,

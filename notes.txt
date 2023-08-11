@@ -236,3 +236,7 @@ const styles = StyleSheet.create({
 })
 
 export default NewCollection
+
+
+
+in my assumtion  i a m working cash collection we cant fetch or getting data u must use if case to get data because when rendering a component not wait for getting and fetch the data 
