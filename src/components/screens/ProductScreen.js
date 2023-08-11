@@ -28,7 +28,7 @@ const ProductScreen = () => {
 
     const contact = route.params?.contact // without ? getting errors 
     // const{ contact }=route.params;
-   
+
 
     const numColumns = 2;
     const navigation = useNavigation();
