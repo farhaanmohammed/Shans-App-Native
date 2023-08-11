@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Picker } from "@react-native-community/picker";
 import { useNavigation, useRoute } from '@react-navigation/native';
 
