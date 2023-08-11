@@ -102,7 +102,7 @@ export default function ContactDetails({ route, navigation }) {
 
   const totalPriceSum = totalPrice.reduce((sum, value) => sum + value, 0);
 
-  const removeProduct = (productIDToRemove) => {
+  const removeProduct = (productIDToRemove,index) => {
     setAddedProducts(prevProducts => prevProducts.filter(p => p.productID !== productIDToRemove));
     setTotalprice(prevPrices => {
       const newPrices = [...prevPrices];
@@ -230,7 +230,13 @@ const formattedDate = `${year}-${month}-${day}`;
 
     axios.post(CreateinvoiceUrl, payload).then(res => {
       console.log("payload",payload)
-      console.log("response-----------------------------------------",res.data);
+      // console.log("response-----------------------------------------",res.data);
+      if(res.data.success==true){
+        alert("Invoice Success")
+
+      } else{
+        alert("Invoice not Created")
+      }
       
       // console.log("success");
       navigation.navigate('Contactsviewnav');
@@ -290,23 +296,28 @@ const formattedDate = `${year}-${month}-${day}`;
           />
 
           
-              <View style={styles.bottomContainer}>
-              <View style={{ flexDirection: "column" }}>
-  
-                <Text style={styles.productLabel}>Total Quantity: {addedProducts.length}</Text>
-                <View style={{ flexDirection: "row" }}>
-                  <Text style={styles.productLabel}>Price items  </Text>
-                  <Text style={styles.productText}> {totalPriceSum} AED</Text>
+          <View style={styles.bottomContainer}>
+            {addedProducts.every(product => product.totalProductQuantity > 0) ? (
+              <>
+                <View style={{ flexDirection: "column" }}>
+                  <Text style={styles.productLabel}>Total Quantity: {addedProducts.length}</Text>
+                  <View style={{ flexDirection: "row" }}>
+                    <Text style={styles.productLabel}>Price items  </Text>
+                    <Text style={styles.productText}> {totalPriceSum} AED</Text>
+                  </View>
                 </View>
-              </View>
-              <View style={styles.submitButtonContainer}>
-  
-                <CustomSubmitButton
-                  title="Place Order"
-                  onPress={handlesubmit}
-                />
-              </View>
-            </View>
+                <View style={styles.submitButtonContainer}>
+                  <CustomSubmitButton
+                    title="Place Order"
+                    onPress={handlesubmit}
+                  />
+                </View>
+              </>
+            ) : (
+              <Text style={styles.productLabel}>Some products are out of stock</Text>
+            )}
+          </View>
+
           
           
           

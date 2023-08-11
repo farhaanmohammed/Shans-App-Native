@@ -27,7 +27,10 @@ export default function OrderSummery({product,index,updateTotalPrice,removeProdu
         }
 
         const increaseQuantity = () => {
-            setQuantity(quantity + 1);
+            if(quantity<product.productQuantity){
+                setQuantity(quantity + 1);
+            }
+            
         };
         
         const decreaseQuantity = () => {
@@ -119,14 +122,24 @@ export default function OrderSummery({product,index,updateTotalPrice,removeProdu
                 </View>
             ):(
                 <View>
-                    <View>
-                        <Text>
+                    <View style={styles.titlemargin}>
+                        <Text style={styles.titletext}>
                             {product.productName}
                         </Text>
                     </View>
-                    <View> 
-                        <Text>Availability:</Text>
-                        <Text>Out Of Stock</Text>
+                    <View style={styles.fieldmargin}> 
+                        <Text style={styles.fieldtext}>Availability:</Text>
+                        <Text style={styles.outofstock}>Out Of Stock</Text>
+                        
+                        
+                    </View>
+
+                    <View>
+                            <TouchableOpacity onPress={handleRemoveProduct}>
+                                <Text style={styles.removeButtonText}>REMOVE</Text>
+                            </TouchableOpacity>
+
+
                     </View>
                     
                 </View>
@@ -200,6 +213,11 @@ const styles= StyleSheet.create({
     removeContainer: {
         flexDirection: 'row',
         justifyContent: "space-between",
+    },
+
+    outofstock:{
+        color:"red",
+        fontWeight:'500',
     },
 
     
