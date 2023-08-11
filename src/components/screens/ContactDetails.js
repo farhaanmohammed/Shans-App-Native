@@ -229,9 +229,9 @@ const formattedDate = `${year}-${month}-${day}`;
 
 
     axios.post(CreateinvoiceUrl, payload).then(res => {
-      console.log("payload",payload)
-      // console.log("response-----------------------------------------",res.data);
-      if(res.data.success==true){
+      // console.log("payload",payload)
+      console.log("response-----------------------------------------",res.data);
+      if(res.data.success===true){
         alert("Invoice Success")
 
       } else{
