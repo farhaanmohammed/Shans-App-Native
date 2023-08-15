@@ -1,10 +1,13 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Picker } from "@react-native-community/picker";
 import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios';
 import { baseUrl } from "../../api/const";
+import SignatureScreen from "react-native-signature-canvas";
+import Sign from "../Sign/Sign";
+
 
 
 const collectionTypeUrl = `${baseUrl}/viewCollectionType/collection_type_list/collection_type_dropdown`
@@ -32,6 +35,7 @@ const CustomSubmitButton = ({ title, onPress }) => {
     );
 };
 const NewCollection = () => {
+
 
 
     const route = useRoute();
@@ -136,94 +140,96 @@ const NewCollection = () => {
 
 
     return (
-        <ScrollView>
-
-            <View style={styles.container}>
-                <View>
-                    <Text style={styles.label}>Date:</Text>
-                    <TextInput
-                        value={formattedDate}
-                        style={styles.input}
-                        editable={false}
-                    />
-                    <Text style={styles.label}>Sales Person:</Text>
-                    <TextInput
-                        value={adminDetails.related_profile?.name}
-                        style={styles.input}
-                        editable={false}
-                    />
-                    <Text style={styles.label}>Shop:</Text>
-                    <TextInput
-                        value={adminDetails.warehouse?.warehouse_name}
-                        style={styles.input}
-                        editable={false}
-                    />
-                    <Text style={styles.label}>Company:</Text>
-                    <TextInput
-                        value={adminDetails.company?.name}
-                        style={styles.input}
-                        editable={false}
-                    />
-                    <Text style={styles.label}>Collection Type:</Text>
-                </View>
-                <View style={styles.dropdown}>
-                    {/* Dropdown collection type */}
-                    <View style={styles.dropdown}>
-                        <Picker
-                            style={styles.picker}
-                            selectedValue={collectionType}
-                            onValueChange={(itemValue) => setCollectionType(itemValue)}
-                        >
-                            <Picker.Item label="Select a collection type" value="" />
-                            {collectionTypeOptions}
-                        </Picker>
+        <View style={styles.container}>
+            <ScrollView style={styles.scrollContainer} >
+                <>
+                    <View>
+                        <Text style={styles.label}>Date:</Text>
+                        <TextInput
+                            value={formattedDate}
+                            style={styles.input}
+                            editable={false}
+                        />
+                        <Text style={styles.label}>Sales Person:</Text>
+                        <TextInput
+                            value={adminDetails.related_profile?.name}
+                            style={styles.input}
+                            editable={false}
+                        />
+                        <Text style={styles.label}>Shop:</Text>
+                        <TextInput
+                            value={adminDetails.warehouse?.warehouse_name}
+                            style={styles.input}
+                            editable={false}
+                        />
+                        <Text style={styles.label}>Company:</Text>
+                        <TextInput
+                            value={adminDetails.company?.name}
+                            style={styles.input}
+                            editable={false}
+                        />
+                        <Text style={styles.label}>Collection Type:</Text>
                     </View>
-                </View>
-                <View style={styles.customerBorder}>
-                    <View style={styles.customerContent}>
-                        <Text style={styles.label}>Customer: </Text>
-                        <TextInput
-                            value={customer.customerName}
-                            style={styles.input}
-                            editable={false}
-                            placeholder='Enter Customer Name'
-                        />
-                        <Text style={styles.label}>Invoice Number :</Text>
-                        <TextInput
-                            value={customer.invoiceNumber}
-                            style={styles.input}
-                            editable={false}
-                            placeholder='Enter Invoice No'
-                        />
-                        <Text style={styles.label}>AMT :</Text>
-                        <TextInput
-                            value={customer.totalAmount}
-                            style={styles.input}
-                            editable={false}
-                            placeholder='Enter Total Amount'
-                        />
-                        <View style={styles.customerBottom}>
-                            <Text style={styles.qrLabel}>Update from Qr code?</Text>
-                            <CustomButton title="Scan" onPress={() => navigation.navigate('Scanner')} />
+                    <View style={styles.dropdown}>
+                        {/* Dropdown collection type */}
+                        <View style={styles.dropdown}>
+                            <Picker
+                                style={styles.picker}
+                                selectedValue={collectionType}
+                                onValueChange={(itemValue) => setCollectionType(itemValue)}
+                            >
+                                <Picker.Item label="Select a collection type" value="" />
+                                {collectionTypeOptions}
+                            </Picker>
                         </View>
                     </View>
+                    <View style={styles.customerBorder}>
+                        <View style={styles.customerContent}>
+                            <Text style={styles.label}>Customer: </Text>
+                            <TextInput
+                                value={customer.customerName}
+                                style={styles.input}
+                                editable={false}
+                                placeholder='Enter Customer Name'
+                            />
+                            <Text style={styles.label}>Invoice Number :</Text>
+                            <TextInput
+                                value={customer.invoiceNumber}
+                                style={styles.input}
+                                editable={false}
+                                placeholder='Enter Invoice No'
+                            />
+                            <Text style={styles.label}>AMT :</Text>
+                            <TextInput
+                                value={customer.totalAmount}
+                                style={styles.input}
+                                editable={false}
+                                placeholder='Enter Total Amount'
+                            />
+                            <View style={styles.customerBottom}>
+                                <Text style={styles.qrLabel}>Update from Qr code?</Text>
+                                <CustomButton title="Scan" onPress={() => navigation.navigate('Scanner')} />
+                            </View>
+                        </View>
 
-                </View>
-                <Text style={styles.label}>Remarks :</Text>
-                <TextInput
-                    style={styles.inputRemarks}
-                    // editable={false}
-                    placeholder='Enter Remarks'
-                />
+                    </View>
+                    <Text style={styles.label}>Remarks :</Text>
+                    <TextInput
+                        style={styles.inputRemarks}
+                        // editable={false}
+                        placeholder='Enter Remarks'
+                    />
+                </>
                 {/* <Text style={styles.selectedValue}>Selected Value: {selectedValue}</Text> */}
 
-                <Text style={styles.label}>Customer/Vendor Signature</Text>
-                <View style={styles.signatureContainer}>
-                    {/* signature  */}
-                </View>
-                <CustomSubmitButton title="Submit" />
+            </ScrollView>
+            <Text style={styles.label}>Customer/Vendor Signature</Text>
+            {/* <CustomButton title="sign" onPress={() => navigation.navigate('Sign')} />  */}
+            <View style={styles.signatureContainer}>
+                <Sign />
             </View>
-        </ScrollView>
+        </View>
+
     )
 }
 const styles = StyleSheet.create({
@@ -326,14 +332,17 @@ const styles = StyleSheet.create({
         fontSize: 13,
     },
     signatureContainer: {
-        borderWidth: 0.9,
-        borderColor: 'gray',
-        paddingHorizontal: 10,
-        paddingVertical: 100,
-        fontSize: 18,
-        borderRadius: 6,
-        fontSize: 13,
+        borderWidth: 1,
+        borderColor: '#000',
+        width: '100%',
+        height: 200,
+        marginBottom: 20,
+
+    },
+    scrollContainer: {
+        flex: 1,
     }
 })
+
 
 export default NewCollection
