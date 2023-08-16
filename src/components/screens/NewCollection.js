@@ -5,7 +5,7 @@ import { Picker } from "@react-native-community/picker";
 import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios';
 import { baseUrl } from "../../api/const";
-import SignatureScreen from "react-native-signature-canvas";
+// import SignatureScreen from "react-native-signature-canvas";
 import Sign from "../Sign/Sign";
 
 
@@ -25,15 +25,15 @@ const CustomButton = ({ title, onPress }) => {
     );
 };
 
-const CustomSubmitButton = ({ title, onPress }) => {
-    return (
-        <TouchableOpacity style={[styles.submitButtonContainer]} onPress={onPress}>
-            <View style={styles.buttonContent}>
-                <Text style={styles.buttonText}>{title}</Text>
-            </View>
-        </TouchableOpacity>
-    );
-};
+// const CustomSubmitButton = ({ title, onPress }) => {
+//     return (
+//         <TouchableOpacity style={[styles.submitButtonContainer]} onPress={onPress}>
+//             <View style={styles.buttonContent}>
+//                 <Text style={styles.buttonText}>{title}</Text>
+//             </View>
+//         </TouchableOpacity>
+//     );
+// };
 const NewCollection = () => {
 
 
@@ -124,6 +124,9 @@ const NewCollection = () => {
 
     // const date = new Date().toDateString();
     // console.log(date)
+
+
+    // collectiontype name
     let collectionTypeOptions = null;
 
     if (resData.data) {
@@ -136,8 +139,6 @@ const NewCollection = () => {
         ));
         console.log(collectionTypeOptions)
     }
-
-
 
     return (
         <View style={styles.container}>
