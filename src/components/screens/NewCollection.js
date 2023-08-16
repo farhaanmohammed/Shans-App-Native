@@ -10,8 +10,12 @@ import Sign from "../Sign/Sign";
 
 
 
-const collectionTypeUrl = `${baseUrl}/viewCollectionType/collection_type_list/collection_type_dropdown`
-const customerDetailsUrl = `${baseUrl}/viewInvoice?sequence_no=`
+const collectionTypeDropdownUrl = `${baseUrl}/viewCollectionType/collection_type_list/collection_type_dropdown`
+const collectionTypeUrl = `${baseUrl}/viewCollectionType?`
+const invoiceDetailsUrl = `${baseUrl}/viewInvoice?sequence_no=`
+const vendorDetailsUrl = `${baseUrl}/viewVendorBill?sequence_no=`
+const salesReturnUrl = `${baseUrl}/viewReturn?sequence_no=`
+const purchaseReturnUrl = `${baseUrl}/viewReturn?sequence_no=`
 
 
 const CustomButton = ({ title, onPress }) => {
@@ -25,6 +29,9 @@ const CustomButton = ({ title, onPress }) => {
     );
 };
 
+
+// submit button
+
 // const CustomSubmitButton = ({ title, onPress }) => {
 //     return (
 //         <TouchableOpacity style={[styles.submitButtonContainer]} onPress={onPress}>
@@ -36,8 +43,6 @@ const CustomButton = ({ title, onPress }) => {
 // };
 const NewCollection = () => {
 
-
-
     const route = useRoute();
     const navigation = useNavigation()
 
@@ -45,22 +50,23 @@ const NewCollection = () => {
     const [collectionType, setCollectionType] = useState('');
     // const [selectedCustomer, setSelectedCustomer] = useState('');
     const [adminDetails, setAdminDetails] = useState({});
-    const [customer, setCustomer] = useState({})
+    const [customer, setCustomer] = useState({});
+    
 
 
     //fetch details from scanner compnent
-    const scannedData = route.params?.scannedData;
+    const scannedData = route.params?.scannedData; //sample output getting scanned data filtering which want to search in the sequence number sample getting output is "INV-39"
+    const whichBill = route.params?.whichBill; //which bill means invoice or vendor or anything else // sample output gettinig is Invoice or Vendor bill
 
     console.log("scannedData----------", scannedData)
+    console.log("whichBill----------", whichBill)
 
     useEffect(() => {
         fetchAdminDetails();
-        axios.get(collectionTypeUrl).then((response) => {
+        axios.get(collectionTypeDropdownUrl).then((response) => {
             console.log(response.data)
             setResData(response.data)
         })
-
-
     }, []);
 
     useEffect(() => {
@@ -87,21 +93,108 @@ const NewCollection = () => {
 
     const fetchCustomerDetails = async () => {
         try {
-            const response = await axios.get(`${customerDetailsUrl}${scannedData}`);
-            const customerData = response.data.data[0] // Assuming the response contains the customer details
+            if (whichBill == "Invoice") {
 
-            if (customerData) {
-                const customerDetails = {
-                    customerName: customerData.customer.customer_name,
-                    invoiceNumber: customerData.sequence_no,
-                    totalAmount: customerData.total_amount.toString()
+                const response = await axios.get(`${invoiceDetailsUrl}${scannedData}`);
+                
+                const customerData = response.data.data[0] // Assuming the response contains the customer details
+
+                if (customerData) {
+                    const customerDetails = {
+                        customerName: customerData.customer.customer_name,
+                        invoiceNumber: customerData.sequence_no,
+                        businessType: customerData.bussiness_type_id,
+                        paymentMethod: customerData.register_payments[0].payment_method_id,
+                        totalAmount: customerData.total_amount.toString()
+                    }
+                    console.log("customerDetails=====full =+++", customerDetails)
+                    const collectionTypeResponse = await axios.get(`http://137.184.67.138:3004/viewCollectionType?bussiness_type_id=${customerDetails.businessType}&payment_method_id=${customerDetails.paymentMethod}`);
+                    const collectionResponseData = collectionTypeResponse.data.data[0];
+                    setCollectionType(collectionResponseData)
+                    setCustomer(customerDetails)
+                    
+
                 }
-                console.log("customerDetails======+++", customerDetails)
-                setCustomer(customerDetails)
+                
+                console.log("customerData", customerData);
+            }
+            if (whichBill == "Vendor Bill") {
+                const response = await axios.get(`${vendorDetailsUrl}${scannedData}`);
+                const customerData = response.data.data[0] // Assuming the response contains the customer details
+
+                console.log("Vendor bill customoer data", customerData)
+
+                if (customerData) {
+                    const customerDetails = {
+                        customerName: customerData.supplier.supplier_name,
+                        invoiceNumber: customerData.sequence_no,
+                        totalAmount: customerData.total_amount.toString()
+                    }
+                    console.log("customerDetails======+++", customerDetails)
+                    setCustomer(customerDetails)
+                }
+
+                console.log("customerData", customerData);
+              
             }
 
+            if (whichBill == "SALRET") {
+                const response = await axios.get(`${salesReturnUrl}${scannedData}`);
+                const customerData = response.data.data[0] // Assuming the response contains the customer details
 
-            console.log("customerData", customerData);
+                console.log("Vendor bill customoer data", customerData)
+
+                if (customerData) {
+                    const customerDetails = {
+                        customerName: customerData.customer.customer_name,
+                        invoiceNumber: customerData.sequence_no,
+                        totalAmount: customerData.total_amount.toString()
+                    }
+                    console.log("customerDetails======+++", customerDetails)
+                    setCustomer(customerDetails)
+                }
+
+                console.log("customerData", customerData);
+            }
+            if (whichBill == "PURCHRET") {
+                const response = await axios.get(`${purchaseReturnUrl}${scannedData}`);
+                const customerData = response.data.data[0] // Assuming the response contains the customer details
+
+                console.log("Vendor bill customoer data", customerData)
+
+                if (customerData) {
+                    const customerDetails = {
+                        customerName: customerData.supplier.supplier_name,
+                        invoiceNumber: customerData.sequence_no,
+                        totalAmount: customerData.total_amount.toString()
+                    }
+                    console.log("customerDetails======+++", customerDetails)
+                    setCustomer(customerDetails)
+                }
+
+                console.log("customerData", customerData);
+            }
+
+            if (whichBill == "CAPREC") {
+                const response = await axios.get(`${purchaseReturnUrl}${scannedData}`);
+                const customerData = response.data.data[0] // Assuming the response contains the customer details
+
+                console.log("Vendor bill customoer data", customerData)
+
+                if (customerData) {
+                    const customerDetails = {
+                        customerName: customerData.supplier.supplier_name,
+                        invoiceNumber: customerData.sequence_no,
+                        totalAmount: customerData.total_amount.toString()
+                    }
+                    console.log("customerDetails======+++", customerDetails)
+                    setCustomer(customerDetails)
+                }
+
+                console.log("customerData", customerData);
+            }
+            console.log(customer);
+
             // setCustomerName(customerData.customer_name);
         } catch (error) {
             console.error('Error fetching customer details:', error);
@@ -174,14 +267,12 @@ const NewCollection = () => {
                     <View style={styles.dropdown}>
                         {/* Dropdown collection type */}
                         <View style={styles.dropdown}>
-                            <Picker
-                                style={styles.picker}
-                                selectedValue={collectionType}
-                                onValueChange={(itemValue) => setCollectionType(itemValue)}
-                            >
-                                <Picker.Item label="Select a collection type" value="" />
-                                {collectionTypeOptions}
-                            </Picker>
+                        <TextInput
+                                value={collectionType.collection_type_name}
+                                style={styles.input}
+                                editable={false}
+                                placeholder='Collection Type'
+                            />
                         </View>
                     </View>
                     <View style={styles.customerBorder}>
