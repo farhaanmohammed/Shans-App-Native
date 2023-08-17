@@ -3,13 +3,16 @@ import { StyleSheet, View, Button } from "react-native";
 import SignatureScreen from "react-native-signature-canvas";
 import * as FileSystem from "expo-file-system";
 import sendSignatureToAPI from "../../api/Signature/sendSignatureToAPI";
+import { useNavigation } from "@react-navigation/native";
+
 
 const Sign = ({ onOK }) => {
+  const navigation = useNavigation()
   const ref = useRef();
 
  
 const handleOK = (signature) => {
-  const path = FileSystem.cacheDirectory + "sign.png";
+  const path = FileSystem.cacheDirectory + `sign_${Date.now()}.png`;
   FileSystem.writeAsStringAsync(
     path,
     signature.replace("data:image/png;base64,", ""),
@@ -18,7 +21,7 @@ const handleOK = (signature) => {
   .then(async() => {
     console.log("path in sign js " , path)
    
-    sendSignatureToAPI(path)
+    sendSignatureToAPI(path, navigation)
  
   } )
     .then(console.log)

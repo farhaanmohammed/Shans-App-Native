@@ -1,10 +1,12 @@
 import axios from 'axios';
 import * as FileSystem from 'expo-file-system';
 import { baseUrl } from '../const';
+import { useNavigation } from '@react-navigation/native';
 
 
 
-const sendSignatureToAPI = async (fileUri) => {
+const sendSignatureToAPI = async (fileUri,  navigation) => {
+
   console.log("******====******", fileUri)
   try {
     const apiUrl = `${baseUrl}/fileupload`;
@@ -24,8 +26,9 @@ const sendSignatureToAPI = async (fileUri) => {
         'Content-Type': 'multipart/form-data',
       },
     });
-
-    console.log('API response:', response.data);
+    const uploadUrl = response.data.data
+    navigation.navigate('NewCollection', {uploadUrl:uploadUrl });
+    console.log('API response:', response.data.data);
     // Handle the API response as needed
   } catch (error) {
     console.error('API error:', error);

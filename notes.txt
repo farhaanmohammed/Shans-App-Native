@@ -240,3 +240,12 @@ export default NewCollection
 
 
 in my assumtion  i a m working cash collection we cant fetch or getting data u must use if case to get data because when rendering a component not wait for getting and fetch the data 
+
+
+
+completed fetch details and collection type capital payment, invoice, vendor, capital Receipts 
+
+
+
+salesreturn api is not getting i want to complete the details also not getting collection type also
+purchase return also have no collection type finding because of the buisiness type i snot found in the api 

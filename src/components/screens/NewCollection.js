@@ -10,12 +10,15 @@ import Sign from "../Sign/Sign";
 
 
 
-const collectionTypeDropdownUrl = `${baseUrl}/viewCollectionType/collection_type_list/collection_type_dropdown`
-const collectionTypeUrl = `${baseUrl}/viewCollectionType?`
+// const collectionTypeDropdownUrl = `${baseUrl}/viewCollectionType/collection_type_list/collection_type_dropdown`//no need this drop down we can collect data in the invoice 
+const collectionTypeUrl = `${baseUrl}/viewCollectionType?bussiness_type_id=`
 const invoiceDetailsUrl = `${baseUrl}/viewInvoice?sequence_no=`
 const vendorDetailsUrl = `${baseUrl}/viewVendorBill?sequence_no=`
 const salesReturnUrl = `${baseUrl}/viewReturn?sequence_no=`
 const purchaseReturnUrl = `${baseUrl}/viewReturn?sequence_no=`
+const capitalPaymentUrl = `${baseUrl}/viewCapitalPayment?sequence_no=`
+const capitalReceiptsUrl = `${baseUrl}/viewCapital?sequence_no=`
+const createAuditingUrl = `${baseUrl}/createAuditing`
 
 
 const CustomButton = ({ title, onPress }) => {
@@ -32,18 +35,21 @@ const CustomButton = ({ title, onPress }) => {
 
 // submit button
 
-// const CustomSubmitButton = ({ title, onPress }) => {
-//     return (
-//         <TouchableOpacity style={[styles.submitButtonContainer]} onPress={onPress}>
-//             <View style={styles.buttonContent}>
-//                 <Text style={styles.buttonText}>{title}</Text>
-//             </View>
-//         </TouchableOpacity>
-//     );
-// };
+const CustomSubmitButton = ({ title, onPress }) => {
+    return (
+        <TouchableOpacity style={[styles.submitButtonContainer]} onPress={onPress}>
+            <View style={styles.buttonContent}>
+                <Text style={styles.buttonText}>{title}</Text>
+            </View>
+        </TouchableOpacity>
+    );
+};
 const NewCollection = () => {
 
+
+
     const route = useRoute();
+    console.log(route)
     const navigation = useNavigation()
 
     const [resData, setResData] = useState([])
@@ -51,22 +57,27 @@ const NewCollection = () => {
     // const [selectedCustomer, setSelectedCustomer] = useState('');
     const [adminDetails, setAdminDetails] = useState({});
     const [customer, setCustomer] = useState({});
-    
+    const [remarks, setRemarks] = useState('')
+    // console.log(remarks)
 
 
     //fetch details from scanner compnent
     const scannedData = route.params?.scannedData; //sample output getting scanned data filtering which want to search in the sequence number sample getting output is "INV-39"
     const whichBill = route.params?.whichBill; //which bill means invoice or vendor or anything else // sample output gettinig is Invoice or Vendor bill
+    const uploadUrl = route.params?.uploadUrl;
 
     console.log("scannedData----------", scannedData)
     console.log("whichBill----------", whichBill)
+    console.log("uploadUrl----------", uploadUrl)
+
+
 
     useEffect(() => {
         fetchAdminDetails();
-        axios.get(collectionTypeDropdownUrl).then((response) => {
-            console.log(response.data)
-            setResData(response.data)
-        })
+        // axios.get(collectionTypeDropdownUrl).then((response) => { //no need dropdown 
+        //     console.log(response.data)
+        //     setResData(response.data)
+        // })
     }, []);
 
     useEffect(() => {
@@ -96,7 +107,7 @@ const NewCollection = () => {
             if (whichBill == "Invoice") {
 
                 const response = await axios.get(`${invoiceDetailsUrl}${scannedData}`);
-                
+
                 const customerData = response.data.data[0] // Assuming the response contains the customer details
 
                 if (customerData) {
@@ -108,14 +119,17 @@ const NewCollection = () => {
                         totalAmount: customerData.total_amount.toString()
                     }
                     console.log("customerDetails=====full =+++", customerDetails)
-                    const collectionTypeResponse = await axios.get(`http://137.184.67.138:3004/viewCollectionType?bussiness_type_id=${customerDetails.businessType}&payment_method_id=${customerDetails.paymentMethod}`);
+                    const collectionTypeResponse = await axios.get(`${collectionTypeUrl}${customerDetails.businessType}&payment_method_id=${customerDetails.paymentMethod}`);
+                    //checking api format correct or not 
+                    console.log(`${collectionTypeUrl}${customerDetails.businessType}&payment_method_id=${customerDetails.paymentMethod}`)
+                    // const collectionTypeResponse = await axios.get(`http://137.184.67.138:3004/viewCollectionType?bussiness_type_id=${customerDetails.businessType}&payment_method_id=${customerDetails.paymentMethod}`);
                     const collectionResponseData = collectionTypeResponse.data.data[0];
                     setCollectionType(collectionResponseData)
                     setCustomer(customerDetails)
-                    
+
 
                 }
-                
+
                 console.log("customerData", customerData);
             }
             if (whichBill == "Vendor Bill") {
@@ -128,14 +142,22 @@ const NewCollection = () => {
                     const customerDetails = {
                         customerName: customerData.supplier.supplier_name,
                         invoiceNumber: customerData.sequence_no,
-                        totalAmount: customerData.total_amount.toString()
+                        totalAmount: customerData.total_amount.toString(),
+                        businessType: customerData.bussiness_type_id,
+                        paymentMethod: customerData.register_payments[0].payment_method_id,
                     }
                     console.log("customerDetails======+++", customerDetails)
+                    const collectionTypeResponse = await axios.get(`${collectionTypeUrl}${customerDetails.businessType}&payment_method_id=${customerDetails.paymentMethod}`);
+                    //checking api format correct or not 
+                    console.log(`${collectionTypeUrl}${customerDetails.businessType}&payment_method_id=${customerDetails.paymentMethod}`)
+                    // const collectionTypeResponse = await axios.get(`http://137.184.67.138:3004/viewCollectionType?bussiness_type_id=${customerDetails.businessType}&payment_method_id=${customerDetails.paymentMethod}`);
+                    const collectionResponseData = collectionTypeResponse.data.data[0];
+                    setCollectionType(collectionResponseData)
                     setCustomer(customerDetails)
                 }
 
                 console.log("customerData", customerData);
-              
+
             }
 
             if (whichBill == "SALRET") {
@@ -148,7 +170,9 @@ const NewCollection = () => {
                     const customerDetails = {
                         customerName: customerData.customer.customer_name,
                         invoiceNumber: customerData.sequence_no,
-                        totalAmount: customerData.total_amount.toString()
+                        totalAmount: customerData.total_amount.toString(),
+                        // businessType: customerData.bussiness_type_id,
+                        // paymentMethod: customerData.payment_method_id,
                     }
                     console.log("customerDetails======+++", customerDetails)
                     setCustomer(customerDetails)
@@ -166,7 +190,10 @@ const NewCollection = () => {
                     const customerDetails = {
                         customerName: customerData.supplier.supplier_name,
                         invoiceNumber: customerData.sequence_no,
-                        totalAmount: customerData.total_amount.toString()
+                        totalAmount: customerData.total_amount.toString(),
+                        businessType: customerData.bussiness_type_id,
+                        paymentMethod: customerData.payment_method_id,
+
                     }
                     console.log("customerDetails======+++", customerDetails)
                     setCustomer(customerDetails)
@@ -176,25 +203,58 @@ const NewCollection = () => {
             }
 
             if (whichBill == "CAPREC") {
-                const response = await axios.get(`${purchaseReturnUrl}${scannedData}`);
+                const response = await axios.get(`${capitalReceiptsUrl}${scannedData}`);
                 const customerData = response.data.data[0] // Assuming the response contains the customer details
 
                 console.log("Vendor bill customoer data", customerData)
 
                 if (customerData) {
                     const customerDetails = {
-                        customerName: customerData.supplier.supplier_name,
+                        customerName: customerData.sales_person.sales_person_name,
                         invoiceNumber: customerData.sequence_no,
-                        totalAmount: customerData.total_amount.toString()
+                        totalAmount: customerData.amount.toString(),
+                        businessType: customerData.bussiness_type_id,
+                        paymentMethod: customerData.paid_through_chart_of_account_id,
                     }
                     console.log("customerDetails======+++", customerDetails)
+                    const collectionTypeResponse = await axios.get(`${collectionTypeUrl}${customerDetails.businessType}&payment_method_id=${customerDetails.paymentMethod}`);
+                    //checking api format correct or not 
+                    console.log(`${collectionTypeUrl}${customerDetails.businessType}&payment_method_id=${customerDetails.paymentMethod}`)
+                    // const collectionTypeResponse = await axios.get(`http://137.184.67.138:3004/viewCollectionType?bussiness_type_id=${customerDetails.businessType}&payment_method_id=${customerDetails.paymentMethod}`);
+                    const collectionResponseData = collectionTypeResponse.data.data[0];
+                    setCollectionType(collectionResponseData)
                     setCustomer(customerDetails)
                 }
 
                 console.log("customerData", customerData);
             }
-            console.log(customer);
+            if (whichBill == "CAPPAY") {
+                const response = await axios.get(`${capitalPaymentUrl}${scannedData}`);
+                const customerData = response.data.data[0] // Assuming the response contains the customer details
 
+                console.log("Vendor bill customoer data", customerData)
+
+                if (customerData) {
+                    const customerDetails = {
+                        customerName: customerData.sales_person.sales_person_name,
+                        invoiceNumber: customerData.sequence_no,
+                        totalAmount: customerData.amount.toString(),
+                        businessType: customerData.bussiness_type_id,
+                        paymentMethod: customerData.paid_through_chart_of_account_id
+                    }
+                    console.log("customerDetails======+++", customerDetails)
+
+                    const collectionTypeResponse = await axios.get(`${collectionTypeUrl}${customerDetails.businessType}&payment_method_id=${customerDetails.paymentMethod}`);
+                    //checking api format correct or not 
+                    console.log(`${collectionTypeUrl}${customerDetails.businessType}&payment_method_id=${customerDetails.paymentMethod}`)
+                    // const collectionTypeResponse = await axios.get(`http://137.184.67.138:3004/viewCollectionType?bussiness_type_id=${customerDetails.businessType}&payment_method_id=${customerDetails.paymentMethod}`);
+                    const collectionResponseData = collectionTypeResponse.data.data[0];
+                    setCollectionType(collectionResponseData)
+                    setCustomer(customerDetails)
+                }
+                console.log("customerData", customerData);
+            }
+            console.log(customer);
             // setCustomerName(customerData.customer_name);
         } catch (error) {
             console.error('Error fetching customer details:', error);
@@ -208,7 +268,7 @@ const NewCollection = () => {
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const year = date.getFullYear();
 
-        return `${day}-${month}-${year}`;
+        return `${year}-${month}-${day}`;
     }
 
     const currentDate = new Date();
@@ -218,6 +278,61 @@ const NewCollection = () => {
     // const date = new Date().toDateString();
     // console.log(date)
 
+
+
+
+    const handleSubmit = async () => {
+        const auditingDataToAPI = {
+
+            "date": formattedDate,
+            "amount": customer.totalAmount,
+            "un_taxed_amount": 95,
+            "signature": uploadUrl || null,
+            "remarks": remarks,
+            "attachments": [
+                "hai"
+            ],
+            "warehouse_id": "646b263905b93160a102c0e3",
+            "warehouse_name": adminDetails.warehouse?.warehouse_name,
+            "sales_person_id": "646b263905b93160a102c0e3",
+            "sales_person_name": adminDetails.related_profile?.name,
+            "collection_type_id": "646b796fb2cff9b23ba2f07e",
+            "collection_type_name": collectionType.collection_type_name,
+            "company_id": "646b263905b93160a102c0e3",
+            "company_name": adminDetails.company?.name,
+            "customer_id": "646b263905b93160a102c0e3",
+            "customer_name": customer.customerName,
+            "invoice_id": "646b263905b93160a102c0e3",
+            "inv_sequence_no": customer.invoiceNumber,
+            "register_payment_id": "646b263905b93160a102c0e3",
+            "register_payment_sequence_no": "rp_seq_1",
+            "chq_no": "123",
+            "chq_date": formattedDate,
+            "chq_type": "test",
+            "cheque_transaction_type": "test",
+            "chart_of_accounts_id": "646b263905b93160a102c0e3",
+            "chart_of_accounts_name": "test coa"
+
+        }
+        console.log("auditingDataToAPI: ", auditingDataToAPI)
+
+        try {
+            const response = await axios.post(createAuditingUrl, auditingDataToAPI);
+            console.log(response.data);
+            if (response.data.success === "true") {
+                alert("Invoice Success");
+                navigation.navigate("CashCollection")
+            } else {
+                alert("Invoice not Created");
+            }
+            // Handle the response data as needed
+        } catch (error) {
+            console.error('API error:', error);
+            console.log('Error details:', error.response);
+            console.log('Error details:', error.message);
+            // Handle the error
+        }
+    }
 
     // collectiontype name
     let collectionTypeOptions = null;
@@ -267,7 +382,7 @@ const NewCollection = () => {
                     <View style={styles.dropdown}>
                         {/* Dropdown collection type */}
                         <View style={styles.dropdown}>
-                        <TextInput
+                            <TextInput
                                 value={collectionType.collection_type_name}
                                 style={styles.input}
                                 editable={false}
@@ -310,6 +425,7 @@ const NewCollection = () => {
                         style={styles.inputRemarks}
                         // editable={false}
                         placeholder='Enter Remarks'
+                        onChangeText={(text) => setRemarks(text)}
                     />
                 </>
                 {/* <Text style={styles.selectedValue}>Selected Value: {selectedValue}</Text> */}
@@ -320,6 +436,7 @@ const NewCollection = () => {
             <View style={styles.signatureContainer}>
                 <Sign />
             </View>
+            <CustomSubmitButton title="Submit" onPress={handleSubmit} />
         </View>
 
     )

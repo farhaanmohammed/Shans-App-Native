@@ -1,8 +1,17 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
-import React from 'react'
+import React, { useEffect } from 'react'
+import axios from 'axios'
+import { baseUrl } from '../../api/const'
+
 
 const CashCollection = () => {
+
+    // useEffect(()=> {
+    //     axios.get()
+
+    // }, [])
+
     const navigation = useNavigation()
     return (
         <View style={styles.container}>
