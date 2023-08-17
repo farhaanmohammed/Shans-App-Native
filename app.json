@@ -32,7 +32,8 @@
       "eas": {
         "projectId": "9ef1e5ec-cd9a-4b0e-8163-22e8cec3ffd7"
       }
-    }
+    },
+    "owner": "shansapp"
   },
   "web": {
     "favicon": "./assets/favicon.png"

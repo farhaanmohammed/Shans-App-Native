@@ -58,6 +58,7 @@ const NewCollection = () => {
     const [adminDetails, setAdminDetails] = useState({});
     const [customer, setCustomer] = useState({});
     const [remarks, setRemarks] = useState('')
+    const [customerDataAPI, setCustomerDataAPI] = useState({})
     // console.log(remarks)
 
 
@@ -109,7 +110,7 @@ const NewCollection = () => {
                 const response = await axios.get(`${invoiceDetailsUrl}${scannedData}`);
 
                 const customerData = response.data.data[0] // Assuming the response contains the customer details
-
+                setCustomerDataAPI(customerData)
                 if (customerData) {
                     const customerDetails = {
                         customerName: customerData.customer.customer_name,
@@ -117,6 +118,7 @@ const NewCollection = () => {
                         businessType: customerData.bussiness_type_id,
                         paymentMethod: customerData.register_payments[0].payment_method_id,
                         totalAmount: customerData.total_amount.toString()
+
                     }
                     console.log("customerDetails=====full =+++", customerDetails)
                     const collectionTypeResponse = await axios.get(`${collectionTypeUrl}${customerDetails.businessType}&payment_method_id=${customerDetails.paymentMethod}`);
@@ -260,7 +262,7 @@ const NewCollection = () => {
             console.error('Error fetching customer details:', error);
         }
     };
-
+    console.log("collectionType: ", collectionType)
 
     //formation date
     function formatDate(date) {
@@ -282,36 +284,82 @@ const NewCollection = () => {
 
 
     const handleSubmit = async () => {
+        // const auditingDataToAPI = {
+
+        //     "date": formattedDate,
+        //     "amount": customer.totalAmount,
+        //     "un_taxed_amount": 95,
+        //     "signature": uploadUrl || null,
+        //     "remarks": remarks,
+        //     "attachments": [
+        //         "hai"
+        //     ],
+        //     "warehouse_id": "646b263905b93160a102c0e3",
+        //     "warehouse_name": adminDetails.warehouse?.warehouse_name,
+        //     "sales_person_id": "646b263905b93160a102c0e3",
+        //     "sales_person_name": adminDetails.related_profile?.name,
+        //     "collection_type_id": "646b796fb2cff9b23ba2f07e",
+        //     "collection_type_name": collectionType.collection_type_name,
+        //     "company_id": "646b263905b93160a102c0e3",
+        //     "company_name": adminDetails.company?.name,
+        //     "customer_id": "646b263905b93160a102c0e3",
+        //     "customer_name": customer.customerName,
+        //     "invoice_id": "646b263905b93160a102c0e3",
+        //     "inv_sequence_no": customer.invoiceNumber,
+        //     "register_payment_id": "646b263905b93160a102c0e3",
+        //     "register_payment_sequence_no": "rp_seq_1",
+        //     "chq_no": "123",
+        //     "chq_date": formattedDate,
+        //     "chq_type": "test",
+        //     "cheque_transaction_type": "test",
+        //     "chart_of_accounts_id": "646b263905b93160a102c0e3",
+        //     "chart_of_accounts_name": "test coa"
+
+        // }
+
+
         const auditingDataToAPI = {
 
             "date": formattedDate,
             "amount": customer.totalAmount,
-            "un_taxed_amount": 95,
-            "signature": uploadUrl || null,
+            "un_taxed_amount": customerDataAPI.untaxed_total_amount,
+            "customer_vendor_signature": uploadUrl || null,
+            "cashier_signature": "",
             "remarks": remarks,
             "attachments": [
-                "hai"
+                null
             ],
-            "warehouse_id": "646b263905b93160a102c0e3",
+            "warehouse_id": adminDetails.warehouse_id,
             "warehouse_name": adminDetails.warehouse?.warehouse_name,
-            "sales_person_id": "646b263905b93160a102c0e3",
+            "sales_person_id": customerDataAPI.sales_person_id || null,
             "sales_person_name": adminDetails.related_profile?.name,
-            "collection_type_id": "646b796fb2cff9b23ba2f07e",
+            "supplier_id": "646b263905b93160a102c0e3",
+            "supplier_name": "test sup",
+            "collection_type_id": collectionType._id || null,
             "collection_type_name": collectionType.collection_type_name,
             "company_id": "646b263905b93160a102c0e3",
             "company_name": adminDetails.company?.name,
-            "customer_id": "646b263905b93160a102c0e3",
+            "customer_id": adminDetails.company?.company_id,
             "customer_name": customer.customerName,
-            "invoice_id": "646b263905b93160a102c0e3",
+            "invoice_id": customerDataAPI.crm_product_lines[0].invoice_id,
             "inv_sequence_no": customer.invoiceNumber,
-            "register_payment_id": "646b263905b93160a102c0e3",
+            "register_payment_id": customerDataAPI.register_payments[0]._id,
             "register_payment_sequence_no": "rp_seq_1",
-            "chq_no": "123",
-            "chq_date": formattedDate,
-            "chq_type": "test",
-            "cheque_transaction_type": "test",
+            "chq_no": customerDataAPI.register_payments[0].chq_no,
+            "chq_date": customerDataAPI.register_payments[0].chq_date,
+            "chq_type": customerDataAPI.register_payments[0].chq_type,
+            "cheque_transaction_type": "",
             "chart_of_accounts_id": "646b263905b93160a102c0e3",
-            "chart_of_accounts_name": "test coa"
+            "chart_of_accounts_name": "",
+            "ledger_name": null,
+            "ledger_type": null,
+            "ledger_id": "643e4799c0e7b0adaed6a8b3",
+            "ledger_display_name": null,
+            "employee_ledger_id": "643e4799c0e7b0adaed6a8b3",
+            "employee_ledger_name": null,
+            "employee_ledger_display_name": null,
+            "service_amount": null,
+            "service_product_amount": null
 
         }
         console.log("auditingDataToAPI: ", auditingDataToAPI)
@@ -320,7 +368,7 @@ const NewCollection = () => {
             const response = await axios.post(createAuditingUrl, auditingDataToAPI);
             console.log(response.data);
             if (response.data.success === "true") {
-                alert("Invoice Success");
+                alert("Invoice Created Successfully");
                 navigation.navigate("CashCollection")
             } else {
                 alert("Invoice not Created");
