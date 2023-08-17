@@ -1,12 +1,13 @@
 import React, { useEffect } from "react";
-import { Text,View,StyleSheet,ScrollView,TextInput,Modal,Button } from "react-native"
+import { Text,View,StyleSheet,ScrollView,TextInput,Modal,Button,FlatList,TouchableOpacity } from "react-native"
 import { Picker } from "@react-native-community/picker";
 import { Formik } from "formik";
 import { baseUrl } from "../../api/const";
 import axios from "axios";
-import DatePicker from '@react-native-community/datetimepicker'
+import DateTimePicker from '@react-native-community/datetimepicker'
 import SearchableDropDown from "react-native-searchable-dropdown";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Complaints from "./Complaints";
 
 
 export default function AddJob(){
@@ -20,6 +21,9 @@ export default function AddJob(){
     const[jobItem,setJobItem]=React.useState([]) ;   
     const[employee,setEmployee]=React.useState([]);
     const[modal,setModal]=React.useState(false);
+    const[complaints,setComplaints]=React.useState([]);
+    
+    
 
     const currentDate = new Date();
     const year = currentDate.getFullYear();
@@ -27,6 +31,8 @@ export default function AddJob(){
     const day = currentDate.getDate().toString().padStart(2, '0');
 
     const formattedDate = `${year}-${month}-${day}`;
+
+    const[date,setDate]=React.useState(formattedDate);
 
     const[warehouse ,setWarehouse]=React.useState('');
 
@@ -53,9 +59,9 @@ export default function AddJob(){
     
         },[])
 
-    console.log("Login user data",warehouse.warehouse_name);
-    const warehouse_name=warehouse.warehouse_name;
-    console.log("the amen of the ware house",warehouse_name)
+    
+    const warehouse_name1=warehouse.warehouse_name;
+    console.log("the amen of the ware house",warehouse_name1)
     // const warehouse_name=user.warehouse.warehouse_name
     // console.log("+++++++++++++==================",warehouse_name)
 
@@ -106,6 +112,24 @@ export default function AddJob(){
     // console.log("outside effet++++++++++",jobItem)
     // console.log("outside effet-------------",brand)
 
+    // console.log("date",date)
+
+    function handleComplaintSubmit(values){
+        setComplaints([...complaints,values]);
+
+    }
+
+    console.log("complaint in addjob +++++++++++",complaints);
+
+    function handleclose(value){
+        setModal(value);
+    }
+
+    function handleRemoveComplaint(index){
+        const updatedComplaints = complaints.filter((item, i) => i !== index);
+        setComplaints(updatedComplaints);
+    }
+
 
 
 
@@ -116,12 +140,12 @@ export default function AddJob(){
             
             <ScrollView style={styles.container}>
                 <Formik
-                    initialValues={{customer:'',mobile:'',email:'',warehouse_name:warehouse_name,consumer_model_id:'',device_id:'',brand_id:'',estimation:'',assignedOn: formattedDate,assignedto:'',}}
+                    initialValues={{customer:'',mobile:'',email:'',warehouse_name:warehouse_name1,consumer_model_id:'',device_id:'',brand_id:'',estimation:'',assignedOn: new Date().toISOString().split('T')[0],assignedto:'',}}
                     onSubmit={(values)=> {console.log("values:",values)}}
                 
                 >
                 {(props)=>(
-                    <View>
+                    <View style={styles.form}>
                         <View style={styles.heading}>
                             <Text style={styles.headingtext}>Customer Information</Text>
                         </View>
@@ -169,9 +193,8 @@ export default function AddJob(){
                             </Text>
                             <TextInput
                                 style={styles.input}
-                                initialValues={warehouse_name}
                                 placeholder="Warehouse"
-                                onChangeText={(value)=>{props.handleChange('warehouse_name')(value)}}
+                                onChangeText={(value)=>{props.handleChange('warehouse_name')}}
                                 value={props.values.warehouse_name}
                             />
                             
@@ -275,13 +298,47 @@ export default function AddJob(){
                                 Complaints/service Requests:
                             </Text>
                             <Modal visible={modal} animationType="slide">
-                                <View>
-                                    <Text>Hello Modal</Text>
-                                    <Button title="close model" onPress={()=>setModal(false)}/>
+                                <View style={styles.modalHeader}>
+                                    <Text style={styles.modalHeaderText}>Modal Header</Text>
+                                    <Button title="Close" onPress={() => setModal(false)} />
                                 </View>
-
+                                <View style={styles.modalContent}>
+                                    {/* The rest of your modal content */}
+                                    <Complaints onSubmitted={handleComplaintSubmit} Closebutton={handleclose}/>
+                                </View>
                             </Modal>
+
                             <Button title="open model" onPress={()=>setModal(true)}/>
+
+                            {complaints.length > 0 && complaints.map((item,index)=>(
+                                <View key={index} style={styles.contentborder}>
+                                    <View style={styles.complaintfield_margin}>
+                                        <View style={styles.complaintfield}>
+                                            <Text >Complaint/Service:</Text>
+                                            <Text style={styles.complaintfieldval}>{item.complaint_type_name}</Text>
+                                        </View>
+                                        <View style={styles.complaintfield}>
+                                            <Text>Complaint/Service Request:</Text>
+                                            <Text style={styles.complaintfieldval}>{item.complaint_request_name}</Text>
+                                        </View>
+                                        <View style={styles.complaintfield}>
+                                            <Text>Remarks:</Text>
+                                            <Text style={styles.complaintfieldval}>{item.remarks}</Text>
+                                        </View>
+                                        <View>
+                                            <TouchableOpacity onPress={()=>{handleRemoveComplaint(index)}}>
+                                                <Text style={styles.removeButtonText}>REMOVE</Text>
+                                            </TouchableOpacity>
+                                        </View>
+
+                                    </View>
+                                    
+                                </View>
+                            ))
+                                    
+
+
+                            }
                         </View>
 
                         <View style={styles.heading}>
@@ -332,25 +389,12 @@ export default function AddJob(){
                             <Text style={styles.fieldtext}>
                                     Assigned On:
                             </Text>
-                            {/* <DatePicker
-                                style={styles.input}
-                                value={props.values.assignedOn}
-                                mode="date"
-                                placeholder="Select date"
-                                format="YYYY-MM-DD"
-                                confirmBtnText="Confirm"
-                                cancelBtnText="Cancel"
-                                customStyles={{
-                                    dateInput: {
-                                    borderWidth: 0,
-                                    },
-                                    dateText: {
-                                    fontSize: 18,
-                                    },
-                                }}
-                                onDateChange={(date) => {
-                                    props.handleChange('assignedOn')(date);
-                                }}
+                            {/* <DateTimePicker
+                                date={new Date(date.now())}
+                                mode={'date'}
+                                display="default"
+                                is24Hour={true}
+                                onChange={props.handleChange('assignedOn')}
                             /> */}
                         </View>
                         <View style={styles.fieldmargin}>
@@ -380,6 +424,7 @@ const styles=StyleSheet.create({
     container: {
         flexGrow: 1,
         paddingHorizontal: 10,
+        
     },
 
     input:{
@@ -394,7 +439,9 @@ const styles=StyleSheet.create({
     },
 
     form:{
-        marginVertical:20,
+        marginVertical:5,
+        marginHorizontal:25,
+        
         
     },
 
@@ -405,13 +452,68 @@ const styles=StyleSheet.create({
     },
 
     fieldmargin:{
-        marginVertical:7,
+        marginVertical:2,
+        justifyContent:'center',
 
     },
     fieldtext:{
         color:"#ffa600",
         fontWeight:"800",
         fontSize:16,
+    },
+
+    modalHeader: {
+        flexDirection: 'row-reverse',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: 10,
+        backgroundColor: "#ffa600",
+    },
+    modalHeaderText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    modalContent: {
+        padding: 20,
+    },
+
+    remarkinput:{
+        borderWidth:0.5,
+        borderColor:"black",
+        paddingHorizontal: 10,
+        paddingTop:5,
+        // fontSize:12,
+        borderRadius:6,
+        maxWidth:350,
+        
+    },
+    contentborder:{
+        borderWidth:0.5,
+        borderColor:"#ffa600",
+        borderRadius:6,
+        marginVertical:5,
+
+    },
+    complaintfield_margin:{
+        marginLeft:8,
+
+
+    },
+
+    complaintfield:{
+        marginVertical:3,
+        flexDirection:'row',
+    },
+
+    complaintfieldval:{
+        fontWeight:'800',
+        marginLeft:3,
+    },
+
+    removeButtonText: {
+        color: 'red',
+        fontWeight: '600',
+        fontSize: 17,
     },
 
 

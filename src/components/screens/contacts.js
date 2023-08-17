@@ -25,8 +25,22 @@ export default function Contacts({ navigation }) {
             name: item.name,
             customer_mobile: item.customer_mobile,
             _id: item._id,
-            warehouse_id: item.warehouse_id,
-            warehouse_name:item.warehouse_name,
+            // warehouse_id: item.warehouse_id,
+            // warehouse_name:item.warehouse_name,
+            language_id:item.language_id,
+            country_id:item.country_id,
+            currency_id:item.currency_id,
+            // pipelines_id:item.pipelines._id,
+            trn_no:item.trn_no,
+            state_id:item.state_id,
+            pipeline_id:item.pipelines,
+            address:item.address,
+            customer_credit_ledger:item.customer_credit_ledger
+
+            
+
+
+
             }));
             setNames(namesArray);
             setFilteredNames(namesArray);

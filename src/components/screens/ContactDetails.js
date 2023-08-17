@@ -38,7 +38,8 @@ export default function ContactDetails({ route, navigation }) {
   const { item, product } = route.params;
   // console.log("Product prop:", product);
 
-  // console.log("item",item)
+  console.log("contact",item)
+  // console.log("pipeline_id..............",item.customer_credit_ledger[0].in)
 
   // const[warehouseName,setWarehouseName]=useState('');
   // const[warehouseId,setWarehouseId]=useState('');
@@ -67,7 +68,7 @@ export default function ContactDetails({ route, navigation }) {
 
   },[])
 
-  console.log("Login user data",user.warehouse);
+  // console.log("Login user data",user._id);
   
 
   const CreateinvoiceUrl = `${baseUrl}/createCombinedInvoicePaymentReceived`
@@ -124,19 +125,19 @@ export default function ContactDetails({ route, navigation }) {
     }
   },[product])
   
-console.log("pushed products:---------------------",addedProducts);
+// console.log("pushed products:---------------------",addedProducts);
 
 
-console.log("UpdatedTotalPrice in Contactdetails page",totalPrice);
+// console.log("UpdatedTotalPrice in Contactdetails page",totalPrice);
 
 const orderItems=addedProducts.map((product,index)=>({
   "product_id":product.productID,
   "product_name":product.productName,
-  "tax_type_id":"648d9b8fef9cd868dfbfa37f",
+  "tax_type_id":'648d9b8fef9cd868dfbfa37f',
   "tax value":0,
   "uom":null,
   "qty":prquantity[index],
-  "unit price":unitprice[index],
+  "unit price":unitprice[index]*prquantity[index],
   "discount_percentage": 0,
   "remarks": null,
   "total": totalPrice[index],
@@ -145,9 +146,13 @@ const orderItems=addedProducts.map((product,index)=>({
   "return_quantity": 0
 }))
 
-// console.log("ordersummery",orderItems);
+console.log("ordersummery",orderItems);
 
 // console.log("contact details",item._id,item.name,item.warehouse_id,item.warehousename)
+
+
+
+
 
 
 
@@ -161,20 +166,22 @@ const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Addin
 const day = currentDate.getDate().toString().padStart(2, '0');
 
 const formattedDate = `${year}-${month}-${day}`;
+console.log("date",formattedDate)
 
 
   function handlesubmit() {
 
     const payload=  {
       "date": formattedDate,
-      "amounts": 34567890,
-      "invoice_status": "fully_paid",
+      "amounts": totalPriceSum,
+      "payment_status":"un_paid",
+      "invoice_status": "un_paid",
       "remarks": null,
-      "trn_no": null,
-      "delivery_address": "Dubai",
-      "due_date": "2023-08-03",
-      "paid_amount": 34567890,
-      "due_amount": 0,
+      "trn_no": item.trn_no,
+      "delivery_address": item.address,
+      "due_date": null,
+      "paid_amount": 0,
+      "due_amount": totalPriceSum,
       "customer_id": item._id,
       "customer_name": item.name,
       "warehouse_id": user.warehouse.warehouse_id,
@@ -182,25 +189,17 @@ const formattedDate = `${year}-${month}-${day}`;
       "pipeline_id": null,
       "payment_terms_id": null,
       "delivery_method_id": null,
-      "sales_person_id": "644124f9b5cd0bbe6c5216d4",
-      "sales_person_name": "",
+      "sales_person_id": user._id,
+      "sales_person_name": user.user_name,
       "sales_channel_id": null,
-      "state_id": "6454ada82bbaec5968bb22aa",
+      "state_id": item.state_id,
       "quotation_id": null,
       "sales_order_id": null,
-      "currency_id": "644ce4163f3da529998602a8",
-      "product_id": null,
-      "total_amount": 34567890,
-      "untaxed_total_amount": 34567890,
-      "total_purchase_cost":totalPriceSum ,
-      "payment_status": "fully_paid",
-      "total_tax_amount": 0,
-      "tax_type_id": null,
-      "total_discount_amount": 0,
+      "currency_id": item.currency_id,
       "crm_product_line_ids": orderItems,
       "image_url": [],
-      "payment_date": "2023-08-03",
-      "amount": 34567890,
+      "payment_date": null,
+      "amount": totalPriceSum,
       "type": "payment",
       "chq_no": null,
       "chq_date": "",
@@ -214,15 +213,17 @@ const formattedDate = `${year}-${month}-${day}`;
       "payment_method_name": "credit",
       "journal_id": null,
       "chq_bank_id": null,
-      "is_cheque_cleared": true,
+      "is_cheque_cleared": false,
       "reference": null,
-      "in_amount": 0,
-      "out_amount": 34567890,
+      "in_amount": null,
+      "out_amount": null,
       "due_balance": 0,
-      "outstanding": 34567890,
-      "credit_balance": -34467890,
+      "outstanding": null,
+      "credit_balance": null,
       "Pdc_status": ""
     }
+
+    console.log("payload.....................",payload)
 
     
 
@@ -233,11 +234,11 @@ const formattedDate = `${year}-${month}-${day}`;
     axios.post(CreateinvoiceUrl, payload).then(res => {
       // console.log("payload",payload)
       console.log("response-----------------------------------------",res.data);
-      if(res.data.success===true){
+      if(res.data.success=="true"){
         alert("Invoice Success")
 
       } else{
-        alert("Invoice not Created")
+        alert(res.data.message)
       }
       
       // console.log("success");
