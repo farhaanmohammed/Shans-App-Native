@@ -87,7 +87,7 @@ export default function Contacts({ navigation }) {
         
 
         <FAB
-            style={fab}
+            style={styles.fab}
             icon={() => <MaterialIcons name="contact-page" size={24} color="white" />}
             onPress={() => navigation.navigate('addcontacts')}
         />

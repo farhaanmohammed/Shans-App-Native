@@ -110,7 +110,7 @@ export default function Addcontact(){
             customer_title:'',trn_no:'',image_url:'',customer_type:''
         }}
         validationSchema={AddSchema}
-        onSubmit={(values,{seFromtSubmitted})=>{
+        onSubmit={(values,{setFormSubmitted})=>{
             
             setFormSubmitted(true);
             // axios.post(imageUrl,result).then((res)=>setFieldValue('file_upload', res.data))
@@ -383,7 +383,7 @@ export default function Addcontact(){
                                                 value={item._id}
                                                 key={item._id}
                                             />
-                                        )
+                                        )   
                                     })}
 
                                     

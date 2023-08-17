@@ -70,7 +70,7 @@ export default function Home() {
 
                 <View style={styles.buttonicon}>
                     <MaterialIcons name="design-services" size={28} color="black" />
-                    <CustomButton title="Services" color="#fe0000" onPress={() => console.log('Button pressed')} />
+                    <CustomButton title="Services" color="#fe0000" onPress={() => navigation.navigate('Jobscreen')} />
                 </View>
 
                 <View style={styles.buttonicon}>
