@@ -22,9 +22,13 @@ export default function Scanner() {
 
 
 
-    const handleBarCodeScanned = ({ type, data }) => {
+    const handleBarCodeScanned =({ type, data }) => {
         console.log('daaaaaaaaaaaaaaaaaaata', data)
         setScanned(true);
+        const billParts = data.split('-')
+        console.log("which bill", billParts)
+        const whichBill = billParts[0]
+        console.log("which bill", whichBill)
         // setData(data); // Store the scanned data
         const sequenceParts = data.split('-'); // Split the data by "-"
         // console.log('sequenceParts', sequenceParts)
@@ -32,7 +36,7 @@ export default function Scanner() {
 
         console.log("sequence number:", sequenceNumber)
         // Navigate to the NewCollection screen and pass the scanned data
-        navigation.navigate('NewCollection', { scannedData: sequenceNumber });
+       navigation.navigate('NewCollection', { scannedData: sequenceNumber, whichBill: whichBill});
     };
 
     if (hasPermission === null) {
