@@ -39,7 +39,7 @@ const ProductScreen = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [filteredProducts, setFilteredProducts] = useState([]);
 
-    console.log("passed items",contact);
+    // console.log("passed items",contact);
 
     useEffect(() => {
         axios.get(productUrl)

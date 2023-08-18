@@ -36,10 +36,10 @@ const CustomSubmitButton = ({ title, onPress }) => {
 
 export default function ContactDetails({ route, navigation }) {
   const { item, product } = route.params;
-  // console.log("Product prop:", product);
+  console.log("Product prop:", product);
 
   console.log("contact",item)
-  // console.log("pipeline_id..............",item.customer_credit_ledger[0].in)
+  // console.log("pipeline_id..............",item.customer_credit_ledger)
 
   // const[warehouseName,setWarehouseName]=useState('');
   // const[warehouseId,setWarehouseId]=useState('');
@@ -68,7 +68,7 @@ export default function ContactDetails({ route, navigation }) {
 
   },[])
 
-  // console.log("Login user data",user._id);
+  console.log("Login user data",user);
   
 
   const CreateinvoiceUrl = `${baseUrl}/createCombinedInvoicePaymentReceived`
@@ -125,7 +125,7 @@ export default function ContactDetails({ route, navigation }) {
     }
   },[product])
   
-// console.log("pushed products:---------------------",addedProducts);
+console.log("pushed products:---------------------",addedProducts);
 
 
 // console.log("UpdatedTotalPrice in Contactdetails page",totalPrice);
@@ -133,11 +133,11 @@ export default function ContactDetails({ route, navigation }) {
 const orderItems=addedProducts.map((product,index)=>({
   "product_id":product.productID,
   "product_name":product.productName,
-  "tax_type_id":'648d9b8fef9cd868dfbfa37f',
-  "tax value":0,
+  "tax_type_id":"648d9b8fef9cd868dfbfa37f",
+  "tax_value":0,
   "uom":null,
   "qty":prquantity[index],
-  "unit price":unitprice[index]*prquantity[index],
+  "unit_price":unitprice[index]*prquantity[index],
   "discount_percentage": 0,
   "remarks": null,
   "total": totalPrice[index],
@@ -172,10 +172,12 @@ console.log("date",formattedDate)
   function handlesubmit() {
 
     const payload=  {
+      "total_amount":totalPriceSum,
       "date": formattedDate,
       "amounts": totalPriceSum,
       "payment_status":"un_paid",
       "invoice_status": "un_paid",
+      "total_tax_amount":0,
       "remarks": null,
       "trn_no": item.trn_no,
       "delivery_address": item.address,

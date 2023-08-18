@@ -60,7 +60,8 @@ const ProductDetails = () => {
           productCost: productItems.cost,
           productCode: productItems.product_code,
           productDesc: productItems.product_description, 
-          minSalePrice: productItems.sale_price
+          minSalePrice: productItems.minimal_sales_price,
+          sale_price: productItems.sale_price,
         };
         setDetail(details);
       }
