@@ -5,36 +5,36 @@ import * as FileSystem from "expo-file-system";
 import sendSignatureToAPI from "../../api/Signature/sendSignatureToAPI";
 import { useNavigation } from "@react-navigation/native";
 
-
 const Sign = ({ onOK }) => {
-  const navigation = useNavigation()
+  const navigation = useNavigation();
   const ref = useRef();
 
- 
-const handleOK = (signature) => {
-  const path = FileSystem.cacheDirectory + `sign_${Date.now()}.png`;
-  FileSystem.writeAsStringAsync(
-    path,
-    signature.replace("data:image/png;base64,", ""),
-    { encoding: FileSystem.EncodingType.Base64 }
-  )
-  .then(async() => {
-    console.log("path in sign js " , path)
-   
-    sendSignatureToAPI(path, navigation)
- 
-  } )
-    .then(console.log)
-
-    .catch(console.error);
-};
+  const handleOK = async (signature) => {
+    const path = FileSystem.cacheDirectory + `sign_${Date.now()}.png`;
+    await FileSystem.writeAsStringAsync(
+      path,
+      signature.replace("data:image/png;base64,", ""),
+      { encoding: FileSystem.EncodingType.Base64 }
+    )
+      .then(async () => {
+        try {
+          console.log("Writing signature to file completed. Path:", path);
+          await sendSignatureToAPI(path, navigation);
+          // console.log("API response---:", uploadResponse);
+          // Handle the API response as needed
+        } catch (error) {
+          console.log("API error:", error);
+          // Log the error in the console, but don't affect the mobile screen
+        }
+      })
+      .catch(console.error);
+  };
 
   const handleClear = () => {
     ref.current.clearSignature();
   };
 
-  const handleConfirm = () => {
-    console.log("end");
+  const handleEnd = () => {
     ref.current.readSignature();
   };
 
@@ -42,10 +42,9 @@ const handleOK = (signature) => {
 
   return (
     <View style={styles.container}>
-      <SignatureScreen ref={ref} onOK={handleOK} webStyle={style} />
+      <SignatureScreen ref={ref} onOK={handleOK} webStyle={style} onEnd={handleEnd} />
       <View style={styles.row}>
         <Button title="Clear" onPress={handleClear} />
-        <Button title="Confirm" onPress={handleConfirm} />
       </View>
     </View>
   );

@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import Splash from "./src/components/screens/Splash";
 import LoginScreen from "./src/components/screens/LoginScreen";
@@ -23,7 +23,67 @@ import Sign from "./src/components/Sign/Sign";
 
 import Jobs from "./src/components/screens/Jobs";
 import AddJob from "./src/components/screens/AddJob";
+
 const Stack = createNativeStackNavigator();
+
+import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
+
+/*
+  1. Create the config
+*/
+const toastConfig = {
+ 
+  success: (props) => (
+    <BaseToast
+      {...props}
+      style={{ borderLeftColor: 'pink' }}
+      contentContainerStyle={{ paddingHorizontal: 15 }}
+      text1Style={{
+        fontSize: 15,
+        fontWeight: '400'
+      }}
+    />
+  ),
+
+  error: (props) => (
+    <ErrorToast
+      {...props}
+      text1Style={{
+        fontSize: 17
+      }}
+      text2Style={{
+        fontSize: 15
+      }}
+    />
+  ),
+
+  tomatoToast: ({ text1, props }) => (
+    <View style={{ padding: 5, width: '70%', backgroundColor: 'white', borderRadius: 12, borderLeftWidth: 3.5, borderLeftColor: "red",alignItems: "center", justifyContent: "center"}}>
+      <Text style={{fontSize:18, alignSelf: "center"}}>{text1}</Text>
+      <Text>{props.uuid}</Text>
+    </View>
+  ),
+
+  requireToast: ({text1, text2}) => (
+    <View style={{padding: 5, flex: 1, backgroundColor: 'red', marginVertical: 15, width: '70%', borderRadius: 12, borderLeftWidth: 3.5, borderWidth: 0.9,borderColor: "white", marginVertical: "50%"}}>
+    <View style={{marginHorizontal: 5, alignContent: "center"}}>
+      <Text style={{ fontSize: 12, fontWeight: "bold", color: "white"}}>{text1} !!!</Text>
+      <Text style={{ fontSize: 18, fontWeight: "bold", color: "white"}}>{text2}</Text>
+    </View>
+  </View>
+  ),
+  
+  invoiceSuccessToast:  ({text1, text2}) => (
+    <View style={{padding: 5, flex: 1, backgroundColor: 'white', marginVertical: 15, width: '80%', borderRadius: 10, borderBottomWidth: 4.5, borderBottomColor: "green", marginVertical: "50%"}}>
+    <View style={{marginHorizontal: 5, marginVertical: 10, alignContent: "center"}}>
+      <Text style={{ fontSize: 12, fontWeight: "bold", color: "green"}}>{text1}</Text>
+      <Text style={{ fontSize:18, fontWeight: "bold", color: "black"}}>{text2}</Text>
+    </View>
+  </View>
+  )
+
+};
+
 
 
 const App = () => {
@@ -60,6 +120,7 @@ const App = () => {
           <Stack.Screen name="Scanner" component={Scanner} options={{ headerStyle: { backgroundColor: '#ffa600' }, headerShown: false, title: "Scanner" }} />
          <Stack.Screen name="Sign"  component={Sign} options={{ headerStyle: { backgroundColor: '#ffa600' }, headerShown: false, title: "Scanner" }} />
         </Stack.Navigator>
+        <Toast config={toastConfig} />
       </View>
     </NavigationContainer>
   )
