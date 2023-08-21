@@ -57,12 +57,12 @@ const toastConfig = {
     />
   ),
 
-  tomatoToast: ({ text1, props }) => (
-    <View style={{ padding: 5, width: '70%', backgroundColor: 'white', borderRadius: 12, borderLeftWidth: 3.5, borderLeftColor: "red",alignItems: "center", justifyContent: "center"}}>
-      <Text style={{fontSize:18, alignSelf: "center"}}>{text1}</Text>
-      <Text>{props.uuid}</Text>
-    </View>
-  ),
+  // tomatoToast: ({ text1, props }) => (
+  //   <View style={{ padding: 5, width: '70%', backgroundColor: 'white', borderRadius: 12, borderLeftWidth: 3.5, borderLeftColor: "red",alignItems: "center", justifyContent: "center"}}>
+  //     <Text style={{fontSize:18, alignSelf: "center"}}>{text1}</Text>
+  //     <Text>{props.uuid}</Text>
+  //   </View>
+  // ),
 
   requireToast: ({text1, text2}) => (
     <View style={{padding: 5, flex: 1, backgroundColor: 'red', marginVertical: 15, width: '70%', borderRadius: 12, borderLeftWidth: 3.5, borderWidth: 0.9,borderColor: "white", marginVertical: "50%"}}>

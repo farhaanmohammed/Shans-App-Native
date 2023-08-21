@@ -18,6 +18,9 @@ const vendorDetailsUrl = `${baseUrl}/viewVendorBill?sequence_no=`
 const salesReturnUrl = `${baseUrl}/viewReturn?sequence_no=`
 const purchaseReturnUrl = `${baseUrl}/viewReturn?sequence_no=`
 const capitalPaymentUrl = `${baseUrl}/viewCapitalPayment?sequence_no=`
+const jobInvoiceUrl = `${baseUrl}/viewJobInvoice?sequence_no=`
+const pettyCashAllotmentUrl = `${baseUrl}/viewPettyCashAllotement?sequence_no=`
+const pettyCashExpenseUrl = `${baseUrl}/viewPettyCashExpence?sequence_no=`
 const capitalReceiptsUrl = `${baseUrl}/viewCapital?sequence_no=`
 const createAuditingUrl = `${baseUrl}/createAuditing`
 
@@ -47,6 +50,8 @@ const CustomSubmitButton = ({ title, onPress }) => {
 };
 const NewCollection = () => {
 
+
+    // just show toast sample
     const showToast = () => {
         Toast.show({
             type: 'success',
@@ -242,6 +247,88 @@ const NewCollection = () => {
                 const customerData = response.data.data[0] // Assuming the response contains the customer details
 
                 console.log("Vendor bill customoer data", customerData)
+
+                if (customerData) {
+                    const customerDetails = {
+                        customerName: customerData.sales_person.sales_person_name,
+                        invoiceNumber: customerData.sequence_no,
+                        totalAmount: customerData.amount.toString(),
+                        businessType: customerData.bussiness_type_id,
+                        paymentMethod: customerData.paid_through_chart_of_account_id
+                    }
+                    console.log("customerDetails======+++", customerDetails)
+
+                    const collectionTypeResponse = await axios.get(`${collectionTypeUrl}${customerDetails.businessType}&payment_method_id=${customerDetails.paymentMethod}`);
+                    //checking api format correct or not 
+                    console.log(`${collectionTypeUrl}${customerDetails.businessType}&payment_method_id=${customerDetails.paymentMethod}`)
+                    // const collectionTypeResponse = await axios.get(`http://137.184.67.138:3004/viewCollectionType?bussiness_type_id=${customerDetails.businessType}&payment_method_id=${customerDetails.paymentMethod}`);
+                    const collectionResponseData = collectionTypeResponse.data.data[0];
+                    setCollectionType(collectionResponseData)
+                    setCustomer(customerDetails)
+                }
+                console.log("customerData", customerData);
+            }
+            console.log(customer);
+            if (whichBill == "JobInvoice") {
+                const response = await axios.get(`${jobInvoiceUrl}${scannedData}`);
+                const customerData = response.data.data[0] // Assuming the response contains the customer details
+
+                console.log("Job invoice  data", customerData)
+
+                if (customerData) {
+                    const customerDetails = {
+                        customerName: customerData.sales_person.sales_person_name,
+                        invoiceNumber: customerData.sequence_no,
+                        totalAmount: customerData.amount.toString(),
+                        businessType: customerData.bussiness_type_id,
+                        paymentMethod: customerData.paid_through_chart_of_account_id
+                    }
+                    console.log("customerDetails======+++", customerDetails)
+
+                    const collectionTypeResponse = await axios.get(`${collectionTypeUrl}${customerDetails.businessType}&payment_method_id=${customerDetails.paymentMethod}`);
+                    //checking api format correct or not 
+                    console.log(`${collectionTypeUrl}${customerDetails.businessType}&payment_method_id=${customerDetails.paymentMethod}`)
+                    // const collectionTypeResponse = await axios.get(`http://137.184.67.138:3004/viewCollectionType?bussiness_type_id=${customerDetails.businessType}&payment_method_id=${customerDetails.paymentMethod}`);
+                    const collectionResponseData = collectionTypeResponse.data.data[0];
+                    setCollectionType(collectionResponseData)
+                    setCustomer(customerDetails)
+                }
+                console.log("customerData", customerData);
+            }
+            console.log(customer);
+
+            if (whichBill == "PETTYALLOT") {
+                const response = await axios.get(`${pettyCashAllotmentUrl}${scannedData}`);
+                const customerData = response.data.data[0] // Assuming the response contains the customer details
+
+                console.log("Job invoice  data", customerData)
+
+                if (customerData) {
+                    const customerDetails = {
+                        customerName: customerData.sales_person.sales_person_name,
+                        invoiceNumber: customerData.sequence_no,
+                        totalAmount: customerData.amount.toString(),
+                        businessType: customerData.bussiness_type_id,
+                        paymentMethod: customerData.paid_through_chart_of_account_id
+                    }
+                    console.log("customerDetails======+++", customerDetails)
+
+                    const collectionTypeResponse = await axios.get(`${collectionTypeUrl}${customerDetails.businessType}&payment_method_id=${customerDetails.paymentMethod}`);
+                    //checking api format correct or not 
+                    console.log(`${collectionTypeUrl}${customerDetails.businessType}&payment_method_id=${customerDetails.paymentMethod}`)
+                    // const collectionTypeResponse = await axios.get(`http://137.184.67.138:3004/viewCollectionType?bussiness_type_id=${customerDetails.businessType}&payment_method_id=${customerDetails.paymentMethod}`);
+                    const collectionResponseData = collectionTypeResponse.data.data[0];
+                    setCollectionType(collectionResponseData)
+                    setCustomer(customerDetails)
+                }
+                console.log("customerData", customerData);
+            }
+            console.log(customer);
+            if (whichBill == "PETEXP") {
+                const response = await axios.get(`${pettyCashExpenseUrl}${scannedData}`);
+                const customerData = response.data.data[0] // Assuming the response contains the customer details
+
+                console.log("Job invoice  data", customerData)
 
                 if (customerData) {
                     const customerDetails = {
@@ -499,19 +586,21 @@ const NewCollection = () => {
                             style={styles.input}
                             editable={false}
                         />
-                        <Text style={styles.label}>Sales Person:</Text>
+
+                        {/* sales Person */}
+                        {/* <Text style={styles.label}>Sales Person:</Text>
                         <TextInput
                             value={adminDetails.related_profile?.name}
                             style={styles.input}
                             editable={false}
-                        />
-                        <Text style={styles.label}>Shop:</Text>
+                        /> */}
+                        {/* <Text style={styles.label}>Shop:</Text>
                         <TextInput
                             value={adminDetails.warehouse?.warehouse_name}
                             style={styles.input}
                             editable={false}
-                        />
-                        <Text style={styles.label}>Company:</Text>
+                        /> */}
+                        <Text style={styles.label}>Brand:</Text>
                         <TextInput
                             value={adminDetails.company?.name}
                             style={styles.input}
@@ -523,12 +612,13 @@ const NewCollection = () => {
                         {/* Dropdown collection type */}
                         <View style={styles.dropdown}>
                             <TextInput
-                                value={collectionType.collection_type_name}
+                                value={collectionType ? collectionType.collection_type_name : "Scan for Collection Type"}
                                 style={styles.input}
                                 editable={false}
                                 placeholder='Collection Type'
                             />
                         </View>
+
                     </View>
                     <View style={styles.customerBorder}>
                         <View style={styles.customerContent}>
