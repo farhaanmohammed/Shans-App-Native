@@ -19,6 +19,7 @@ const Sign = ({ onOK }) => {
       .then(async () => {
         try {
           console.log("Writing signature to file completed. Path:", path);
+          
           await sendSignatureToAPI(path, navigation);
           // console.log("API response---:", uploadResponse);
           // Handle the API response as needed
@@ -35,7 +36,7 @@ const Sign = ({ onOK }) => {
   };
 
   const handleEnd = () => {
-    ref.current.readSignature();
+  ref.current.readSignature();
   };
 
   const style = `.m-signature-pad--footer {display: none; margin: 0px;}`;
@@ -58,7 +59,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     height: 250,
-    padding: 10,
+    padding: 1,
   },
   row: {
     display: "flex",

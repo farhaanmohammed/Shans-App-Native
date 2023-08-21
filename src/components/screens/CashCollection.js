@@ -3,10 +3,41 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { baseUrl } from '../../api/const';
+// import { useFonts } from 'expo-font';
+
 
 const listAuditingUrl = `${baseUrl}/viewAuditing`;
 
+// const dummyAuditingList = [
+//     {
+//         id: 1,
+//         sequenceNum: 123,
+//         date: '2023-08-21',
+//         customerName: 'John Doe',
+//         totalAmount: 100,
+//     },
+//     {
+//         id: 2,
+//         sequenceNum: 124,
+//         date: '2023-08-22',
+//         customerName: 'Jane Smith',
+//         totalAmount: 200,
+//     },
+//     {
+//         id: 3,
+//         sequenceNum: 124,
+//         date: '2023-08-22',
+//         customerName: 'Jane Smith',
+//         totalAmount: 200,
+//     },
+//     // Add more dummy data objects as needed
+// ];
+
+
 const CashCollection = () => {
+    
+
+    // const auditingList = dummyAuditingList
     const [auditingList, setAuditingList] = useState([]);
 
     useEffect(() => {
@@ -36,9 +67,9 @@ const CashCollection = () => {
             ) : (
                 auditingList.map((data, index) => (
                     <View style={styles.detailsContainer} key={data.id}>
-                        <Text>{data.customerName}</Text>
-                        <Text>{data.date}</Text>
-                        <Text>{data.totalAmount}</Text>
+                        <Text style={styles.label}>{data.customerName}</Text>
+                        <Text  style={styles.label}>{data.totalAmount}</Text>
+                        <Text  style={styles.label}>{data.date}</Text>
                     </View>
                 ))
             )}
@@ -75,14 +106,27 @@ const styles = StyleSheet.create({
         color: 'white',
     },
     detailsContainer: {
-        borderWidth: 1.5,
-        borderRadius: 20,
-        marginVertical: 1,
+        borderRightWidth: 7.5,
+        borderBottomWidth: 0.9,
+        borderLeftWidth: 0.9,
+        borderTopWidth: 0.9,
+        borderRightColor: "red",
+        borderBottomEndRadius: 25,
+        borderTopLeftRadius: 25,
+        marginVertical: 5,
+        padding: 30,
+        justifyContent: "space-between",
+        flexDirection: "row"
     },
     notFoundText: {
         textAlign: "center",
         fontSize: 30,
         color: "black"
+    },
+    label: {
+        fontSize: 15,
+       
+       
     }
 });
 
