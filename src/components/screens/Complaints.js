@@ -185,7 +185,6 @@ const styles=StyleSheet.create({
             borderColor:"black",
             paddingHorizontal: 10,
             paddingTop:5,
-            // fontSize:12,
             borderRadius:6,
             maxWidth:350,
             

@@ -5,9 +5,17 @@ import { Formik } from "formik";
 import { baseUrl } from "../../api/const";
 import axios from "axios";
 import DateTimePicker from '@react-native-community/datetimepicker'
-import SearchableDropDown from "react-native-searchable-dropdown";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Complaints from "./Complaints";
+import { AntDesign } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
+import { Dropdown } from 'react-native-element-dropdown';
+
+
+
+
+
+
 
 
 export default function AddJob(){
@@ -15,6 +23,8 @@ export default function AddJob(){
     const brandUrl=`${baseUrl}/viewJobBrand/job_brand_model/dropdown`;
     const deviceUrl=`${baseUrl}/viewJobDevice/job_devices/dropdown`;
     const employeeUrl=`${baseUrl}/viewEmployees/employee_list/employee_dropdown`;
+    const accessoriesUrl= `${baseUrl}/viewJobAccessory/accessory_list/accessory_dropdown`;
+    const contacturl = `${baseUrl}/viewCustomers`;
 
     const[device,setDevice]= React.useState([]);
     const[brand,setBrand]=React.useState([]);
@@ -22,6 +32,24 @@ export default function AddJob(){
     const[employee,setEmployee]=React.useState([]);
     const[modal,setModal]=React.useState(false);
     const[complaints,setComplaints]=React.useState([]);
+    const[accessories,setAccesories]=React.useState([]);
+    const[selectedaccessories,setSelectedAccessories]=React.useState([]);
+    const[customers,setCustomers]=React.useState([])
+    const [selectedCustomer, setSelectedCustomer] = React.useState(null);
+
+    const [value, setValue] = React.useState(null);
+    const [isFocus, setIsFocus] = React.useState(false);
+
+    const renderLabel = () => {
+        if (value || isFocus) {
+            return (
+            <Text style={[styles.label, isFocus && { color: 'blue' }]}>
+                Dropdown label
+            </Text>
+            );
+        }
+        return null;
+    };
     
     
 
@@ -58,6 +86,10 @@ export default function AddJob(){
             fetchData();
     
         },[])
+
+        
+
+        
 
     
     const warehouse_name1=warehouse.warehouse_name;
@@ -106,6 +138,26 @@ export default function AddJob(){
             setEmployee(employeeArray)
         })
 
+        axios.get(accessoriesUrl).then(res=>{
+
+            const accessoriesArray=res.data.data.map((item)=>({
+                id:item._id,
+                accessories_name:item.accessories_name,
+            }))
+
+            setAccesories(accessoriesArray);
+        })
+
+        axios.get(contacturl).then(res=>{
+            const contactArray=res.data.data.map((item)=>({
+                id:item._id,
+                name:item.name,
+                customer_mobile:item.customer_mobile,
+                customer_email:item.customer_email,
+            }))
+            setCustomers(contactArray);
+        })
+
     },[])
     // console.log("Employee Details++_________________________",employee)
     // console.log("the device array ????????????",device)
@@ -113,13 +165,14 @@ export default function AddJob(){
     // console.log("outside effet-------------",brand)
 
     // console.log("date",date)
+    // console.log("accedsss============================",accessories);
 
     function handleComplaintSubmit(values){
         setComplaints([...complaints,values]);
 
     }
 
-    console.log("complaint in addjob +++++++++++",complaints);
+    // console.log("complaint in addjob +++++++++++",complaints);
 
     function handleclose(value){
         setModal(value);
@@ -129,6 +182,8 @@ export default function AddJob(){
         const updatedComplaints = complaints.filter((item, i) => i !== index);
         setComplaints(updatedComplaints);
     }
+
+    
 
 
 
@@ -140,8 +195,13 @@ export default function AddJob(){
             
             <ScrollView style={styles.container}>
                 <Formik
-                    initialValues={{customer:'',mobile:'',email:'',warehouse_name:warehouse_name1,consumer_model_id:'',device_id:'',brand_id:'',estimation:'',assignedOn: new Date().toISOString().split('T')[0],assignedto:'',}}
-                    onSubmit={(values)=> {console.log("values:",values)}}
+                    initialValues={{customer:'',mobile:'',email:'',warehouse_name:warehouse_name1,consumer_model_id:'',device_id:'',brand_id:'',
+                    estimation:'',assignedOn: new Date().toISOString().split('T')[0],assignedto:'',remarks:'',
+                }}
+                    onSubmit={(values)=> {console.log("values:",values)
+                    console.log("Selected customer:", selectedCustomer);
+                
+                }}
                 
                 >
                 {(props)=>(
@@ -154,6 +214,25 @@ export default function AddJob(){
                                 Search by Mobile/Customer:
                             </Text>
 
+                            {renderLabel()}
+                            <Dropdown
+                                style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+                                data={customers}
+                                search
+                                maxHeight={300}
+                                labelField="name"
+                                valueField="_id"
+                                placeholder={!isFocus ? 'Select Accessories' : '...'}
+                                searchPlaceholder="Search Customers"
+                                value={props.values.customer}
+                                onFocus={() => setIsFocus(true)}
+                                onBlur={() => setIsFocus(false)}
+                                onChange={item => {
+                                    setSelectedCustomer(item.value)
+                                    props.setFieldValue('customer',item.value)
+                                    setIsFocus(false);
+                                }}
+                            />
 
 
                         </View>
@@ -191,12 +270,16 @@ export default function AddJob(){
                             <Text style={styles.fieldtext}>
                                 Warehouse/Shop:
                             </Text>
-                            <TextInput
+                            {/* <TextInput
                                 style={styles.input}
                                 placeholder="Warehouse"
                                 onChangeText={(value)=>{props.handleChange('warehouse_name')}}
                                 value={props.values.warehouse_name}
-                            />
+                            /> */}
+                            <View style={styles.input}>
+                                <Text style={{fontSize:16,}}>{warehouse_name1}</Text>
+                            
+                            </View>
                             
                         </View>
                         <View style={styles.fieldmargin}>
@@ -291,45 +374,89 @@ export default function AddJob(){
                             <Text style={styles.headingtext}>
                                 Accessories
                             </Text>
+                            {renderLabel()}
+                            <Dropdown
+                                style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+                                data={accessories}
+                                search
+                                maxHeight={300}
+                                labelField="accessories_name"
+                                valueField="_id"
+                                placeholder={!isFocus ? 'Select Accessories' : '...'}
+                                searchPlaceholder="Search Accessories"
+                                value={value}
+                                onFocus={() => setIsFocus(true)}
+                                onBlur={() => setIsFocus(false)}
+                                onChange={item => {
+                                    setValue(item.value);
+                                    setIsFocus(false);
+                                }}
+
+
+
+                            
+                            
+                            />
+                            
                         </View>
+
 
                         <View style={styles.heading}>
                             <Text style={styles.headingtext}>
-                                Complaints/service Requests:
+                                Complaints/Service Requests:
                             </Text>
                             <Modal visible={modal} animationType="slide">
                                 <View style={styles.modalHeader}>
-                                    <Text style={styles.modalHeaderText}>Modal Header</Text>
-                                    <Button title="Close" onPress={() => setModal(false)} />
+                                    <AntDesign name="close" size={24} color="black" onPress={() => setModal(false)} />
+                                    <Text style={styles.modalHeaderText}>ADD COMPLAINT OR REQUEST</Text>
+                                    
+                                    
                                 </View>
                                 <View style={styles.modalContent}>
                                     {/* The rest of your modal content */}
                                     <Complaints onSubmitted={handleComplaintSubmit} Closebutton={handleclose}/>
                                 </View>
                             </Modal>
+                            <TouchableOpacity style={styles.complaintbutton} onPress={()=>setModal(true)}>
 
-                            <Button title="open model" onPress={()=>setModal(true)}/>
+                                <Text style={styles.complaintboxtext}>ADD COMPLAINT OR REQUEST</Text>
+                                <Ionicons name="ios-add-circle" size={24} color="green"  />
+
+                            </TouchableOpacity>
+                            {/* <Button title="open model" onPress={()=>setModal(true)}/> */}
 
                             {complaints.length > 0 && complaints.map((item,index)=>(
                                 <View key={index} style={styles.contentborder}>
                                     <View style={styles.complaintfield_margin}>
-                                        <View style={styles.complaintfield}>
-                                            <Text >Complaint/Service:</Text>
-                                            <Text style={styles.complaintfieldval}>{item.complaint_type_name}</Text>
-                                        </View>
-                                        <View style={styles.complaintfield}>
-                                            <Text>Complaint/Service Request:</Text>
-                                            <Text style={styles.complaintfieldval}>{item.complaint_request_name}</Text>
-                                        </View>
-                                        <View style={styles.complaintfield}>
-                                            <Text>Remarks:</Text>
-                                            <Text style={styles.complaintfieldval}>{item.remarks}</Text>
-                                        </View>
-                                        <View>
-                                            <TouchableOpacity onPress={()=>{handleRemoveComplaint(index)}}>
-                                                <Text style={styles.removeButtonText}>REMOVE</Text>
-                                            </TouchableOpacity>
-                                        </View>
+                                        
+                                            <View style={styles.complaintfield}>
+                                                <Text >Complaint/Service:</Text>
+                                                <Text style={styles.complaintfieldval}>{item.complaint_type_name}</Text>
+                                            </View>
+
+                                            <View style={{flexDirection:'row',flex:1,justifyContent:'space-between'}}>
+
+                                                <View style={styles.complaintfield}>
+                                                    <Text>Complaint/Service Request:</Text>
+                                                    <Text style={styles.complaintfieldval}>{item.complaint_request_name}</Text>
+                                                </View>
+
+                                                <View>
+                                                    <TouchableOpacity onPress={()=>{handleRemoveComplaint(index)}}>
+                                                        <Text style={styles.removeButtonText}>REMOVE</Text>
+                                                    </TouchableOpacity>
+                                                </View>
+
+
+                                            </View>
+                                            
+                                            <View style={styles.complaintfield}>
+                                                <Text>Remarks:</Text>
+                                                <Text style={styles.complaintfieldval}>{item.remarks}</Text>
+                                            </View>
+                                        
+                                        
+                                        
 
                                     </View>
                                     
@@ -350,18 +477,7 @@ export default function AddJob(){
                             <Text style={styles.fieldtext}>
                                     Assigned To:
                             </Text>
-                            {/* <SearchableDropDown
                             
-                                style={styles.input}
-                                items={employee}
-                                defaultIndex={0}
-                                placeholder="Select and employee "
-                                resetValue={false}
-                                onItemSelect={(item)=>{
-                                    props.handleChange('assignedto')(item.name);
-                                    props.handleChange('assignedto_id')(item.id);
-                                }}
-                            /> */}
 
                             <Picker
                                 style={styles.input}
@@ -408,6 +524,27 @@ export default function AddJob(){
                                 value={props.values.estimation}
                             />
                         </View>
+                        <View  style={styles.fieldmargin}>
+                            <Text  style={styles.fieldtext}>Remarks</Text>
+
+                            <View style={styles.remarkinput}>
+
+                                <TextInput
+                                    
+                                    multiline={true}
+                                    numberOfLines={4}
+                                    onChangeText={props.handleChange('remarks')}
+                                    value={props.values.remarks}
+                                    placeholder="Enter remarks"
+                                    textAlignVertical="top"
+                                
+                                />
+
+                            </View>
+
+                            <Button title="submit" onPress={props.handleSubmit}/>
+
+                        </View>
                         
 
                     </View>
@@ -420,6 +557,14 @@ export default function AddJob(){
 }
 
 const styles=StyleSheet.create({
+
+    dropdown: {
+        height: 50,
+        borderColor: 'gray',
+        borderWidth: 0.5,
+        borderRadius: 8,
+        paddingHorizontal: 8,
+    },
 
     container: {
         flexGrow: 1,
@@ -463,15 +608,19 @@ const styles=StyleSheet.create({
     },
 
     modalHeader: {
-        flexDirection: 'row-reverse',
-        justifyContent: 'space-between',
+        flexDirection: 'row',
+        // justifyContent:'space-around',
         alignItems: 'center',
-        padding: 10,
+        padding: 15,
         backgroundColor: "#ffa600",
     },
     modalHeaderText: {
+        flex: 1, 
+        textAlign: 'center', 
         fontSize: 18,
         fontWeight: 'bold',
+        color:"white",
+        
     },
     modalContent: {
         padding: 20,
@@ -496,6 +645,8 @@ const styles=StyleSheet.create({
     },
     complaintfield_margin:{
         marginLeft:8,
+        
+        
 
 
     },
@@ -513,7 +664,35 @@ const styles=StyleSheet.create({
     removeButtonText: {
         color: 'red',
         fontWeight: '600',
-        fontSize: 17,
+        fontSize: 16,
+        
+    },
+
+    complaintbutton:{
+        flexDirection:'row',
+        justifyContent:'space-between',
+        borderWidth:0,
+        // borderColor:"white",
+        borderRadius:6,
+        marginVertical:5,
+        padding:20,
+        backgroundColor:'#ebebeb',
+
+    },
+
+    complaintboxtext:{
+        color:'#ffa600',
+        fontWeight:'700',
+    },
+
+    remarkinput:{
+        borderWidth:0.5,
+        borderColor:"black",
+        paddingHorizontal: 10,
+        paddingTop:5,
+        borderRadius:6,
+        maxWidth:350,
+        
     },
 
 
