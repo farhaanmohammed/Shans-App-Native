@@ -9,7 +9,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Complaints from "./Complaints";
 import { AntDesign } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
-import { Dropdown } from 'react-native-element-dropdown';
+import { Dropdown ,MultiSelect } from 'react-native-element-dropdown';
+
 
 
 
@@ -35,21 +36,20 @@ export default function AddJob(){
     const[accessories,setAccesories]=React.useState([]);
     const[selectedaccessories,setSelectedAccessories]=React.useState([]);
     const[customers,setCustomers]=React.useState([])
-    const [selectedCustomer, setSelectedCustomer] = React.useState(null);
+    const [selected, setSelected] = React.useState([]);
+    
 
     const [value, setValue] = React.useState(null);
     const [isFocus, setIsFocus] = React.useState(false);
 
-    const renderLabel = () => {
-        if (value || isFocus) {
-            return (
-            <Text style={[styles.label, isFocus && { color: 'blue' }]}>
-                Dropdown label
-            </Text>
+    const renderItem = item => {
+        return (
+            <View style={styles.item}>
+                <Text style={styles.selectedTextStyle}>{item.label}</Text>
+                <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
+            </View>
             );
-        }
-        return null;
-    };
+        };
     
     
 
@@ -183,6 +183,8 @@ export default function AddJob(){
         setComplaints(updatedComplaints);
     }
 
+    // console.log("customers=======================",customers)
+
     
 
 
@@ -195,11 +197,11 @@ export default function AddJob(){
             
             <ScrollView style={styles.container}>
                 <Formik
-                    initialValues={{customer:'',mobile:'',email:'',warehouse_name:warehouse_name1,consumer_model_id:'',device_id:'',brand_id:'',
+                    initialValues={{ customer:'',customer_id:'',mobile:'',email:'',warehouse_name:'',consumer_model_id:'',device_id:'',brand_id:'',
                     estimation:'',assignedOn: new Date().toISOString().split('T')[0],assignedto:'',remarks:'',
                 }}
                     onSubmit={(values)=> {console.log("values:",values)
-                    console.log("Selected customer:", selectedCustomer);
+                    console.log("Selected customer:");
                 
                 }}
                 
@@ -214,7 +216,7 @@ export default function AddJob(){
                                 Search by Mobile/Customer:
                             </Text>
 
-                            {renderLabel()}
+                            {/* {renderLabel()} */}
                             <Dropdown
                                 style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
                                 data={customers}
@@ -222,15 +224,18 @@ export default function AddJob(){
                                 maxHeight={300}
                                 labelField="name"
                                 valueField="_id"
-                                placeholder={!isFocus ? 'Select Accessories' : '...'}
+                                placeholder={props.values.customer ?props.values.customer : "Select Customer"     }
                                 searchPlaceholder="Search Customers"
-                                value={props.values.customer}
+                                value={props.values?.customer}
                                 onFocus={() => setIsFocus(true)}
                                 onBlur={() => setIsFocus(false)}
-                                onChange={item => {
-                                    setSelectedCustomer(item.value)
-                                    props.setFieldValue('customer',item.value)
-                                    setIsFocus(false);
+                                onChange={item=>{
+                                    // props.setFieldValue('customer',item)
+                                    props.setFieldValue('customer', item.name);
+                                    props.setFieldValue('customer_id', item.id); // Set the customer ID
+                                    props.setFieldValue('mobile', item.customer_mobile); // Set other fields like mobile if available
+                                    props.setFieldValue('email', item.customer_email);
+                                
                                 }}
                             />
 
@@ -273,7 +278,7 @@ export default function AddJob(){
                             {/* <TextInput
                                 style={styles.input}
                                 placeholder="Warehouse"
-                                onChangeText={(value)=>{props.handleChange('warehouse_name')}}
+                                onChangeText={props.handleChange('warehouse_name')}
                                 value={props.values.warehouse_name}
                             /> */}
                             <View style={styles.input}>
@@ -374,27 +379,28 @@ export default function AddJob(){
                             <Text style={styles.headingtext}>
                                 Accessories
                             </Text>
-                            {renderLabel()}
-                            <Dropdown
-                                style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+                            <MultiSelect 
+                                style={styles.dropdown_access}
                                 data={accessories}
-                                search
-                                maxHeight={300}
                                 labelField="accessories_name"
-                                valueField="_id"
-                                placeholder={!isFocus ? 'Select Accessories' : '...'}
-                                searchPlaceholder="Search Accessories"
-                                value={value}
-                                onFocus={() => setIsFocus(true)}
-                                onBlur={() => setIsFocus(false)}
-                                onChange={item => {
-                                    setValue(item.value);
-                                    setIsFocus(false);
+                                valueField="id"
+                                placeholder="select item"
+                                value={selected}
+                                search
+                                searchPlaceholder="Select Accessories"
+                                onChange={item=>{
+                                    setSelected(item);
                                 }}
+                                renderItem={renderItem}
+                                renderSelectedItem={(item,unSelect)=>(
+                                    <TouchableOpacity onPress={()=>unSelect && unSelect(item)}>
+                                        <View style={styles.selectedStyle}>
+                                            <Text style={styles.textSelectedStyle}>{item.label}</Text>
+                                            <AntDesign color="black" name="delete" size={17} />
+                                        </View>
+                                    </TouchableOpacity>
+                                )}
 
-
-
-                            
                             
                             />
                             
@@ -565,6 +571,46 @@ const styles=StyleSheet.create({
         borderRadius: 8,
         paddingHorizontal: 8,
     },
+    textSelectedStyle: {
+        marginRight: 5,
+        fontSize: 16,
+    },
+
+    selectedStyle: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 14,
+        backgroundColor: 'white',
+        shadowColor: '#000',
+        marginTop: 8,
+        marginRight: 12,
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        shadowOffset: {
+        width: 0,
+        height: 1,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 1.41,
+        elevation: 2,
+    },
+
+    dropdown_access: {
+        height: 50,
+        backgroundColor: 'white',
+        borderRadius: 12,
+        padding: 12,
+        shadowColor: '#000',
+        shadowOffset: {
+        width: 0,
+        height: 1,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 1.41,
+
+        elevation: 2,
+    },
 
     container: {
         flexGrow: 1,
@@ -579,7 +625,7 @@ const styles=StyleSheet.create({
         paddingVertical:7,
         fontSize:18,
         borderRadius:6,
-        maxWidth:350,
+        maxWidth:390,
         marginTop:5,
     },
 

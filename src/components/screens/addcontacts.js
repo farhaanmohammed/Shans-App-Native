@@ -128,7 +128,8 @@ export default function Addcontact(){
                 setFormSubmitted(false);
             })
         
-        }}
+        }
+    }
         >
 
 
@@ -168,7 +169,8 @@ export default function Addcontact(){
                                     prompt="Select Customer Title"
                                     onValueChange={(itemValue)=>{
                                         props.setFieldValue('customer_title', itemValue);
-                                        setCustomerTitle(itemValue)}}
+                                        // setCustomerTitle(itemValue)
+                                    }}
                                     selectedValue={props.values.customer_title}
                                 >
                                 <Picker.Item label="M/s" value="M/s"/>
@@ -268,11 +270,11 @@ export default function Addcontact(){
                                     style={styles.input}
                                     enabled={true}
                                     mode="dropdown"
-                                    placeholder="Select State"
+                                    placeholder={props.values.state_id ? props.values.state_id : "select state"}
                                     onValueChange={props.handleChange('state_id')}
                                     selectedValue={props.values.state_id}
                                 >
-                                <Picker.Item label="Select State" value="" />
+                                {/* <Picker.Item label="Select State" value="" /> */}
                                 {state.map((item)=>{
                                     if(item.country_id===props.values.country_id){
                                         // console.log('State:', item.state_name, 'ID:', item._id);
@@ -302,7 +304,7 @@ export default function Addcontact(){
                                     style={styles.input}
                                     enabled={true}
                                     mode="dropdown"
-                                    placeholder="Select Area"
+                                    // placeholder="Select Area"
                                     onValueChange={props.handleChange('area_id')}
                                     selectedValue={props.values.area_id}
                                 >
