@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native'
 import React, { useState, useEffect, useRef } from 'react'
 import { Picker } from "@react-native-community/picker";
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -7,6 +7,7 @@ import axios from 'axios';
 import { baseUrl } from "../../api/const";
 // import SignatureScreen from "react-native-signature-canvas";
 import Sign from "../Sign/Sign";
+import Toast from 'react-native-toast-message';
 
 
 
@@ -46,7 +47,13 @@ const CustomSubmitButton = ({ title, onPress }) => {
 };
 const NewCollection = () => {
 
-
+    const showToast = () => {
+        Toast.show({
+            type: 'success',
+            text1: 'Hello',
+            text2: 'This is some something 👋'
+        });
+    }
 
     const route = useRoute();
     console.log(route)
@@ -58,7 +65,7 @@ const NewCollection = () => {
     const [adminDetails, setAdminDetails] = useState({});
     const [customer, setCustomer] = useState({});
     const [remarks, setRemarks] = useState('')
-    const [customerDataAPI, setCustomerDataAPI] = useState({})
+    const [customerDataAPI, setCustomerDataAPI] = useState([])
     // console.log(remarks)
 
 
@@ -284,98 +291,183 @@ const NewCollection = () => {
 
 
     const handleSubmit = async () => {
-        // const auditingDataToAPI = {
-
-        //     "date": formattedDate,
-        //     "amount": customer.totalAmount,
-        //     "un_taxed_amount": 95,
-        //     "signature": uploadUrl || null,
-        //     "remarks": remarks,
-        //     "attachments": [
-        //         "hai"
-        //     ],
-        //     "warehouse_id": "646b263905b93160a102c0e3",
-        //     "warehouse_name": adminDetails.warehouse?.warehouse_name,
-        //     "sales_person_id": "646b263905b93160a102c0e3",
-        //     "sales_person_name": adminDetails.related_profile?.name,
-        //     "collection_type_id": "646b796fb2cff9b23ba2f07e",
-        //     "collection_type_name": collectionType.collection_type_name,
-        //     "company_id": "646b263905b93160a102c0e3",
-        //     "company_name": adminDetails.company?.name,
-        //     "customer_id": "646b263905b93160a102c0e3",
-        //     "customer_name": customer.customerName,
-        //     "invoice_id": "646b263905b93160a102c0e3",
-        //     "inv_sequence_no": customer.invoiceNumber,
-        //     "register_payment_id": "646b263905b93160a102c0e3",
-        //     "register_payment_sequence_no": "rp_seq_1",
-        //     "chq_no": "123",
-        //     "chq_date": formattedDate,
-        //     "chq_type": "test",
-        //     "cheque_transaction_type": "test",
-        //     "chart_of_accounts_id": "646b263905b93160a102c0e3",
-        //     "chart_of_accounts_name": "test coa"
-
-        // }
 
 
-        const auditingDataToAPI = {
+        let auditingDataToAPI;
+        try {
+            // if (!formattedDate || !adminDetails.related_profile?.name || !adminDetails.warehouse?.warehouse_name ||
+            //     !adminDetails.company?.name || !collectionType.collection_type_name || !customer.customerName ||
+            //     !customer.invoiceNumber || !customer.totalAmount || !remarks || !uploadUrl) {
+            //     alert('Please fill in all required fields.');
+            //     return;
+            // }
+            if (!formattedDate) {
+                alert('Please select a date.');
+                return;
+            }
+            if (!adminDetails.related_profile?.name) {
+                Toast.show({
+                    type: 'requireToast',
+                    text1: 'Field is required',
+                    text2: 'Sales Person is required.',
+                    position: 'middle',
+                });
+                // alert('Sales Person is required.');
+                return;
+            }
+            if (!adminDetails.warehouse?.warehouse_name) {
+                Toast.show({
+                    type: 'requireToast',
+                    text1: 'Field is required',
+                    text2: 'Shop is required.',
+                    position: 'middle',
+                });
+                // alert('Shop is required.');
+                return;
+            }
+            if (!adminDetails.company?.name) {
+                Toast.show({
+                    type: 'requireToast',
+                    text1: 'Field is required',
+                    text2: 'Company is required.',
+                    position: 'middle',
+                });
+                // alert('Company is required.');
+                return;
+            }
+            if (!collectionType.collection_type_name) {
+                Toast.show({
+                    type: 'requireToast',
+                    text1: 'Field is required',
+                    text2: 'Collection Type is required.',
+                    // position: 'middle',
+                });
+                // Alert.alert('Collection Type is required.');
+                return;
+            }
+            if (!customer.customerName) {
+                Toast.show({
+                    type: 'requireToast',
+                    text1: 'Field is required',
+                    text2: 'Customer name is required.',
+                    position: 'middle',
+                });
+                // alert('Customer name is required.');
+                return;
+            }
+            if (!customer.invoiceNumber) {
+                Toast.show({
+                    type: 'requireToast',
+                    text1: 'Field is required',
+                    text2: 'Invoice number is required.',
+                    position: 'middle',
+                });
+                // alert('Invoice number is required.');
+                return;
+            }
+            if (!customer.totalAmount) {
+                Toast.show({
+                    type: 'requireToast',
+                    text1: 'Field is required',
+                    text2: 'Total amount is required.',
+                    position: 'middle',
+                });
+                // alert('Total amount is required.');
+                return;
+            }
+            if (!remarks) {
+                Toast.show({
+                    type: 'requireToast',
+                    text1: 'Field is required',
+                    text2: 'Remarks are required.',
+                    position: 'middle',
+                });
+                // alert('Remarks are required.');
+                return;
+            }
+            if (!uploadUrl) {
+                Toast.show({
+                    type: 'requireToast',
+                    text1: 'Field is required',
+                    text2: 'Customer/Vendor Signature is required.',
+                    position: 'middle',
+                });
+                // alert('Customer/Vendor Signature is required.');
+                return;
+            }
+            auditingDataToAPI = {
 
-            "date": formattedDate,
-            "amount": customer.totalAmount,
-            "un_taxed_amount": customerDataAPI.untaxed_total_amount,
-            "customer_vendor_signature": uploadUrl || null,
-            "cashier_signature": "",
-            "remarks": remarks,
-            "attachments": [
-                null
-            ],
-            "warehouse_id": adminDetails.warehouse_id,
-            "warehouse_name": adminDetails.warehouse?.warehouse_name,
-            "sales_person_id": customerDataAPI.sales_person_id || null,
-            "sales_person_name": adminDetails.related_profile?.name,
-            "supplier_id": "646b263905b93160a102c0e3",
-            "supplier_name": "test sup",
-            "collection_type_id": collectionType._id || null,
-            "collection_type_name": collectionType.collection_type_name,
-            "company_id": "646b263905b93160a102c0e3",
-            "company_name": adminDetails.company?.name,
-            "customer_id": adminDetails.company?.company_id,
-            "customer_name": customer.customerName,
-            "invoice_id": customerDataAPI.crm_product_lines[0].invoice_id,
-            "inv_sequence_no": customer.invoiceNumber,
-            "register_payment_id": customerDataAPI.register_payments[0]._id,
-            "register_payment_sequence_no": "rp_seq_1",
-            "chq_no": customerDataAPI.register_payments[0].chq_no,
-            "chq_date": customerDataAPI.register_payments[0].chq_date,
-            "chq_type": customerDataAPI.register_payments[0].chq_type,
-            "cheque_transaction_type": "",
-            "chart_of_accounts_id": "646b263905b93160a102c0e3",
-            "chart_of_accounts_name": "",
-            "ledger_name": null,
-            "ledger_type": null,
-            "ledger_id": "643e4799c0e7b0adaed6a8b3",
-            "ledger_display_name": null,
-            "employee_ledger_id": "643e4799c0e7b0adaed6a8b3",
-            "employee_ledger_name": null,
-            "employee_ledger_display_name": null,
-            "service_amount": null,
-            "service_product_amount": null
+                "date": formattedDate,
+                "amount": customer?.totalAmount || 0,
+                "un_taxed_amount": customerDataAPI?.untaxed_total_amount || 0,
+                "customer_vendor_signature": uploadUrl || null,
+                "cashier_signature": "",
+                "remarks": remarks || "",
+                "attachments": [
+                    null
+                ],
+                "warehouse_id": adminDetails.warehouse_id || null,
+                "warehouse_name": adminDetails.warehouse?.warehouse_name || null,
+                "sales_person_id": customerDataAPI.sales_person_id || null,
+                "sales_person_name": adminDetails.related_profile?.name || null,
+                "supplier_id": "646b263905b93160a102c0e3",
+                "supplier_name": "test sup",
+                "collection_type_id": collectionType._id || null,
+                "collection_type_name": collectionType?.collection_type_name || null,
+                "company_id": "646b263905b93160a102c0e3",
+                "company_name": adminDetails.company?.name || null,
+                "customer_id": adminDetails.company?.company_id || null,
+                "customer_name": customer.customerName || null,
+                "invoice_id": customerDataAPI?.crm_product_lines[0]?.invoice_id || null,
+                "inv_sequence_no": customer.invoiceNumber || null,
+                "register_payment_id": customerDataAPI.register_payments[0]._id || null,
+                "register_payment_sequence_no": "rp_seq_1",
+                "chq_no": customerDataAPI.register_payments[0].chq_no || null,
+                "chq_date": customerDataAPI.register_payments[0].chq_date || null,
+                "chq_type": customerDataAPI.register_payments[0].chq_type || null,
+                "cheque_transaction_type": "",
+                "chart_of_accounts_id": "646b263905b93160a102c0e3",
+                "chart_of_accounts_name": "",
+                "ledger_name": null,
+                "ledger_type": null,
+                "ledger_id": "643e4799c0e7b0adaed6a8b3",
+                "ledger_display_name": null,
+                "employee_ledger_id": "643e4799c0e7b0adaed6a8b3",
+                "employee_ledger_name": null,
+                "employee_ledger_display_name": null,
+                "service_amount": null,
+                "service_product_amount": null
 
+            }
+            console.log("auditingDataToAPI: ", auditingDataToAPI)
+        } catch (error) {
+            console.error('Error during handleSubmit:', error);
+            // Handle the error appropriately (e.g., show an error message to the user)
         }
-        console.log("auditingDataToAPI: ", auditingDataToAPI)
 
         try {
             const response = await axios.post(createAuditingUrl, auditingDataToAPI);
             console.log(response.data);
             if (response.data.success === "true") {
-                alert("Invoice Created Successfully");
+                Toast.show({
+                    type: 'invoiceSuccessToast',
+                    text1: 'Success',
+                    text2: 'Invoice Created Successfully',
+                    position: 'bottom',
+                });
+                // alert("Invoice Created Successfully");
                 navigation.navigate("CashCollection")
             } else {
-                alert("Invoice not Created");
+                Toast.show({
+                    type: 'error',
+                    text1: 'ERROR',
+                    text2: 'Invoice is not created',
+                    position: 'bottom',
+                });
             }
             // Handle the response data as needed
         } catch (error) {
-            console.error('API error:', error);
+            // console.error('API error:', error); // i have a doubt 470 is showing the screen error message
             console.log('Error details:', error.response);
             console.log('Error details:', error.message);
             // Handle the error

@@ -249,3 +249,6 @@ completed fetch details and collection type capital payment, invoice, vendor, ca
 
 salesreturn api is not getting i want to complete the details also not getting collection type also
 purchase return also have no collection type finding because of the buisiness type i snot found in the api 
+
+
+console.error('API error:', error); // i have a doubt 470 is showing the screen error message
