@@ -7,7 +7,7 @@ import { baseUrl } from '../../api/const';
 
 
 const listAuditingUrl = `${baseUrl}/viewAuditing`;
-
+//dummy data for updating style
 // const dummyAuditingList = [
 //     {
 //         id: 1,
