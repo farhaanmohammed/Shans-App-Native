@@ -74,7 +74,7 @@ const toastConfig = {
   ),
   
   invoiceSuccessToast:  ({text1, text2}) => (
-    <View style={{padding: 5, flex: 1, backgroundColor: 'white', marginVertical: 15, width: '80%', borderRadius: 10, borderBottomWidth: 4.5, borderBottomColor: "green", marginVertical: "50%"}}>
+    <View style={{padding: 5, flex: 1, backgroundColor: 'white', marginVertical: 10, width: '80%', borderRadius: 10, borderBottomWidth: 4.5, borderBottomColor: "green", marginVertical: "50%"}}>
     <View style={{marginHorizontal: 5, marginVertical: 10, alignContent: "center"}}>
       <Text style={{ fontSize: 12, fontWeight: "bold", color: "green"}}>{text1}</Text>
       <Text style={{ fontSize:18, fontWeight: "bold", color: "black"}}>{text2}</Text>

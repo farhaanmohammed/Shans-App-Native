@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { baseUrl } from '../../api/const';
@@ -61,7 +61,10 @@ const CashCollection = () => {
     const navigation = useNavigation();
 
     return (
+        
+        
         <View style={styles.container}>
+            <ScrollView>
             {auditingList.length === 0 ? (
                 <Text style={styles.notFoundText}>No Collections found</Text>
             ) : (
@@ -73,6 +76,7 @@ const CashCollection = () => {
                     </View>
                 ))
             )}
+                </ScrollView>
             <TouchableOpacity
                 onPress={() => navigation.navigate('NewCollection')}
                 style={styles.fab}
