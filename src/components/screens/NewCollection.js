@@ -19,7 +19,7 @@ const salesReturnUrl = `${baseUrl}/viewReturn?sequence_no=`
 const purchaseReturnUrl = `${baseUrl}/viewReturn?sequence_no=`
 const capitalPaymentUrl = `${baseUrl}/viewCapitalPayment?sequence_no=`
 const jobInvoiceUrl = `${baseUrl}/viewJobInvoice?sequence_no`
-const sparePartsIssueUrl = `${baseUrl}/viewSparePartsIssue?sequence_no=`
+const sparePartsIssueUrl = `${baseUrl}/viewSparePartsIssue/auditing/spare_parts_issue_details?sequence_no=`
 const pettyCashAllotmentUrl = `${baseUrl}/viewPettyCashAllotement?sequence_no=`
 const pettyCashExpenseUrl = `${baseUrl}/viewPettyCashExpence?sequence_no=`
 const capitalReceiptsUrl = `${baseUrl}/viewCapital?sequence_no=`
@@ -287,12 +287,16 @@ const NewCollection = () => {
                 console.log("customerData", customerData);
             }
             console.log(customer);
+
+
+
             if (whichBill == "JobInvoice") {
                 console.log("i entered jobinboice ")
                 const response = await axios.get(`${jobInvoiceUrl}${scannedData}`);
                 const customerData = response.data.data[0] // Assuming the response contains the customer details
 
                 console.log("Job invoice  data", customerData)
+                setCustomerDataAPI(customerData)
 
                 if (customerData) {
                     const customerDetails = {
@@ -385,17 +389,12 @@ const NewCollection = () => {
                         customerName: customerData.created_by.employee_name,
                         invoiceNumber: customerData.sequence_no,
                         // totalAmount: customerData.amount.toString(),
+                        // totalAmount: customerData.spare_parts_line[0].totalCount[0].total_calculated_amounts.toString()
                         // businessType: customerData.bussiness_type_id,
                         // paymentMethod: customerData.paid_through_chart_of_account_id
                     }
                     console.log("customerDetails======+++", customerDetails)
 
-                    const collectionTypeResponse = await axios.get(`${collectionTypeUrl}${customerDetails.businessType}&payment_method_id=${customerDetails.paymentMethod}`);
-                    //checking api format correct or not 
-                    console.log(`${collectionTypeUrl}${customerDetails.businessType}&payment_method_id=${customerDetails.paymentMethod}`)
-                    // const collectionTypeResponse = await axios.get(`http://137.184.67.138:3004/viewCollectionType?bussiness_type_id=${customerDetails.businessType}&payment_method_id=${customerDetails.paymentMethod}`);
-                    const collectionResponseData = collectionTypeResponse.data.data[0];
-                    setCollectionType(collectionResponseData)
                     setCustomer(customerDetails)
                 }
                 console.log("customerData", customerData);
@@ -562,7 +561,7 @@ const NewCollection = () => {
                     "invoice_id": customerDataAPI?.crm_product_lines[0]?.invoice_id ?? null,
                     "inv_sequence_no": customer?.invoiceNumber ?? null,
                     "register_payment_id": customerDataAPI?.register_payments[0]._id ?? null,
-                    "register_payment_sequence_no": "rp_seq_1",
+                    // "register_payment_sequence_no": "rp_seq_1",
                     "chq_no": customerDataAPI?.register_payments[0]?.chq_no ?? null,
                     "chq_date": customerDataAPI?.register_payments[0]?.chq_date ?? null,
                     "chq_type": customerDataAPI?.register_payments[0]?.chq_type ?? null,
@@ -855,7 +854,7 @@ const NewCollection = () => {
                 auditingData = {
                     "date": formattedDate,
                     "amount": customer?.totalAmount ?? 0,
-                    "un_taxed_amount": customerDataAPI?.untaxed_total_amount ?? 0,
+                    "un_taxed_amount": null,
                     "customer_vendor_signature": uploadUrl ?? null,
                     "cashier_signature": "",
                     "remarks": remarks || "",
@@ -875,7 +874,7 @@ const NewCollection = () => {
                     "invoice_id": customerDataAPI?.job_crm_product_lines[0]?.invoice_id ?? null,
                     "inv_sequence_no": customer?.invoiceNumber ?? null,
                     "register_payment_id": customerDataAPI?.register_payments[0]._id ?? null,
-                    "register_payment_sequence_no": "rp_seq_1",
+                    // "register_payment_sequence_no": "rp_seq_1",
                     "chq_no": customerDataAPI?.register_payments[0]?.chq_no ?? null,
                     "chq_date": customerDataAPI?.register_payments[0]?.chq_date ?? null,
                     "chq_type": customerDataAPI?.register_payments[0]?.chq_type ?? null,
@@ -886,8 +885,8 @@ const NewCollection = () => {
                     "ledger_type": null,
                     "ledger_id": "",
                     "ledger_display_name": null,
-                    "employee_ledger_id": "",
-                    "employee_ledger_name": null,
+                    "employee_ledger_id": assigned?.employee_id,
+                    "employee_ledger_name": assigned?.employee_name,
                     "employee_ledger_display_name": null,
                     "service_amount": null,
                     "service_product_amount": null
@@ -916,11 +915,11 @@ const NewCollection = () => {
                     "invoice_id": customerDataAPI?.job_crm_product_lines[0]?.invoice_id ?? null,
                     "inv_sequence_no": customer?.invoiceNumber ?? null,
                     "register_payment_id": customerDataAPI?.register_payments[0]._id ?? null,
-                    "register_payment_sequence_no": "rp_seq_1",
+                    // "register_payment_sequence_no": "rp_seq_1",
                     "chq_no": customerDataAPI?.register_payments[0]?.chq_no ?? null,
                     "chq_date": customerDataAPI?.register_payments[0]?.chq_date ?? null,
                     "chq_type": customerDataAPI?.register_payments[0]?.chq_type ?? null,
-                    "cheque_transaction_type": customerDataAPI?.register_payments[0]?.type,
+                    "cheque_transaction_type": customerDataAPI?.register_payments[0]?.type ?? null,
                     "chart_of_accounts_id": "",
                     "chart_of_accounts_name": "",
                     "ledger_name": null,
@@ -956,12 +955,13 @@ const NewCollection = () => {
                 });
                 navigation.navigate('CashCollection');
             } else {
-                Toast.show({
-                    type: 'error',
-                    text1: 'ERROR',
-                    text2: 'Audit creation failed',
-                    position: 'bottom',
-                });
+                console.log(response)
+                // Toast.show({
+                //     type: 'error',
+                //     text1: 'ERROR',
+                //     text2: 'Audit creation failed',
+                //     position: 'bottom',
+                // });
             }
         } catch (error) {
             console.error('Error during handleSubmit:', error);
