@@ -309,3 +309,9 @@ const sendSignatureToAPI = async (fileUri, navigation) => {
 };
 
 export default sendSignatureToAPI;
+
+
+
+completed 
+
+invoice, vendor, Capital reaceipts, Capital Payments, pettyCashAllotment, pettycashexpense, purchasereturn, salesReturn, jobinvoice, spareissue

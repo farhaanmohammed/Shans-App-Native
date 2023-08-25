@@ -18,7 +18,8 @@ const vendorDetailsUrl = `${baseUrl}/viewVendorBill?sequence_no=`
 const salesReturnUrl = `${baseUrl}/viewReturn?sequence_no=`
 const purchaseReturnUrl = `${baseUrl}/viewReturn?sequence_no=`
 const capitalPaymentUrl = `${baseUrl}/viewCapitalPayment?sequence_no=`
-const jobInvoiceUrl = `${baseUrl}/viewJobInvoice?sequence_no=`
+const jobInvoiceUrl = `${baseUrl}/viewJobInvoice?sequence_no`
+const sparePartsIssueUrl = `${baseUrl}/viewSparePartsIssue?sequence_no=`
 const pettyCashAllotmentUrl = `${baseUrl}/viewPettyCashAllotement?sequence_no=`
 const pettyCashExpenseUrl = `${baseUrl}/viewPettyCashExpence?sequence_no=`
 const capitalReceiptsUrl = `${baseUrl}/viewCapital?sequence_no=`
@@ -131,7 +132,7 @@ const NewCollection = () => {
     const fetchCustomerDetails = async () => {
         try {
             if (whichBill == "Invoice") {
-
+                // console.log("entered--------------")
                 const response = await axios.get(`${invoiceDetailsUrl}${scannedData}`);
 
                 const customerData = response.data.data[0] // Assuming the response contains the customer details
@@ -237,8 +238,8 @@ const NewCollection = () => {
                 const response = await axios.get(`${capitalReceiptsUrl}${scannedData}`);
                 const customerData = response.data.data[0] // Assuming the response contains the customer details
 
-                console.log("Vendor bill customoer data", customerData)
-
+                console.log("Capital reciepts customoer data", customerData)
+                setCustomerDataAPI(customerData)
                 if (customerData) {
                     const customerDetails = {
                         customerName: customerData.sales_person.sales_person_name,
@@ -263,8 +264,8 @@ const NewCollection = () => {
                 const response = await axios.get(`${capitalPaymentUrl}${scannedData}`);
                 const customerData = response.data.data[0] // Assuming the response contains the customer details
 
-                console.log("Vendor bill customoer data", customerData)
-
+                console.log("Capital Payment customoer data", customerData)
+                setCustomerDataAPI(customerData)
                 if (customerData) {
                     const customerDetails = {
                         customerName: customerData.sales_person.sales_person_name,
@@ -287,6 +288,7 @@ const NewCollection = () => {
             }
             console.log(customer);
             if (whichBill == "JobInvoice") {
+                console.log("i entered jobinboice ")
                 const response = await axios.get(`${jobInvoiceUrl}${scannedData}`);
                 const customerData = response.data.data[0] // Assuming the response contains the customer details
 
@@ -294,11 +296,11 @@ const NewCollection = () => {
 
                 if (customerData) {
                     const customerDetails = {
-                        customerName: customerData.sales_person.sales_person_name,
+                        customerName: customerData.customer.customer_name,
                         invoiceNumber: customerData.sequence_no,
-                        totalAmount: customerData.amount.toString(),
+                        totalAmount: customerData.total_amount.toString(),
                         businessType: customerData.bussiness_type_id,
-                        paymentMethod: customerData.paid_through_chart_of_account_id
+                        paymentMethod: customerData.register_payments[0].payment_method_id
                     }
                     console.log("customerDetails======+++", customerDetails)
 
@@ -312,6 +314,9 @@ const NewCollection = () => {
                 }
                 console.log("customerData", customerData);
             }
+
+
+
             console.log(customer);
 
             if (whichBill == "PETTYALLOT") {
@@ -354,6 +359,34 @@ const NewCollection = () => {
                         totalAmount: customerData.amount.toString(),
                         businessType: customerData.bussiness_type_id,
                         paymentMethod: customerData.paid_through_chart_of_account_id
+                    }
+                    console.log("customerDetails======+++", customerDetails)
+
+                    const collectionTypeResponse = await axios.get(`${collectionTypeUrl}${customerDetails.businessType}&payment_method_id=${customerDetails.paymentMethod}`);
+                    //checking api format correct or not 
+                    console.log(`${collectionTypeUrl}${customerDetails.businessType}&payment_method_id=${customerDetails.paymentMethod}`)
+                    // const collectionTypeResponse = await axios.get(`http://137.184.67.138:3004/viewCollectionType?bussiness_type_id=${customerDetails.businessType}&payment_method_id=${customerDetails.paymentMethod}`);
+                    const collectionResponseData = collectionTypeResponse.data.data[0];
+                    setCollectionType(collectionResponseData)
+                    setCustomer(customerDetails)
+                }
+                console.log("customerData", customerData);
+            }
+            console.log(customer);
+            if (whichBill == "Spare Issue") {
+                console.log("i entered the spare issue ")
+                const response = await axios.get(`${sparePartsIssueUrl}${scannedData}`);
+                const customerData = response.data.data[0] // Assuming the response contains the customer details
+
+                console.log("Spare issue invoice  data", customerData)
+
+                if (customerData) {
+                    const customerDetails = {
+                        customerName: customerData.created_by.employee_name,
+                        invoiceNumber: customerData.sequence_no,
+                        // totalAmount: customerData.amount.toString(),
+                        // businessType: customerData.bussiness_type_id,
+                        // paymentMethod: customerData.paid_through_chart_of_account_id
                     }
                     console.log("customerDetails======+++", customerDetails)
 
@@ -437,22 +470,22 @@ const NewCollection = () => {
                 // alert('Company is required.');
                 return;
             }
-          
-                console.log("invoice --------------------------------------++++++++++")
+
+            console.log("invoice --------------------------------------++++++++++")
 
 
-                if (bill !== "SALRET") {
-                    // Your existing validation logic for collectionType
-                    if (!collectionType || !collectionType.collection_type_name) {
-                        Toast.show({
-                            type: 'requireToast',
-                            text1: 'Field is required',
-                            text2: 'Collection Type is required.',
-                        });
-                        return;
-                    }
+            if (bill !== "SALRET" && bill !== "PURCHRET" && bill !== "Spare Issue") {
+                // Your existing validation logic for collectionType
+                if (!collectionType || !collectionType.collection_type_name) {
+                    Toast.show({
+                        type: 'requireToast',
+                        text1: 'Field is required',
+                        text2: 'Collection Type is required.',
+                    });
+                    return;
                 }
-        
+            }
+
             if (!customer.customerName) {
                 Toast.show({
                     type: 'requireToast',
@@ -522,7 +555,7 @@ const NewCollection = () => {
                     "supplier_name": customerDataAPI?.supplier?.supplier_name ?? null,
                     "collection_type_id": collectionType?._id ?? null,
                     "collection_type_name": collectionType?.collection_type_name ?? null,
-                    "company_id": "646b263905b93160a102c0e3",
+                    "company_id": adminDetails?.company.company_id ?? null,
                     "company_name": adminDetails?.company?.name ?? null,
                     "customer_id": adminDetails?.company?.company_id ?? null,
                     "customer_name": customer?.customerName ?? null,
@@ -534,7 +567,7 @@ const NewCollection = () => {
                     "chq_date": customerDataAPI?.register_payments[0]?.chq_date ?? null,
                     "chq_type": customerDataAPI?.register_payments[0]?.chq_type ?? null,
                     "cheque_transaction_type": "",
-                    "chart_of_accounts_id": "646b263905b93160a102c0e3",
+                    "chart_of_accounts_id": adminDetails?.company.company_id ?? null,
                     "chart_of_accounts_name": "",
                     "ledger_name": null,
                     "ledger_type": null,
@@ -593,11 +626,11 @@ const NewCollection = () => {
                 }
 
 
-            } else if(bill == "SALRET"){
+            } else if (bill == "SALRET") { //still not working 
                 auditingData = {
                     "date": formattedDate,
                     "amount": customer?.totalAmount ?? 0,
-                    "un_taxed_amount": customerDataAPI?.untaxed_total_amount ?? 0,
+                    "un_taxed_amount": customerDataAPI?.total_untaxed_amount ?? 0,
                     "customer_vendor_signature": uploadUrl ?? null,
                     "cashier_signature": "",
                     "remarks": remarks || "",
@@ -615,11 +648,11 @@ const NewCollection = () => {
                     "customer_id": adminDetails?.company?.company_id ?? null,
                     "customer_name": customer?.customerName ?? null,
                     "inv_sequence_no": customer?.invoiceNumber ?? null,
-                    "register_payment_id": customerDataAPI?.register_payments[0]._id ?? null,
-                    "register_payment_sequence_no": customerDataAPI?.register_payments[0]?.sequence_no ?? null,
-                    "chq_no": customerDataAPI?.register_payments[0]?.chq_no ?? null,
-                    "chq_date": customerDataAPI?.register_payments[0]?.chq_date ?? null,
-                    "chq_type": customerDataAPI?.register_payments[0]?.chq_type ?? null,
+                    "register_payment_id": null,
+                    "register_payment_sequence_no": null,
+                    "chq_no": customerDataAPI?.chq_no ?? null,
+                    "chq_date": customerDataAPI?.chq_date ?? null,
+                    "chq_type": customerDataAPI?.chq_type ?? null,
                     "cheque_transaction_type": "",
                     "chart_of_accounts_id": null,
                     "chart_of_accounts_name": "",
@@ -633,11 +666,11 @@ const NewCollection = () => {
                     "service_amount": null,
                     "service_product_amount": null
                 }
-            } else  if (bill == "CAPREC"){
+            } else if (bill == "CAPREC") {
                 auditingData = {
                     "date": formattedDate,
                     "amount": customer?.totalAmount ?? 0,
-                    "un_taxed_amount":null,
+                    "un_taxed_amount": null,
                     "customer_vendor_signature": uploadUrl ?? null,
                     "cashier_signature": "",
                     "remarks": remarks || "",
@@ -657,7 +690,7 @@ const NewCollection = () => {
                     "inv_sequence_no": customer?.invoiceNumber ?? null,
                     "cheque_transaction_type": "",
                     "chart_of_accounts_id": customerDataAPI?.capital_chart_of_account_id ?? null,
-                    "chart_of_accounts_name":customerDataAPI?.capital_chart_of_account_name ?? null,
+                    "chart_of_accounts_name": customerDataAPI?.capital_chart_of_account_name ?? null,
                     "ledger_name": null,
                     "ledger_type": null,
                     "ledger_id": null,
@@ -668,8 +701,240 @@ const NewCollection = () => {
                     "service_amount": null,
                     "service_product_amount": null
                 }
+            } else if (bill == "CAPPAY") {
+                console.log("i entered  CAPPAY")
+                auditingData = {
+                    "date": formattedDate,
+                    "amount": customer?.totalAmount ?? 0,
+                    "un_taxed_amount": null,
+                    "customer_vendor_signature": uploadUrl ?? null,
+                    "cashier_signature": "",
+                    "remarks": remarks || "",
+                    "attachments": [null],
+                    "warehouse_id": adminDetails?.warehouse_id ?? null,
+                    "warehouse_name": adminDetails?.warehouse?.warehouse_name ?? null,
+                    "sales_person_id": customerDataAPI?.sales_person_id ?? null,
+                    "sales_person_name": adminDetails?.related_profile?.name ?? null,
+                    "supplier_id": customerDataAPI?.supplier?.supplier_id ?? null,
+                    "supplier_name": customerDataAPI?.supplier?.supplier_name ?? null,
+                    "collection_type_id": collectionType?._id ?? null,
+                    "collection_type_name": collectionType?.collection_type_name ?? null,
+                    "company_id": adminDetails?.company.company_id ?? null,
+                    "company_name": adminDetails?.company?.name ?? null,
+                    "customer_id": adminDetails?.company?.company_id ?? null,
+                    "customer_name": customer?.customerName ?? null,
+                    "inv_sequence_no": customer?.invoiceNumber ?? null,
+                    "chq_no": customerDataAPI?.chq_no ?? null,
+                    "chq_date": customerDataAPI?.chq_date ?? null,
+                    "chq_type": customerDataAPI?.chq_type ?? null,
+                    "cheque_transaction_type": "",
+                    "chart_of_accounts_id": customerDataAPI?.capital_chart_of_account_id ?? null,
+                    "chart_of_accounts_name": customerDataAPI?.capital_chart_of_account_name ?? null,
+                    "ledger_name": customerDataAPI?.ledger_name ?? null,
+                    "ledger_type": customerDataAPI?.ledger_type ?? null,
+                    "ledger_id": customerDataAPI?.ledger_id ?? null,
+                    "ledger_display_name": null,
+                    "employee_ledger_id": customerDataAPI?.employee_ledger ?? null,
+                    "employee_ledger_name": customerDataAPI?.employee_ledger ?? null,
+                    "employee_ledger_display_name": null,
+                    "service_amount": null,
+                    "service_product_amount": null
+                }
             }
-            
+
+
+            else if (bill == "PETEXP") {
+                auditingData = {
+                    "date": formattedDate,
+                    "amount": customer?.totalAmount ?? 0,
+                    "un_taxed_amount": null,
+                    "customer_vendor_signature": uploadUrl ?? null,
+                    "cashier_signature": "",
+                    "remarks": remarks || "",
+                    "attachments": [null],
+                    "warehouse_id": adminDetails?.warehouse_id ?? null,
+                    "warehouse_name": adminDetails?.warehouse?.warehouse_name ?? null,
+                    "sales_person_id": customerDataAPI?.sales_person_id ?? null,
+                    "sales_person_name": adminDetails?.related_profile?.name ?? null,
+                    "supplier_id": customerDataAPI?.supplier?.supplier_id ?? null,
+                    "supplier_name": customerDataAPI?.supplier?.supplier_name ?? null,
+                    "collection_type_id": collectionType?._id ?? null,
+                    "collection_type_name": collectionType?.collection_type_name ?? null,
+                    "company_id": adminDetails?.company.company_id ?? null,
+                    "company_name": adminDetails?.company?.name ?? null,
+                    "customer_id": adminDetails?.company?.company_id ?? null,
+                    "customer_name": customer?.customerName ?? null,
+                    "inv_sequence_no": customer?.invoiceNumber ?? null,
+                    "cheque_transaction_type": "",
+                    "chart_of_accounts_id": customerDataAPI?.paid_through_chart_of_account_id ?? null,
+                    "chart_of_accounts_name": customerDataAPI?.paid_through_chart_of_account_name ?? null,
+                    "ledger_name": customerDataAPI?.ledger_name ?? null,
+                    "ledger_type": null,
+                    "ledger_id": customerDataAPI?.ledger_id ?? null,
+                    "ledger_display_name": null,
+                    "employee_ledger_id": customerDataAPI?.employee_ledger ?? null,
+                    "employee_ledger_name": customerDataAPI?.employee_ledger ?? null,
+                    "employee_ledger_display_name": null,
+                    "service_amount": null,
+                    "service_product_amount": null
+                }
+            } else if (bill == "PETTYALLOT") {
+                auditingData = {
+                    "date": formattedDate,
+                    "amount": customer?.totalAmount ?? 0,
+                    "un_taxed_amount": null,
+                    "customer_vendor_signature": uploadUrl ?? null,
+                    "cashier_signature": "",
+                    "remarks": remarks || "",
+                    "attachments": [null],
+                    "warehouse_id": adminDetails?.warehouse_id ?? null,
+                    "warehouse_name": adminDetails?.warehouse?.warehouse_name ?? null,
+                    "sales_person_id": customerDataAPI?.sales_person_id ?? null,
+                    "sales_person_name": adminDetails?.related_profile?.name ?? null,
+                    "supplier_id": customerDataAPI?.supplier?.supplier_id ?? null,
+                    "supplier_name": customerDataAPI?.supplier?.supplier_name ?? null,
+                    "collection_type_id": collectionType?._id ?? null,
+                    "collection_type_name": collectionType?.collection_type_name ?? null,
+                    "company_id": adminDetails?.company.company_id ?? null,
+                    "company_name": adminDetails?.company?.name ?? null,
+                    "customer_id": adminDetails?.company?.company_id ?? null,
+                    "customer_name": customer?.customerName ?? null,
+                    "inv_sequence_no": customer?.invoiceNumber ?? null,
+                    "cheque_transaction_type": "",
+                    "chart_of_accounts_id": customerDataAPI?.capital_chart_of_account_id ?? null,
+                    "chart_of_accounts_name": customerDataAPI?.capital_chart_of_account_name ?? null,
+                    "ledger_name": customerDataAPI?.ledger_name ?? null,
+                    "ledger_type": customerDataAPI?.ledger_type ?? null,
+                    "ledger_id": customerDataAPI?.ledger_id ?? null,
+                    "ledger_display_name": null,
+                    "employee_ledger_id": customerDataAPI?.employee_ledger ?? null,
+                    "employee_ledger_name": customerDataAPI?.employee_ledger ?? null,
+                    "employee_ledger_display_name": null,
+                    "service_amount": null,
+                    "service_product_amount": null
+                }
+            } else if (bill == "PURCHRET") {
+                auditingData = {
+                    "date": formattedDate,
+                    "amount": customer?.totalAmount ?? 0,
+                    "un_taxed_amount": customerDataAPI?.total_untaxed_amount ?? 0,
+                    "customer_vendor_signature": uploadUrl ?? null,
+                    "cashier_signature": "",
+                    "remarks": remarks || "",
+                    "attachments": [null],
+                    "warehouse_id": adminDetails?.warehouse_id ?? null,
+                    "warehouse_name": adminDetails?.warehouse?.warehouse_name ?? null,
+                    "sales_person_id": customerDataAPI?.sales_person_id ?? null,
+                    "sales_person_name": adminDetails?.related_profile?.name ?? null,
+                    "supplier_id": customerDataAPI?.supplier?.supplier_id ?? null,
+                    "supplier_name": customerDataAPI?.supplier?.supplier_name ?? null,
+                    "collection_type_id": collectionType?._id ?? null,
+                    "collection_type_name": collectionType?.collection_type_name ?? null,
+                    "company_id": adminDetails?.company.company_id ?? null,
+                    "company_name": adminDetails?.company?.name ?? null,
+                    "customer_id": adminDetails?.company?.company_id ?? null,
+                    "customer_name": customer?.customerName ?? null,
+                    "inv_sequence_no": customer?.invoiceNumber ?? null,
+                    "chq_no": customerDataAPI?.chq_no ?? null,
+                    "chq_date": customerDataAPI?.chq_date ?? null,
+                    "chq_type": customerDataAPI?.chq_type ?? null,
+                    "cheque_transaction_type": customerDataAPI?.type ?? null,
+                    "chart_of_accounts_id": customerDataAPI?.capital_chart_of_account_id ?? null,
+                    "chart_of_accounts_name": customerDataAPI?.capital_chart_of_account_name ?? null,
+                    "ledger_name": customerDataAPI?.ledger_name ?? null,
+                    "ledger_type": customerDataAPI?.ledger_type ?? null,
+                    "ledger_id": customerDataAPI?.ledger_id ?? null,
+                    "ledger_display_name": null,
+                    "employee_ledger_id": customerDataAPI?.employee_ledger ?? null,
+                    "employee_ledger_name": customerDataAPI?.employee_ledger ?? null,
+                    "employee_ledger_display_name": null,
+                    "service_amount": null,
+                    "service_product_amount": null
+                }
+            } else if (bill == "Spare Issue") {
+                auditingData = {
+                    "date": formattedDate,
+                    "amount": customer?.totalAmount ?? 0,
+                    "un_taxed_amount": customerDataAPI?.untaxed_total_amount ?? 0,
+                    "customer_vendor_signature": uploadUrl ?? null,
+                    "cashier_signature": "",
+                    "remarks": remarks || "",
+                    "attachments": [null],
+                    "warehouse_id": adminDetails?.warehouse_id ?? null,
+                    "warehouse_name": adminDetails?.warehouse?.warehouse_name ?? null,
+                    "sales_person_id": customerDataAPI?.sales_person_id ?? null,
+                    "sales_person_name": adminDetails?.related_profile?.name ?? null,
+                    "supplier_id": null,
+                    "supplier_name": null,
+                    "collection_type_id": collectionType?._id ?? null,
+                    "collection_type_name": collectionType?.collection_type_name ?? null,
+                    "company_id": adminDetails?.company.company_id ?? null,
+                    "company_name": adminDetails?.company?.name ?? null,
+                    "customer_id": adminDetails?.company?.company_id ?? null,
+                    "customer_name": customer?.customerName ?? null,
+                    "invoice_id": customerDataAPI?.job_crm_product_lines[0]?.invoice_id ?? null,
+                    "inv_sequence_no": customer?.invoiceNumber ?? null,
+                    "register_payment_id": customerDataAPI?.register_payments[0]._id ?? null,
+                    "register_payment_sequence_no": "rp_seq_1",
+                    "chq_no": customerDataAPI?.register_payments[0]?.chq_no ?? null,
+                    "chq_date": customerDataAPI?.register_payments[0]?.chq_date ?? null,
+                    "chq_type": customerDataAPI?.register_payments[0]?.chq_type ?? null,
+                    "cheque_transaction_type": customerDataAPI?.register_payments[0]?.type,
+                    "chart_of_accounts_id": "",
+                    "chart_of_accounts_name": "",
+                    "ledger_name": null,
+                    "ledger_type": null,
+                    "ledger_id": "",
+                    "ledger_display_name": null,
+                    "employee_ledger_id": "",
+                    "employee_ledger_name": null,
+                    "employee_ledger_display_name": null,
+                    "service_amount": null,
+                    "service_product_amount": null
+                }
+            } else if (bill == "JobInvoice") {
+                auditingData = {
+                    "date": formattedDate,
+                    "amount": customer?.totalAmount ?? 0,
+                    "un_taxed_amount": customerDataAPI?.untaxed_total_amount ?? 0,
+                    "customer_vendor_signature": uploadUrl ?? null,
+                    "cashier_signature": "",
+                    "remarks": remarks || "",
+                    "attachments": [null],
+                    "warehouse_id": adminDetails?.warehouse_id ?? null,
+                    "warehouse_name": adminDetails?.warehouse?.warehouse_name ?? null,
+                    "sales_person_id": customerDataAPI?.sales_person_id ?? null,
+                    "sales_person_name": adminDetails?.related_profile?.name ?? null,
+                    "supplier_id": null,
+                    "supplier_name": null,
+                    "collection_type_id": collectionType?._id ?? null,
+                    "collection_type_name": collectionType?.collection_type_name ?? null,
+                    "company_id": adminDetails?.company.company_id ?? null,
+                    "company_name": adminDetails?.company?.name ?? null,
+                    "customer_id": adminDetails?.company?.company_id ?? null,
+                    "customer_name": customer?.customerName ?? null,
+                    "invoice_id": customerDataAPI?.job_crm_product_lines[0]?.invoice_id ?? null,
+                    "inv_sequence_no": customer?.invoiceNumber ?? null,
+                    "register_payment_id": customerDataAPI?.register_payments[0]._id ?? null,
+                    "register_payment_sequence_no": "rp_seq_1",
+                    "chq_no": customerDataAPI?.register_payments[0]?.chq_no ?? null,
+                    "chq_date": customerDataAPI?.register_payments[0]?.chq_date ?? null,
+                    "chq_type": customerDataAPI?.register_payments[0]?.chq_type ?? null,
+                    "cheque_transaction_type": customerDataAPI?.register_payments[0]?.type,
+                    "chart_of_accounts_id": "",
+                    "chart_of_accounts_name": "",
+                    "ledger_name": null,
+                    "ledger_type": null,
+                    "ledger_id": "",
+                    "ledger_display_name": null,
+                    "employee_ledger_id": "",
+                    "employee_ledger_name": null,
+                    "employee_ledger_display_name": null,
+                    "service_amount": null,
+                    "service_product_amount": null
+                }
+            }
+
             else {
                 // Handle other bill types or show an error message
                 Toast.show({
