@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet, View, TouchableWithoutFeedback, Text, FlatList } from "react-native";
 import { Searchbar } from "react-native-paper";
 import axios from "axios";
-
 import { AntDesign } from "@expo/vector-icons"
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { baseUrl } from "../../api/const";
@@ -27,27 +26,29 @@ const ProductScreen = () => {
     const route = useRoute()
 
     const contact = route.params?.contact // without ? getting errors 
+    const category = route.params?.category;
+    console.log("route---:", route)
     // const{ contact }=route.params;
 
 
     const numColumns = 2;
     const navigation = useNavigation();
 
-    const productUrl = `${baseUrl}/viewProducts`;
+    const productUrl = category
+    ? `${baseUrl}/viewProducts?product_name=${category}`
+    : `${baseUrl}/viewProducts`;
 
     const [productNames, setProductNames] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [filteredProducts, setFilteredProducts] = useState([]);
-
-    // console.log("passed items",contact);
-
     useEffect(() => {
         axios.get(productUrl)
             .then((res) => {
                 const productNamesArr = res.data.data.map((item) => ({
                     _id: item._id, // Add missing _id property
                     productName: item.product_name,
-                    productCost: item.cost
+                    imageUrl: item.image_url,
+                    productCost: item.cost,
                 }));
                 setProductNames(productNamesArr);
                 setFilteredProducts(productNamesArr);

@@ -21,27 +21,24 @@ const HomeProductList = ({ item }) => {
     const shortenedProductName = getShortProductName(productName, 20);
 
     return (
-
-
-
-            <TouchableOpacity onPress={() => navigation.navigate('ProductDetails', { item: item })}>
-                <View style={[styles.box]} >
-                    <Image
-                        style={styles.tinyLogo}
-                        source={{
-                            uri: 'https://cdn.pixabay.com/photo/2014/08/05/10/30/iphone-410324_1280.jpg',
-                        }}
-                    />
-                    <View style={styles.bottomContainer}>
-                        <Text style={styles.bottomText}>New Lowest Price</Text>
-                    </View>
-                    <Text style={styles.textFam}>{shortenedProductName}</Text>
-                    <Text style={styles.textPrice}>Price : {productCost} QAR</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('ProductDetails', { item: item })}>
+            <View style={[styles.box]} >
+                <Image
+                    style={styles.tinyLogo}
+                    source={{
+                        uri: 'https://cdn1.iconfinder.com/data/icons/scenarium-silver-vol-8/128/044_error_not_found_page-1024.png',
+                    }}
+                />
+                <View style={styles.bottomContainer}>
+                    <Text style={styles.bottomText}>New Lowest Price</Text>
                 </View>
-            </TouchableOpacity>
-   
+                <Text style={styles.textFam}>{shortenedProductName}</Text>
+                <Text style={styles.textPrice}>Price : {productCost} QAR</Text>
+            </View>
+        </TouchableOpacity>
 
-        
+
+
 
 
     );
