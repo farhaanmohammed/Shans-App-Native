@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, TouchableWithoutFeedback, Text, FlatList } from "react-native";
-import { Searchbar } from "react-native-paper";
+import { Searchbar,ActivityIndicator } from "react-native-paper";
 import axios from "axios";
 import { AntDesign } from "@expo/vector-icons"
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -20,9 +20,26 @@ const CustomButton = ({ title, onPress }) => {
     );
 };
 
-const searchUrl = `${baseUrl}/viewCategories?category_name=`;
+// const productCategoriesUrl = `${baseUrl}/viewCategories?offset=${offset}&limit=20`;
+
 
 const CategoriesScreen = () => {
+
+    const [offset, setOffset] = useState(0)
+    const renderLoader = () => {
+        return(
+            <View style={styles.loaderStyle}>
+                <ActivityIndicator size="large" color="#aaa"/>
+            </View>
+        )
+    }
+    const searchUrl = `${baseUrl}/viewCategories?category_name=&offset=${offset}&limit=20`;
+
+    const loadMoreItem = () => {
+        setOffset(offset + 1);
+      };
+    console.log("offset:", offset)
+  
     const route = useRoute()
 
     const contact = route.params?.contact // without ? getting errors 
@@ -32,16 +49,17 @@ const CategoriesScreen = () => {
     const numColumns = 2;
     const navigation = useNavigation();
 
-    const productCategoriesUrl = `${baseUrl}/viewCategories`;
+  
 
     const [categoryNames, setCategoriesNames] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [filteredCategories, setfilteredCategories] = useState([]);
+    const productCategoriesUrl = `${baseUrl}`;
 
     // console.log("passed items",contact);
 
     useEffect(() => {
-        axios.get(productCategoriesUrl)
+        axios.get(`http://137.184.67.138:3004/viewCategories?offset=${offset}&limit=20`)
             .then((res) => {
                 const categoryNameArr = res.data.data.map((item) => ({
                     _id: item._id, 
@@ -53,7 +71,7 @@ const CategoriesScreen = () => {
                 setfilteredCategories(categoryNameArr);
             })
             .catch(err => console.log(err));
-    }, []);
+    }, [offset]);
 
     useEffect(() => {
         if (searchQuery !== "") {
@@ -100,6 +118,9 @@ const CategoriesScreen = () => {
                     keyExtractor={(item) => item._id}
                     renderItem={({ item }) => <CategoriesList item={item} contact={contact} />}
                     numColumns={numColumns}
+                    ListFooterComponent={renderLoader}
+                    onEndReached={loadMoreItem}
+                    onEndReachedThreshold={0}
                 />
             </View>
         </View>
@@ -141,6 +162,10 @@ const styles = StyleSheet.create({
 
         alignItems: "center",
         flex: 1,
+    },
+    loaderStyle:{
+        marginVertical: 16,
+        alignItems: "center"
     }
 
 });

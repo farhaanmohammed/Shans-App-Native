@@ -3,9 +3,9 @@ import { StyleSheet, Text, TouchableOpacity, View, Image, ScrollView } from "rea
 import { useNavigation } from '@react-navigation/native'
 
 const HomeProductList = ({ item }) => {
-    console.log('Product List ++++++++++++ ')
+    // console.log('Product List ++++++++++++ ')
 
-    console.log(item)
+    // console.log(item)
 
     const navigation = useNavigation();
     const { productName, productCost } = item

@@ -23,6 +23,7 @@ const CustomButton = ({ title, onPress }) => {
 const searchUrl = `${baseUrl}/viewProducts?product_name=`;
 
 const ProductScreen = () => {
+    
     const route = useRoute()
 
     const contact = route.params?.contact // without ? getting errors 
