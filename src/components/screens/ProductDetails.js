@@ -82,7 +82,7 @@ const ProductDetails = () => {
           <Image
             style={styles.tinyLogo}
             source={{
-              uri: 'https://www.techspot.com/images2/news/bigimage/2021/05/2021-05-18-image-27-j_1100.webp',
+              uri: 'https://cdn1.iconfinder.com/data/icons/scenarium-silver-vol-8/128/044_error_not_found_page-1024.png',
             }}
           />
           <View style={styles.productInfoContainer}>
@@ -154,18 +154,19 @@ const styles = StyleSheet.create({
     height: 150,
   },
   detailsContainer: {
-    marginHorizontal: 15,
-    marginTop: 10
+    padding: 10
   },
   imgNameContainer: {
     flexDirection: "row"
   },
   productInfoContainer: {
-    marginLeft: 15,
+    marginHorizontal: 15
   },
   productName: {
+    
     fontWeight: "bold",
     fontSize: 14,
+    maxWidth: "83%", 
   },
   rowContainer: {
     flexDirection: "column",
@@ -197,13 +198,15 @@ const styles = StyleSheet.create({
     justifyContent: "space-between"
   },
   addbutton: {
-    marginHorizontal: 25,
-    marginTop: 295,
+    position: "absolute",
+    bottom: 20, // Adjust the distance from the bottom as needed
+    left:10,
+    right: 10,
     padding: 10,
     alignItems: "center",
     backgroundColor: "#ffa600",
-    borderRadius: 13
-  }
+    borderRadius: 13,
+  },
 
 });
 

@@ -25,6 +25,7 @@ export default function Scanner() {
 
 
     const handleBarCodeScanned =({ type, data }) => {
+
         console.log('daaaaaaaaaaaaaaaaaaata', data)
         setScanned(true);
 
