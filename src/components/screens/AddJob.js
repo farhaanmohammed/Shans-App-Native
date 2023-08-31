@@ -3,13 +3,29 @@ import { Text,View,StyleSheet,ScrollView,TextInput,Modal,Button,FlatList,Touchab
 import { Picker } from "@react-native-community/picker";
 import { Formik } from "formik";
 import { baseUrl } from "../../api/const";
-import axios from "axios";
-import DateTimePicker from '@react-native-community/datetimepicker'
+import axios, { all } from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Complaints from "./Complaints";
 import { AntDesign } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { Dropdown ,MultiSelect } from 'react-native-element-dropdown';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import * as DocumentPicker from 'expo-document-picker';
+import { Feather } from '@expo/vector-icons';
+import { useNavigation, useRoute } from '@react-navigation/native';
+
+
+const CustomButton = ({ title, onPress }) => {
+
+    return (
+        <TouchableOpacity style={[styles.buttonContainer]} onPress={onPress}>
+            <View style={styles.buttonContent}>
+                <Text style={styles.buttonText}>{title}</Text>
+            </View>
+        </TouchableOpacity>
+    );
+};
+
 
 
 
@@ -26,6 +42,10 @@ export default function AddJob(){
     const employeeUrl=`${baseUrl}/viewEmployees/employee_list/employee_dropdown`;
     const accessoriesUrl= `${baseUrl}/viewJobAccessory/accessory_list/accessory_dropdown`;
     const contacturl = `${baseUrl}/viewCustomers`;
+    const jobbookingUrl= `${baseUrl}/viewJobBooking`;
+    const imageUploadUrl= `${baseUrl}/fileUploadMultiple`;
+    const consumerModelUrl=`${baseUrl}/viewJobConsumerModel`;
+
 
     const[device,setDevice]= React.useState([]);
     const[brand,setBrand]=React.useState([]);
@@ -34,9 +54,18 @@ export default function AddJob(){
     const[modal,setModal]=React.useState(false);
     const[complaints,setComplaints]=React.useState([]);
     const[accessories,setAccesories]=React.useState([]);
-    const[selectedaccessories,setSelectedAccessories]=React.useState([]);
+    // const[selectedaccessories,setSelectedAccessories]=React.useState([]);
     const[customers,setCustomers]=React.useState([])
-    const [selected, setSelected] = React.useState([]);
+    const[jobs,setJobs]=React.useState([]);
+    const[openDate,setOpenDate]=React.useState(false)
+    const[uris,setUris]=React.useState([])
+    const [selectedDocument, setSelectedDocument] = React.useState([]);
+    const [scannedData, setScannedData] = React.useState('');
+    const[consumermodel,setConsumerModel]=React.useState([]);
+
+
+
+    const navigation=useNavigation();
     
 
     const [value, setValue] = React.useState(null);
@@ -45,7 +74,8 @@ export default function AddJob(){
     const renderItem = item => {
         return (
             <View style={styles.item}>
-                <Text style={styles.selectedTextStyle}>{item.label}</Text>
+                {/* <CheckBox checked={isSelected} color="black" style={styles.checkbox} /> */}
+                <Text style={styles.selectedTextStyle}>{item.accessories_name}</Text>
                 <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
             </View>
             );
@@ -60,7 +90,7 @@ export default function AddJob(){
 
     const formattedDate = `${year}-${month}-${day}`;
 
-    const[date,setDate]=React.useState(formattedDate);
+    const[date,setDate]=React.useState(new Date());
 
     const[warehouse ,setWarehouse]=React.useState('');
 
@@ -91,6 +121,24 @@ export default function AddJob(){
 
         
 
+        const handleScan = () => {
+            navigation.navigate('Scanner', {
+                onScan: (data) => {
+                    setScannedData(data); // Store the scanned data in component state
+                },
+            });
+        };
+
+
+        console.log("scanned data in jobsscreen",scannedData);
+
+
+        
+
+        
+
+        
+
     
     const warehouse_name1=warehouse.warehouse_name;
     console.log("the amen of the ware house",warehouse_name1)
@@ -103,6 +151,8 @@ export default function AddJob(){
                 brand_id:item._id,
                 brand_name:item.brand_name,
                 models:item.job_devices.map((device)=>({model_id:device._id,model_name:device.model_name})),
+            
+                
                 
                 
             }))
@@ -145,6 +195,8 @@ export default function AddJob(){
                 accessories_name:item.accessories_name,
             }))
 
+            // console.log("acceessArray..............",accessoriesArray)
+
             setAccesories(accessoriesArray);
         })
 
@@ -158,6 +210,31 @@ export default function AddJob(){
             setCustomers(contactArray);
         })
 
+        axios.get(jobbookingUrl).then(res=>{
+            const jobArray=res.data.data.map((item)=>({
+                id:item._id,
+                sequence_no:item.sequence_no,
+                device_id:item.device_id,
+                brand_id:item.brand_id,
+                consumer_model_id:item.consumer_model_id,
+                serial_no:item.serial_no,
+                customer_id:item.customer_id,
+                create_date:item.create_date,
+
+            }))
+            setJobs(jobArray);
+        })
+
+        axios.get(consumerModelUrl).then(res=>{
+            const modelArray=res.data.data.map((item)=>({
+                id:item._id,
+                model_name:item.model_name,
+                job_device_id:item.job_device_id,
+                job_brand_id:item.job_brand_id
+            }))
+            setConsumerModel(modelArray);
+        })
+
     },[])
     // console.log("Employee Details++_________________________",employee)
     // console.log("the device array ????????????",device)
@@ -166,6 +243,10 @@ export default function AddJob(){
 
     // console.log("date",date)
     // console.log("accedsss============================",accessories);
+
+    // console.log("JObbooking++++++++++++++++++++",jobs)
+    // console.log("consumer mOdel+++++++++++++++++++++++++++++++",brand);
+    // console.log("scanned data--------------------",scannedData);
 
     function handleComplaintSubmit(values){
         setComplaints([...complaints,values]);
@@ -185,8 +266,74 @@ export default function AddJob(){
 
     // console.log("customers=======================",customers)
 
+    // console.log("accessories==================",accessories);
+
+    
+    const contentType = 'image/png';
     
 
+    const selectDoc = async () => {
+        try {
+            const doc = await DocumentPicker.getDocumentAsync({ multiple: true, type: 'image/*' });
+    
+            if (!doc.canceled) {  // Use "cancelled" instead of "canceled"
+                setSelectedDocument(doc.assets);
+    
+                const fileDataArray = doc.assets.map((document, index) => {
+                    const fileUri = document.uri;
+                    const fileName = fileUri.split('/').pop();
+    
+                    return {
+                        uri: fileUri,
+                        type: contentType,  // Replace with the appropriate content type
+                        name: fileName,
+                    };
+                });
+
+                
+    
+                const formData = new FormData();
+                fileDataArray.forEach((fileData) => {
+                    formData.append('files[]', fileData);
+                });
+    
+                const config = {  // Define your axios config here
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                };
+
+                console.log("foemdata++++++++++++++",formData)
+    
+                const response = await axios.post(imageUploadUrl, formData, config);
+    
+                if (response.data && response.data.data) {
+                    const uploadUrl = response.data.data;
+                    console.log('Upload successful. API response:', uploadUrl);  // Fixed log message
+                } else {
+                    console.log('Upload failed. Unexpected API response:', response.data);
+                }
+            }
+    
+        } catch (error) {
+            // if (DocumentPicker.isCancel(error)) {
+            //     console.log('User cancelled the document picker');
+            // } else {
+            //     console.error('Error picking document:', error);
+            // }
+            console.log("error",error)
+        }
+    };
+    
+
+        const removeImage = (index) => {
+            const updatedDocuments = selectedDocument.filter((_, i) => i !== index);
+            setSelectedDocument(updatedDocuments);
+        };
+        
+
+        console.log("document selectwd=====================",selectedDocument)
+        // console.log("urisss++++++++++++++++++++++++++",uris)
 
 
 
@@ -197,8 +344,9 @@ export default function AddJob(){
             
             <ScrollView style={styles.container}>
                 <Formik
-                    initialValues={{ customer:'',customer_id:'',mobile:'',email:'',warehouse_name:'',consumer_model_id:'',device_id:'',brand_id:'',
-                    estimation:'',assignedOn: new Date().toISOString().split('T')[0],assignedto:'',remarks:'',
+                    initialValues={{ customer:'',customer_id:'',mobile:'',email:'',warehouse_name:'',consumer_model_id:'',consumer_model_name:'',device_id:'',device_name:'',
+                    brand_id:'',brand_name:'',
+                    estimation:'',assignedOn: '',assignedto:'',remarks:'',accessories:[], jobbooking_id:'',serial_no:scannedData,
                 }}
                     onSubmit={(values)=> {console.log("values:",values)
                     console.log("Selected customer:");
@@ -265,6 +413,71 @@ export default function AddJob(){
                             <Text style={styles.fieldtext}>
                                 Return Job Number:
                             </Text>
+
+                            {/* <Picker
+                                style={styles.input}
+                                enabled={true}
+                                mode="dropdown"
+                                
+                                onValueChange={(item)=>{
+
+                                    console.log("itemssssssssssssssss=+=========",item)
+                                    
+                                    props.handleChange('jobbooking_id')
+                                    props.setFieldValue('assignedOn',item.create_date)
+                                    props.setFieldValue('serial_no',item.serial_no)
+                                    props.setFieldValue('brand_id',item.brand_id)
+                                    props.setFieldValue('device_id',item.device_id)
+                                    props.setFieldValue('consumer_model_id',item.consumer_model_id)
+                                    
+                                    
+                                    
+
+                                    
+                                }}
+                                selectedValue={props.values.jobbooking_id}
+                            
+                            >
+                                <Picker.Item label="Select Job Number" value="" />
+                                {jobs.map((item)=>{
+                                    console.log("job item in picker============",item)
+                                    console.log("customer in jobs",props.values.customer_id)
+                                    if(item.customer_id===props.values.customer_id)
+                                        {
+                                            return(
+                                                <Picker.Item
+                                                    label={item.sequence_no.toString()}
+                                                    value={item.id}
+                                                    key={item.id}
+                                                />
+                                            )
+                                        }
+                                })}
+                            </Picker> */}
+                            
+                            <Dropdown
+                                style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+                                data={filteredJobs = jobs.filter(job => job.customer_id === props.values.customer_id)}
+                                maxHeight={300}
+                                labelField="sequence_no"
+                                valueField="id"
+                                placeholder={props.values.jobbooking_id==props.values.customer_id ?props.values.jobbooking_id : "Select Job Number"     }
+                                value={props.values?.jobbooking_id}
+                                onFocus={() => setIsFocus(true)}
+                                onBlur={() => setIsFocus(false)}
+                                onChange={item=>{
+                                    console.log("job details",item);
+                                    props.setFieldValue('jobbooking_id',item.id)
+                                    props.setFieldValue('brand_id', item.brand_id);
+                                    props.setFieldValue('device_id', item.device_id); // Set the customer ID
+                                    props.setFieldValue('consumer_model_id', item.consumer_model_id); // Set other fields like mobile if available
+                                    // props.setFieldValue('serial_no', item.serial_no);
+                                    setScannedData(item.serial_no);
+                                
+                                }}
+                            />
+
+
                         </View>
                         <View style={styles.heading}>
                             <Text style={styles.headingtext}>
@@ -307,7 +520,10 @@ export default function AddJob(){
                                 enabled={true}
                                 mode="dropdown"
                                 placeholder="Select Device"
-                                onValueChange={props.handleChange('device_id')}
+                                onValueChange={(value)=>{console.log("selected value in device:",value)
+                                                props.setFieldValue('device_id',value.model_id)
+                                                props.setFieldValue('device_name',value.model_name)
+                                                }}
                                 selectedValue={props.values.device_id}
                             
                             >
@@ -315,7 +531,7 @@ export default function AddJob(){
                                 {device.map((item)=>(
                                     <Picker.Item
                                         label={item.model_name.toString()}
-                                        value={item.id}
+                                        value={{model_id:item.id,model_name:item.model_name}}
                                         key={item.id}
                                     />
                                 ))}
@@ -331,16 +547,23 @@ export default function AddJob(){
                                 style={styles.input}
                                 enabled={true}
                                 mode="dropdown"
-                                placeholder="Select Device"
-                                onValueChange={props.handleChange('brand_id')}
+                                placeholder="Select Brand"
+                                onValueChange={(value)=>{console.log("selected value in brand:",value)
+                                                props.setFieldValue('brand_id',value.brand_id)
+                                                props.setFieldValue('brand_name',value.brand_name)
+                            
+                                                    }}
                                 selectedValue={props.values.brand_id}
                             
                             >
                                 <Picker.Item label="Select Brand" value="" />
                                 {brand.map((item)=>(
+
+                                    
+                                    
                                     <Picker.Item
                                         label={item.brand_name.toString()}
-                                        value={item.brand_id}
+                                        value={{brand_id:item.brand_id,brand_name:item.brand_name}}
                                         key={item.brand_id}
                                     />
                                 ))}
@@ -356,21 +579,50 @@ export default function AddJob(){
                                 style={styles.input}
                                 enabled={true}
                                 mode="dropdown"
-                                placeholder="Select Device"
-                                onValueChange={props.handleChange('consumer_model_id')}
+                                // placeholder="Select Model"
+                                onValueChange={(value)=>{console.log("selected value in consumer_model:",value)
+                                                props.setFieldValue('consumer_model_id',value.consumer_model_id)
+                                                props.setFieldValue('consumer_model_name',value.consumer_model_name)
+                            
+                                                    }}
                                 selectedValue={props.values.consumer_model_id}
                             
                             >
                                 <Picker.Item label="Select Consumer Model" value="" />
-                                {jobItem.map((item)=>(
-                                    <Picker.Item
-                                        label={item.model_name.toString()}
-                                        value={item.model_id}
-                                        key={item.model_id}
-                                    />
-                                ))}
+                                {consumermodel.map((item)=>{
+                                    if(item.job_brand_id==props.values.brand_id && item.job_device_id==props.values.device_id){
+                                        return(
+                                            <Picker.Item
+                                                label={item.model_name.toString()}
+                                                value={{consumer_model_id:item.id,consumer_model_name:item.model_name}}
+                                                key={item.id}
+                                            />
+                                        )
+                                    }
+                                } 
+                                )}
 
                             </Picker>
+                            
+
+                        </View>
+                                
+
+                        <View style={styles.fieldmargin}>
+                        
+                            <Text style={styles.fieldtext}>
+                                Serial Number:
+                            </Text>
+                            <View style={[styles.input,{flexDirection:'row', justifyContent:'space-between'}]}>
+                                <TextInput
+                                    
+                                    placeholder="Serial Number"
+                                    onChangeText={(value)=>{setScannedData(value)}}
+                                    value={scannedData}
+                                />
+                                <AntDesign name="scan1" size={24} color="black"  onPress={handleScan} />
+                            </View>
+                            
                             
 
                         </View>
@@ -380,28 +632,30 @@ export default function AddJob(){
                                 Accessories
                             </Text>
                             <MultiSelect 
-                                style={styles.dropdown_access}
+                                style={styles.dropdown}
+                                // placeholderStyle={styles.placeholderStyle}
+                                selectedTextStyle={styles.selectedTextStyle}
+                                inputSearchStyle={styles.inputSearchStyle}
                                 data={accessories}
                                 labelField="accessories_name"
                                 valueField="id"
                                 placeholder="select item"
-                                value={selected}
+                                value={props.values?.accessories}
                                 search
                                 searchPlaceholder="Select Accessories"
                                 onChange={item=>{
-                                    setSelected(item);
+                                    console.log("item========================",item)
+                                    props.setFieldValue('accessories',item)
                                 }}
                                 renderItem={renderItem}
                                 renderSelectedItem={(item,unSelect)=>(
                                     <TouchableOpacity onPress={()=>unSelect && unSelect(item)}>
                                         <View style={styles.selectedStyle}>
-                                            <Text style={styles.textSelectedStyle}>{item.label}</Text>
+                                            <Text style={styles.textSelectedStyle}>{item.accessories_name}</Text>
                                             <AntDesign color="black" name="delete" size={17} />
                                         </View>
                                     </TouchableOpacity>
                                 )}
-
-                            
                             />
                             
                         </View>
@@ -511,13 +765,34 @@ export default function AddJob(){
                             <Text style={styles.fieldtext}>
                                     Assigned On:
                             </Text>
-                            {/* <DateTimePicker
-                                date={new Date(date.now())}
-                                mode={'date'}
-                                display="default"
-                                is24Hour={true}
-                                onChange={props.handleChange('assignedOn')}
-                            /> */}
+
+                            <View style={[styles.input,{flexDirection:'row',justifyContent:'space-between'}]}> 
+                                <Text> {props.values.assignedOn}</Text>
+                                <AntDesign name="calendar" size={24} color="black" onPress={()=>setOpenDate(true)} />
+                            </View>
+
+                            {openDate && (
+
+                                <DateTimePicker 
+
+                                    testID="Assigned on date"
+                                    value={new Date()}
+                                    mode="date"
+                                    onChange={(event, selectedDate) => {
+                                        if (selectedDate !== undefined) {
+                                            setOpenDate(false);
+                                            // setDate(selectedDate);
+                                            props.setFieldValue('assignedOn', selectedDate.toISOString().split('T')[0]);
+                                            console.log("Selected Date:", selectedDate);
+                                        }
+                                    }}
+                                    display="default" 
+
+
+                                />
+                            )}
+                            
+                            
                         </View>
                         <View style={styles.fieldmargin}>
                             <Text style={styles.fieldtext}>
@@ -548,9 +823,31 @@ export default function AddJob(){
 
                             </View>
 
+                            <View style={styles.fieldmargin}>
+                                <Text style={styles.fieldtext}> Images</Text>
+                                {selectedDocument.length > 0 ? (
+                                        selectedDocument.map((document, index) => (
+                                            // console.log("documents==============",document)
+                                                <View key={index} style={{flexDirection:'row'}}>
+                                                    <Text style={{fontSize:15,fontWeight:'700',}}>{document.name}</Text>
+                                                    <Feather name="trash" size={24} color="black" onPress={() => removeImage(index)}/>
+
+                                                </View>
+                                                
+                                            
+                                            
+                                        ))
+                                    ) : (
+                                        <Text>No documents selected</Text>
+                                    )}
+                                <CustomButton title="Select Images" onPress={selectDoc} />
+                            </View>
+
                             <Button title="submit" onPress={props.handleSubmit}/>
 
                         </View>
+
+                        
                         
 
                     </View>
@@ -563,6 +860,18 @@ export default function AddJob(){
 }
 
 const styles=StyleSheet.create({
+
+    item: {
+        padding: 17,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+
+    selectedTextStyle: {
+        fontSize: 14,
+        color:"black",
+    },
 
     dropdown: {
         height: 50,
@@ -739,6 +1048,23 @@ const styles=StyleSheet.create({
         borderRadius:6,
         maxWidth:350,
         
+    },
+
+    buttonContent: {
+        maxWidth: 120,
+        backgroundColor: '#ffa600',
+        borderRadius: 6,
+        paddingVertical: 7,
+        paddingHorizontal:3,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginVertical: 10,
+        marginHorizontal:20,
+    },
+    buttonText: {
+        color: 'white',
+        fontSize: 15,
+        fontWeight: 'bold',
     },
 
 

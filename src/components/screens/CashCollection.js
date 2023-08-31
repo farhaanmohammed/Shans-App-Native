@@ -125,8 +125,7 @@ const styles = StyleSheet.create({
     },
     label: {
         fontSize: 15,
-       
-       
+
     }
 });
 

@@ -28,6 +28,8 @@ const sendSignatureToAPI = async (fileUri, navigation) => {
       }
     }
 
+    console.log("formadata=++++++++",formData)
+
     const response = await axios.post(apiUrl, formData, config);
 
     // Check if the response contains the expected data
