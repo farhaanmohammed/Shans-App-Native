@@ -45,6 +45,7 @@ export default function AddJob(){
     const jobbookingUrl= `${baseUrl}/viewJobBooking`;
     const imageUploadUrl= `${baseUrl}/fileUploadMultiple`;
     const consumerModelUrl=`${baseUrl}/viewJobConsumerModel`;
+    const jobregisterUrl=`${baseUrl}/createJobRegistration`;
 
 
     const[device,setDevice]= React.useState([]);
@@ -141,9 +142,11 @@ export default function AddJob(){
 
     
     const warehouse_name1=warehouse.warehouse_name;
-    console.log("the amen of the ware house",warehouse_name1)
+    const warehouse_id=warehouse.warehouse_id;
+    console.log("the amen of the ware house",warehouse_id)
     // const warehouse_name=user.warehouse.warehouse_name
     // console.log("+++++++++++++==================",warehouse_name)
+    console.log("warehouseDetails++++++++++++",warehouse)
 
     useEffect(()=>{
         axios.get(brandUrl).then((res)=>{
@@ -220,6 +223,11 @@ export default function AddJob(){
                 serial_no:item.serial_no,
                 customer_id:item.customer_id,
                 create_date:item.create_date,
+                assignee_id:item.assignee_id,
+                assignee_name:item.assignee_name,
+                sales_person_id:item.sales_person_id,
+                sales_person_name:item.sales_person_name,
+                date:item.date,
 
             }))
             setJobs(jobArray);
@@ -253,7 +261,7 @@ export default function AddJob(){
 
     }
 
-    // console.log("complaint in addjob +++++++++++",complaints);
+    console.log("complaint in addjob +++++++++++",complaints);
 
     function handleclose(value){
         setModal(value);
@@ -266,7 +274,7 @@ export default function AddJob(){
 
     // console.log("customers=======================",customers)
 
-    // console.log("accessories==================",accessories);
+    console.log("accessories==================",accessories);
 
     
     const contentType = 'image/png';
@@ -345,13 +353,78 @@ export default function AddJob(){
             <ScrollView style={styles.container}>
                 <Formik
                     initialValues={{ customer:'',customer_id:'',mobile:'',email:'',warehouse_name:'',consumer_model_id:'',consumer_model_name:'',device_id:'',device_name:'',
-                    brand_id:'',brand_name:'',
-                    estimation:'',assignedOn: '',assignedto:'',remarks:'',accessories:[], jobbooking_id:'',serial_no:scannedData,
+                    brand_id:'',brand_name:'',jobbooking_id:'',jobbooking:'',assignedto_name:'',sales_person_name:'',
+                    estimation:'',assignedOn: '',assignedto_name:'',assignedto_id:'',remarks:'',accessories:[], email:'',serial_no:scannedData,
                 }}
                     onSubmit={(values)=> {console.log("values:",values)
-                    console.log("Selected customer:");
+                        console.log("Selected customer:");
+                        const body= {
+                            "date": formattedDate,
+                            "invoice_date": null,
+                            "incoming_date": null,
+                            "internal_product_id": null,
+                            "internal_product_name": null,
+                            "product_description": null,
+                            "work_order_number": values.jobbooking,
+                            "job_remarks": null,
+                            "estimation": values.estimation,
+                            "assigned_on": values.assignedOn,
+                            "total_sale_estimation": null,
+                            "customer_id": values.customer_id,
+                            "customer_name": values.customer,
+                            "customer_mobile": values.mobile,
+                            "customer_email": values.email,
+                            "job_return_no": values.jobbooking_id,
+                            "created_on": values.assignedOn,
+                            "device_id": values.device_id,
+                            "device_name": values.device_name,
+                            "brand_id": values.brand_id,
+                            "brand_name": values.brand_name,
+                            "consumer_model_id": values.consumer_model_id,
+                            "consumer_model_name": values.consumer_model_name,
+                            "serial_no":scannedData,
+                            "company_id": null,
+                            "company_name": null,
+                            "warehouse_id": warehouse_id,
+                            "warehouse_name": warehouse_name1,
+                            "latitude": null,
+                            "longitude": null,
+                            "is_pickup": null,
+                            "pickup_schedule_time": null,
+                            "assignee_id": values.assignedto_id,
+                            "assignee_name": values.assignedto_name,
+                            "sales_person_id": values.assignedto_name,
+                            "sales_person_name": values.sales_person_name,
+                            "driver_signature": null,
+                            "customer_signature": null,
+                            "service_coordinator_signature": null,
+                            "attachment_details": null,
+                            "remarks": values.remarks,
+                            "job_customer_id": null,
+                            "job_customer_name": null,
+                            "job_booking_id": values.jobbooking_id,
+                            "accessories": values.accessories,
+                            "warranty_date": null,
+                            "warranty_type": null,
+                            "complaint_or_service_request": complaints,
+                        }
+
+                        console.log("body++++++++++++====================",body);
+
+                        axios.post(jobregisterUrl,body).then(res=>{
+                            console.log("response-----------------------------------------",res.data);
+                            if(res.data.success=="true"){
+                                alert("Job Registration Successful")
+
+                            } else{
+                                alert(res.data.message)
+                            }
+                            
+                            // console.log("success");
+                            navigation.navigate('Jobscreen');
+                                            }).catch(err=>console.log("axios error+++++++",err))
                 
-                }}
+                    }}
                 
                 >
                 {(props)=>(
@@ -397,6 +470,7 @@ export default function AddJob(){
                                 placeholder="Mobile number"
                                 onChangeText={props.handleChange('mobile')}
                                 value={props.values.mobile}
+                                keyboardType="numeric"
                             />
                         </View>
                         <View style={styles.fieldmargin}>
@@ -468,10 +542,17 @@ export default function AddJob(){
                                 onChange={item=>{
                                     console.log("job details",item);
                                     props.setFieldValue('jobbooking_id',item.id)
+                                    props.setFieldValue('jobbooking',item.sequence_no)
                                     props.setFieldValue('brand_id', item.brand_id);
                                     props.setFieldValue('device_id', item.device_id); // Set the customer ID
                                     props.setFieldValue('consumer_model_id', item.consumer_model_id); // Set other fields like mobile if available
                                     // props.setFieldValue('serial_no', item.serial_no);
+                                    props.setFieldValue('sales_person_id', item.sales_person_id); 
+                                    props.setFieldValue('sales_person_name', item.sales_person_name); 
+                                    props.setFieldValue('assignedto_name', item.assignee_name); 
+                                    props.setFieldValue('assignedto_id', item.assignee_id); 
+                                    props.setFieldValue('assignedOn',item.date);
+
                                     setScannedData(item.serial_no);
                                 
                                 }}
@@ -585,7 +666,7 @@ export default function AddJob(){
                                                 props.setFieldValue('consumer_model_name',value.consumer_model_name)
                             
                                                     }}
-                                selectedValue={props.values.consumer_model_id}
+                                selectedValue={props.values?.consumer_model_id}
                             
                             >
                                 <Picker.Item label="Select Consumer Model" value="" />
@@ -643,8 +724,9 @@ export default function AddJob(){
                                 value={props.values?.accessories}
                                 search
                                 searchPlaceholder="Select Accessories"
-                                onChange={item=>{
+                                onChange={(item)=>{
                                     console.log("item========================",item)
+                                    
                                     props.setFieldValue('accessories',item)
                                 }}
                                 renderItem={renderItem}
@@ -744,15 +826,22 @@ export default function AddJob(){
                                 enabled={true}
                                 mode="dropdown"
                                 placeholder="Select Device"
-                                onValueChange={props.handleChange('assignedto')}
-                                selectedValue={props.values.assignedto}
+                                onValueChange={(item)=>
+                                    {
+                                        console.log("assignef=don+++++++++++",item)
+                                        // props.handleChange('assignedto')
+                                        props.setFieldValue('assignedto_id',item.assignedTo_id)
+                                        props.setFieldValue('assignedto_name',item.assignedTo_name)
+
+                                }}
+                                selectedValue={props.values.assignedto_id}
                             
                             >
                                 <Picker.Item label="Select Employee" value="" />
                                 {employee.map((item)=>(
                                     <Picker.Item
                                         label={item.name.toString()}
-                                        value={item.id}
+                                        value={{assignedTo_id:item.id,assignedTo_name:item.name}}
                                         key={item.id}
                                     />
                                 ))}
@@ -803,6 +892,7 @@ export default function AddJob(){
                                 placeholder="Please enter Estimation"
                                 onChangeText={props.handleChange('estimation')}
                                 value={props.values.estimation}
+                                keyboardType="numeric"
                             />
                         </View>
                         <View  style={styles.fieldmargin}>

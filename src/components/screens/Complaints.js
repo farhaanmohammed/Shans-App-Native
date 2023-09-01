@@ -58,7 +58,7 @@ export default function Complaints({onSubmitted,Closebutton}){
                                             complaint_type_name:selectedComplaintType_name,
                                             complaint_request_name:selectedComplaintRequest_name,
                                             complaint_type_id:values.complaint_request_type,
-                                            complaint_request_id:values.complaint_request,
+                                            complaint_request_ids:values.complaint_request,
                                             remarks:values.remarks
 
                                         }
