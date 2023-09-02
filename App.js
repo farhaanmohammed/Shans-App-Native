@@ -27,6 +27,8 @@ import AddJob from "./src/components/screens/AddJob";
 const Stack = createNativeStackNavigator();
 
 import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
+import TaskManager from "./src/components/screens/TaskManager";
+import AddTask from "./src/components/screens/AddTask";
 
 /*
   1. Create the config
@@ -119,6 +121,8 @@ const App = () => {
           <Stack.Screen name="NewCollection" component={NewCollection} options={{ headerStyle: { backgroundColor: '#ffa600' }, headerShown: true, title: "New Collection" }} />
           <Stack.Screen name="Scanner" component={Scanner} options={{ headerStyle: { backgroundColor: '#ffa600' }, headerShown: false, title: "Scanner" }} />
          <Stack.Screen name="Sign"  component={Sign} options={{ headerStyle: { backgroundColor: '#ffa600' }, headerShown: false, title: "Scanner" }} />
+         <Stack.Screen name="TaskManager" component={TaskManager} options={{ headerStyle: { backgroundColor: '#ffa600' }, headerShown: false, title: "Task Manager" }} />
+         <Stack.Screen name="AddTask" component={AddTask} options={{ headerStyle: { backgroundColor: '#ffa600' }, headerShown: false, title: "Add Task" }} />
         </Stack.Navigator>
         <Toast config={toastConfig} />
       </View>

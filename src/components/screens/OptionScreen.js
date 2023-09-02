@@ -82,6 +82,20 @@ const OptionScreen = () => {
                     <Text style={styles.textFam}>Cash Collection</Text>
                 </View>
                 </TouchableOpacity>
+
+                {/* task manager in the below opacity */}
+                <TouchableOpacity
+                 onPress={() => navigation.navigate('AddTask')}> 
+
+                <View style={[styles.boxDiffer, { backgroundColor: '#ebebeb' }]} >
+                    <Image
+                        source={require('../../../assets/optionsIcons/task.png')}
+                        fadeDuration={0}
+                        style={{ width: 45, height: 45 }}
+                    />
+                    <Text style={styles.textFam}>Task Manager</Text>
+                </View>
+                </TouchableOpacity>
             </View>
         </View>
     );

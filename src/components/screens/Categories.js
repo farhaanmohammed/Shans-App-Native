@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, TouchableWithoutFeedback, Text, FlatList } from "react-native";
-import { Searchbar,ActivityIndicator } from "react-native-paper";
+import { Searchbar, ActivityIndicator } from "react-native-paper";
 import axios from "axios";
 import { AntDesign } from "@expo/vector-icons"
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -25,21 +25,31 @@ const CustomButton = ({ title, onPress }) => {
 
 const CategoriesScreen = () => {
 
-    const [offset, setOffset] = useState(0)
+
+    const [offset, setOffset] = useState(0);
+    const [loadingMore, setLoadingMore] = useState(false); // Track loading state for loadMore
+
+
     const renderLoader = () => {
-        return(
+        return (
             <View style={styles.loaderStyle}>
-                <ActivityIndicator size="large" color="#aaa"/>
+                <ActivityIndicator size="large" color="#ffa600" />
             </View>
-        )
-    }
+        );
+    };
+
+
     const searchUrl = `${baseUrl}/viewCategories?category_name=&offset=${offset}&limit=20`;
 
     const loadMoreItem = () => {
+        console.log("y first u load : ", loadingMore)
+        if (loadingMore) return; // Prevent multiple calls while loading
+        setLoadingMore(true);
         setOffset(offset + 1);
-      };
+    };
+
     console.log("offset:", offset)
-  
+
     const route = useRoute()
 
     const contact = route.params?.contact // without ? getting errors 
@@ -49,29 +59,43 @@ const CategoriesScreen = () => {
     const numColumns = 2;
     const navigation = useNavigation();
 
-  
+
 
     const [categoryNames, setCategoriesNames] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [filteredCategories, setfilteredCategories] = useState([]);
-    const productCategoriesUrl = `${baseUrl}`;
+    // const productCategoriesUrl = `${baseUrl}`;
 
     // console.log("passed items",contact);
 
     useEffect(() => {
-        axios.get(`http://137.184.67.138:3004/viewCategories?offset=${offset}&limit=20`)
-            .then((res) => {
-                const categoryNameArr = res.data.data.map((item) => ({
-                    _id: item._id, 
-                    categoryName: item.category_name,
-                    imageUrl: item.image_url,
-                    landingCost: item.landing_cost
-                }));
-                setCategoriesNames(categoryNameArr);
-                setfilteredCategories(categoryNameArr);
-            })
-            .catch(err => console.log(err));
-    }, [offset]);
+        if (loadingMore) {
+            console.log("first useffect is loading more :", loadingMore)
+            const productCategoriesUrl = `${baseUrl}/viewCategories?offset=${offset}&limit=20`;
+
+            axios
+                .get(productCategoriesUrl)
+                .then((res) => {
+                    const categoryNameArr = res.data.data.map((item) => ({
+                        _id: item._id,
+                        categoryName: item.category_name,
+                        imageUrl: item.image_url,
+                        landingCost: item.landing_cost,
+                    }));
+                    setCategoriesNames((prevCategories) => [...prevCategories, ...categoryNameArr]);
+                    // if (categoryNameArr.length === 0) {
+                    //     setLoadingMore(false);
+                    // } else {
+                    //     setLoadingMore(true);
+                    // }
+                })
+                .catch((err) => console.log(err))
+                .finally(() => {
+                    setLoadingMore(false);
+                });
+        }
+    }, [offset, loadingMore]);
+
 
     useEffect(() => {
         if (searchQuery !== "") {
@@ -163,7 +187,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         flex: 1,
     },
-    loaderStyle:{
+    loaderStyle: {
         marginVertical: 16,
         alignItems: "center"
     }
