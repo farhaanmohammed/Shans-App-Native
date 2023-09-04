@@ -72,7 +72,7 @@ const CashCollection = () => {
                     <View style={styles.detailsContainer} key={data.id}>
                         <Text style={styles.label}>{data.customerName}</Text>
                         <Text  style={styles.label}>{data.totalAmount}</Text>
-                        <Text  style={styles.label}>{data.date}</Text>
+                        <Text  style={styles.label}>{data.sequenceNum}</Text>
                     </View>
                 ))
             )}

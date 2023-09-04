@@ -1010,7 +1010,7 @@ const NewCollection = () => {
                             style={styles.input}
                             editable={false}
                         /> */}
-                        <Text style={styles.label}>Brand:</Text>
+                        <Text style={styles.label}>Branch:</Text>
                         <TextInput
                             value={adminDetails.company?.name}
                             style={styles.input}

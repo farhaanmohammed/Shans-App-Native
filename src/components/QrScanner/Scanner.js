@@ -7,7 +7,7 @@ import { useNavigation,useRoute } from '@react-navigation/native';
 export default function Scanner() {
     const navigation = useNavigation();
     const [hasPermission, setHasPermission] = useState(null);
-    const [scanned, setScanned] = useState(false);
+    // const [scanned, setScanned] = useState(false);
     // const [data, setData] = useState(null);
     // const [customerName, setCustomerName] = useState(null);
     const [serialMode, setSerialMode] = useState(false);
@@ -27,23 +27,23 @@ export default function Scanner() {
     const handleBarCodeScanned =({ type, data }) => {
 
         console.log('daaaaaaaaaaaaaaaaaaata', data)
-        setScanned(true);
+        // setScanned(true);
 
-        if(serialMode){
+        // if(serialMode){
             
-            console.log('Serial Number Scanned:', data);
+        //     console.log('Serial Number Scanned:', data);
 
-            const onScanCallback = route.params?.onScan;
-            if (onScanCallback) {
-                onScanCallback(data); // Use the callback to send scanned data back
-            }
+        //     const onScanCallback = route.params?.onScan;
+        //     if (onScanCallback) {
+        //         onScanCallback(data); // Use the callback to send scanned data back
+        //     }
         
-            navigation.goBack();
+        //     navigation.goBack();
             
             
-        }
+        // }
 
-        else{
+        // else{
 
             const billParts = data.split('-')
             console.log("which bill", billParts)
@@ -57,7 +57,7 @@ export default function Scanner() {
             console.log("sequence number:", sequenceNumber)
             // Navigate to the NewCollection screen and pass the scanned data
             navigation.navigate('NewCollection', { scannedData: sequenceNumber, whichBill: whichBill});
-        }
+        // }
     };
 
     if (hasPermission === null) {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, TouchableWithoutFeedback, Text, FlatList } from "react-native";
-import { Searchbar } from "react-native-paper";
+import { Searchbar, ActivityIndicator } from "react-native-paper";
 import axios from "axios";
 import { AntDesign } from "@expo/vector-icons"
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -12,7 +12,7 @@ const CustomButton = ({ title, onPress }) => {
         <TouchableWithoutFeedback onPress={onPress}>
             <View style={styles.buttonContainer}>
                 <View style={styles.buttonContent}>
-                    <AntDesign name="left" size={20} color="black"  />
+                    <AntDesign name="left" size={20} color="black" />
                     <Text style={styles.buttonText}>{title}</Text>
                 </View>
             </View>
@@ -23,7 +23,31 @@ const CustomButton = ({ title, onPress }) => {
 const searchUrl = `${baseUrl}/viewProducts?product_name=`;
 
 const ProductScreen = () => {
-    
+
+    const [offset, setOffset] = useState(0);
+    const [loadingMore, setLoadingMore] = useState(false); 
+    const [productNames, setProductNames] = useState([]);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [filteredProducts, setFilteredProducts] = useState([]);
+
+
+    const renderLoader = () => {
+        return (
+            <View style={styles.loaderStyle}>
+                <ActivityIndicator size="large" color="#ffa600" />
+            </View>
+        );
+    };
+
+    const loadMoreItem = () => {
+        console.log("y first u load : ", loadingMore)
+        if (loadingMore) return; // Prevent multiple calls while loading
+        setLoadingMore(true);
+        setOffset(offset + 1);
+    };
+
+    console.log("offset:", offset)
+
     const route = useRoute()
 
     const contact = route.params?.contact // without ? getting errors 
@@ -36,33 +60,39 @@ const ProductScreen = () => {
     const navigation = useNavigation();
 
     const productUrl = category
-    ? `${baseUrl}/viewProducts?product_name=${category}`
-    : `${baseUrl}/viewProducts`;
+        ? `${baseUrl}/viewProducts?product_name=${category}`
+        : `${baseUrl}/viewProducts`;
 
-    const [productNames, setProductNames] = useState([]);
-    const [searchQuery, setSearchQuery] = useState("");
-    const [filteredProducts, setFilteredProducts] = useState([]);
+   
+
+
     useEffect(() => {
-        axios.get(productUrl)
+        fetchProducts()
+    }, [offset])
+
+    const fetchProducts = () => {
+        axios
+            .get(`${productUrl}?offset=${offset}&limit=20`)
             .then((res) => {
                 const productNamesArr = res.data.data.map((item) => ({
-                    _id: item._id, // Add missing _id property
+                    _id: item._id,
                     productName: item.product_name,
                     imageUrl: item.image_url,
                     productCost: item.cost,
                 }));
-                setProductNames(productNamesArr);
-                setFilteredProducts(productNamesArr);
+                setProductNames((prevProductNames) => [...prevProductNames, ...productNamesArr]);
+                setLoadingMore(false); 
             })
-            .catch(err => console.log(err));
-    }, []);
+            .catch((err) => console.log(err));
+    };
+
 
     useEffect(() => {
-        if (searchQuery !== "") { 
+        if (searchQuery !== "") {
             axios.get(searchUrl + searchQuery)
                 .then((res) => {
                     const filteredSearchResults = res.data.data.map((item) => ({
-                        _id: item._id, 
+                        _id: item._id,
                         productName: item.product_name,
                         productCost: item.cost
                     }));
@@ -82,31 +112,34 @@ const ProductScreen = () => {
     };
 
     return (
-            <View style={styles.container}>
-            
-                <View>
+        <View style={styles.container}>
+
+            <View>
                 <CustomButton title="Products" onPress={() => navigation.goBack()} />
-                </View>
-        
+            </View>
+
             <View style={styles.searchContainer}>
                 <Searchbar
-                placeholder="Search Products"
-                value={searchQuery}
-                onChangeText={onChangeSearch}
-                style={styles.searchBox}
+                    placeholder="Search Products"
+                    value={searchQuery}
+                    onChangeText={onChangeSearch}
+                    style={styles.searchBox}
                 />
             </View>
             <View style={styles.productListContainer}>
                 <FlatList
-                data={filteredProducts}
-                keyExtractor={(item) => item._id}
-                renderItem={({ item }) => <ProductList item={item} contact={contact} />}
-                numColumns={numColumns}
+                    data={filteredProducts}
+                    keyExtractor={(item) => item._id}
+                    renderItem={({ item }) => <ProductList item={item} contact={contact} />}
+                    numColumns={numColumns}
+                    ListFooterComponent={renderLoader}
+                    onEndReached={loadMoreItem}
+                    onEndReachedThreshold={0}
                 />
             </View>
-            </View>
-        );
-    }
+        </View>
+    );
+}
 
 
 const styles = StyleSheet.create({
@@ -129,7 +162,7 @@ const styles = StyleSheet.create({
         marginBottom: 12,
         alignItems: "center"
     },
-    
+
     buttonText: {
         marginLeft: 34,
         fontSize: 17,
@@ -137,14 +170,20 @@ const styles = StyleSheet.create({
     },
     searchContainer: {
         backgroundColor: "#ffa600",
-        paddingHorizontal: 10, 
+        paddingHorizontal: 10,
     },
     productListContainer: {
-        
+
         alignItems: "center",
-        flex:1,
+        flex: 1,
+    },
+    loaderStyle: {
+        marginVertical: 16,
+        alignItems: "center", 
+        justifyContent: "center",
     }
-   
+
+
 });
 
 export default ProductScreen;
