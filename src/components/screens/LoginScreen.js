@@ -11,6 +11,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import PopupModal from '../Modal/PopupModal';
+import Privacy from './PrivacyPolicy';
+import { LogBox } from 'react-native';
 
 
 
@@ -19,13 +21,17 @@ const LoginScreen = ({ navigation }) => {
   // destructuring Styles
   const { container, tinyLogo, imageContainer } = styles;
 
+
+  LogBox.ignoreLogs([
+    'Non-serializable values were found in the navigation state',
+  ]);
   
 
   const [inputs, setInputs] = useState({ user_name: '', password: '' });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [checked, setChecked] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
+
   const validate = () => {
     Keyboard.dismiss();
     let isValid = true;
@@ -35,6 +41,10 @@ const LoginScreen = ({ navigation }) => {
     }
     if (!inputs.password) {
       handleError('Please input password', 'password');
+      isValid = false;
+    }
+    if(checked== false){
+      handleError('Please Agree to Privacy Policy','checked')
       isValid = false;
     }
     if (isValid) {
@@ -87,10 +97,13 @@ const LoginScreen = ({ navigation }) => {
     setErrors((prevState) => ({ ...prevState, [input]: error }));
   };
 
-  const toggleModal = () => {
-    setModalVisible(!modalVisible);
-    setChecked(checked);
+  const updateCheckedState = (value) => {
+    setChecked(value);
   };
+
+  
+
+  
 
   return (
     <SafeAreaView style={container}>
@@ -122,19 +135,15 @@ const LoginScreen = ({ navigation }) => {
               status={checked ? 'checked' : 'unchecked'}
               label="Item" 
               onPress={() => {
-                navigation.navigate('PrivacyPolicy');
+                navigation.navigate('PrivacyPolicy',{
+                  updateCheckedState: updateCheckedState,
+                });
+
               
               }}
           />
-          <PopupModal
-            isVisible={modalVisible}
-            onClose={toggleModal}
-            message={
-              <View  style={styles.container}>
-                <Text style={{fontWeight:'bold',}}>GENERAL INSTRUCTIONS</Text>
-              </View>
-            }
-          />
+          {/* <Privacy   updateCheckedState={updateCheckedState}/> */}
+          
           <Text>I agree to the Privacy Policy</Text>
           </View>
           <View>
