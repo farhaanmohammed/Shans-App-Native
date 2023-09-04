@@ -35,6 +35,9 @@ export default function Contacts({ navigation }) {
         setOffset(offset + 1);
     };
 
+
+
+
     useEffect(() => {
         axios.get(`${contacturl}?offset=${offset}&limit=20`)
         .then((res) => {
