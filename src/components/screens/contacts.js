@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, StatusBar, FlatList } from "react-native";
 import { Searchbar } from "react-native-paper";
-import { FAB } from 'react-native-paper';
+import { FAB ,ActivityIndicator} from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
 import axios from "axios";
 import ContactItem from "../contactitem";
@@ -17,9 +17,26 @@ export default function Contacts({ navigation }) {
     const [names, setNames] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [filteredNames, setFilteredNames] = useState([]);
+    const [offset, setOffset] = useState(0);
+    const [loadingMore, setLoadingMore] = useState(false);
+
+    const renderLoader = () => {
+        return (
+            <View style={styles.loaderStyle}>
+                <ActivityIndicator size="large" color="#ffa600" />
+            </View>
+        );
+    };
+
+    const loadMoreItem = () => {
+        console.log("y first u load : ", loadingMore)
+        if (loadingMore) return; // Prevent multiple calls while loading
+        setLoadingMore(true);
+        setOffset(offset + 1);
+    };
 
     useEffect(() => {
-        axios.get(contacturl)
+        axios.get(`${contacturl}?offset=${offset}&limit=20`)
         .then((res) => {
             const namesArray = res.data.data.map((item) => ({
             name: item.name,
@@ -35,7 +52,8 @@ export default function Contacts({ navigation }) {
             state_id:item.state_id,
             pipeline_id:item.pipelines,
             address:item.address,
-            customer_credit_ledger:item.customer_credit_ledger
+            customer_credit_ledger:item.customer_credit_ledger,
+            image_url:item.image_url,
 
             
 
@@ -47,7 +65,7 @@ export default function Contacts({ navigation }) {
         })
         .catch(err => console.log(err));
 
-    }, []);
+    }, [offset]);
 
     useEffect(() => {
         
@@ -73,6 +91,7 @@ export default function Contacts({ navigation }) {
     };
 
     // console.log(names)
+    console.log("ofset",offset);
 
     return (
         <View style={styles.container}>
@@ -95,6 +114,9 @@ export default function Contacts({ navigation }) {
                 data={filteredNames}
                 keyExtractor={(item) => item._id}
                 renderItem={({ item }) => <ContactItem item={item} />}
+                onEndReached={loadMoreItem}
+                onEndReachedThreshold={0.1}
+                ListFooterComponent={renderLoader}
             />
 
         </View>
