@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Keyboard, StyleSheet, Image, Alert } from 'react-native';
 import { Checkbox } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -25,6 +25,17 @@ const LoginScreen = ({ navigation }) => {
   LogBox.ignoreLogs([
     'Non-serializable values were found in the navigation state',
   ]);
+  
+
+  useEffect(() => {
+    const checkLoggedIn = async () => {
+      const userToken = await AsyncStorage.getItem('userToken');
+      if (userToken) {
+        navigation.navigate('Drawer');
+      }
+    };
+    checkLoggedIn();
+  }, []);
   
 
   const [inputs, setInputs] = useState({ user_name: '', password: '' });

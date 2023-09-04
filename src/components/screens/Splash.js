@@ -50,8 +50,8 @@ const Splash = () => {
 
   return (
     <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
-      {/* <LoginScreen navigation={navigation} /> */}
-      <BottomDrawer/>
+      <LoginScreen navigation={navigation} />
+      {/* <BottomDrawer/> */}
     </View>
   )
 }
