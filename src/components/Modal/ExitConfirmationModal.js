@@ -32,7 +32,7 @@ const ExitConfirmationModal = ({ visible, onClose, onConfirm }) => {
     <Modal visible={visible} transparent animationType="fade">
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <View style={{ backgroundColor: 'white', padding: 30 }}>
-          <Text>Are you sure you want to exit the app?</Text>
+          <Text style={styles.exitText}>Are you sure you want to exit the app?</Text>
           {/* <Button title="Cancel" onPress={onClose} /> */}
           <CustomButton title="Cancel" onPress={onClose}/>
           {/* <Button title="Exit" onPress={onConfirm} /> */}
@@ -71,8 +71,9 @@ const styles = StyleSheet.create({
 
     buttonText: {
        marginHorizontal: 20,
-        fontSize: 20,
-        color: "black"
+        fontSize: 16,
+        color: "black", 
+        fontWeight: "bold"
     },
     buttonContainerExit: {
         borderRadius: 15,
@@ -81,6 +82,9 @@ const styles = StyleSheet.create({
         borderColor: "#ffa600",
         // width: "80%",
 
+    }, 
+    exitText: {
+        fontWeight: "bold"
     }
 
 })
