@@ -8,7 +8,8 @@ const HomeProductList = ({ item }) => {
     console.log(item)
 
     const navigation = useNavigation();
-    const { productName, productCost } = item
+    const { productName, productCost, imageUrl } = item
+    console.log(imageUrl)
 
     const getShortProductName = (productName, maxLength) => {
         if (productName.length <= maxLength) {
@@ -26,21 +27,16 @@ const HomeProductList = ({ item }) => {
                 <Image
                     style={styles.tinyLogo}
                     source={{
-                        uri: 'https://cdn1.iconfinder.com/data/icons/scenarium-silver-vol-8/128/044_error_not_found_page-1024.png',
+                        uri: imageUrl || 'https://cdn1.iconfinder.com/data/icons/scenarium-silver-vol-8/128/044_error_not_found_page-1024.png'
                     }}
                 />
                 <View style={styles.bottomContainer}>
                     <Text style={styles.bottomText}>New Lowest Price</Text>
                 </View>
                 <Text style={styles.textFam}>{shortenedProductName}</Text>
-                <Text style={styles.textPrice}>Price : {productCost} QAR</Text>
+                <Text style={styles.textPrice}>Price : {productCost} AED</Text>
             </View>
         </TouchableOpacity>
-
-
-
-
-
     );
 }
 
@@ -50,7 +46,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 5,
         width: 150,
         height: 150,
-        borderRadius: 25,
+        borderRadius: 10,
         justifyContent: "center",
         alignItems: "center",
         borderWidth: 0.5,

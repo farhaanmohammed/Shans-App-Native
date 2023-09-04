@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { View, StyleSheet, Text, Image, StatusBar, FlatList } from "react-native";
 import { FontAwesome } from '@expo/vector-icons';
-import { FAB } from 'react-native-paper';
+import { FAB, ActivityIndicator } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import CustomButton from "../custombutton";
@@ -16,22 +16,51 @@ const productUrl = `${baseUrl}/viewProducts`;
 export default function Home() {
     const numColumns = 2
 
-    const [filteredProducts, setFilteredProducts] = useState([]);
+    const [productNames, setProductNames] = useState([]);
+    const [offset, setOffset] = useState(0);
+    const [loadingMore, setLoadingMore] = useState(false); // Track loading state for loadMore
+
+
+    const renderLoader = () => {
+        return (
+            <View style={styles.loaderStyle}>
+                <ActivityIndicator size="large" color="#ffa600" />
+            </View>
+        );
+    };
+
+
+    const loadMoreItem = () => {
+        console.log("y first u load : ", loadingMore)
+        if (loadingMore) return; // Prevent multiple calls while loading
+        setLoadingMore(true);
+        setOffset(offset + 1);
+    };
+
+    console.log("offset:", offset)
 
     useEffect(() => {
-        axios.get(productUrl)
+        fetchProducts()
+    }, [offset])
+
+
+
+    const fetchProducts = () => {
+        axios.get(`${productUrl}?offset=${offset}&limit=20`)
             .then((res) => {
                 const productNamesArr = res.data.data.map((item) => ({
                     _id: item._id, // Add missing _id property
                     productName: item.product_name,
-                    productCost: item.cost
+                    productCost: item.cost,
+                    imageUrl: item.image_url,
                 }));
-
-                setFilteredProducts(productNamesArr);
+                setProductNames((prevProductNames) => [...prevProductNames, ...productNamesArr]);
+                setLoadingMore(false);
             })
             .catch(err => console.log(err));
-    }, []);
 
+
+    }
 
     const navigation = useNavigation();
 
@@ -64,31 +93,38 @@ export default function Home() {
 
             <View style={styles.button}>
                 <View style={styles.buttonicon}>
-                    <MaterialIcons name="directions-bike" size={28} color="black" />
+                    <Image source={require('../../../assets/homeIcons/ic_dashboard_pickup.png')} style={{ width: 90, height: 50, resizeMode: "stretch" }} />
+                    {/* <MaterialIcons name="directions-bike" size={28} color="black" /> */}
                     <CustomButton title="Pickup" color="#32c918" onPress={() => console.log('Button pressed')} />
                 </View>
 
                 <View style={styles.buttonicon}>
-                    <MaterialIcons name="design-services" size={28} color="black" />
+                    {/* <MaterialIcons name="design-services" size={28} color="black" /> */}
+                    <Image source={require('../../../assets/homeIcons/ic_shan_service.png')} style={{ width: 90, height: 50, resizeMode: "stretch" }} />
                     <CustomButton title="Services" color="#fe0000" onPress={() => navigation.navigate('Jobscreen')} />
                 </View>
 
                 <View style={styles.buttonicon}>
-                    <MaterialIcons name="contact-page" size={28} color="black" />
+                    {/* <MaterialIcons name="contact-page" size={28} color="black" /> */}
+
+                    <Image source={require('../../../assets/homeIcons/ic_dashboard_contacts.png')} style={{ width: 90, height: 50, resizeMode: "stretch" }} />
                     <CustomButton title="Contacts" color="#3c7dff" onPress={() => navigation.navigate('Contactsviewnav')} />
                 </View>
             </View>
-            <View style={{flex:1}}>
+            <View style={{ flex: 1 }}>
                 <View style={styles.productListContainer}>
                     <FlatList
-                        data={filteredProducts}
-                        keyExtractor={(item) => item._id}
+                        data={productNames}
+                        keyExtractor={(item, index) => item._id + index.toString()}
                         renderItem={({ item }) => <HomeProductList item={item} />}
                         numColumns={numColumns}
+                        ListFooterComponent={renderLoader}
+                        onEndReached={loadMoreItem}
+                        onEndReachedThreshold={0.1}
                     />
                 </View>
             </View>
-            
+
             <FAB
                 style={styles.fab}
                 icon={() => <MaterialIcons name="message" size={24} color="white" />}
@@ -122,7 +158,7 @@ const styles = StyleSheet.create({
     fab: {
         position: 'absolute',
         left: 20,
-        bottom: 100, 
+        bottom: 100,
         backgroundColor: '#ffa600',
         borderRadius: 30,
         width: 60,
@@ -130,7 +166,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    
+
     searchContainer: {
         marginTop: 15,
         marginHorizontal: 15,
@@ -175,7 +211,7 @@ const styles = StyleSheet.create({
         fontSize: 24,
         color: "black",
     },
-    productListContainer:{ 
+    productListContainer: {
         // alignSelf: "center",
         alignItems: "center"
     }

@@ -144,7 +144,7 @@ const CategoriesScreen = () => {
                     numColumns={numColumns}
                     ListFooterComponent={renderLoader}
                     onEndReached={loadMoreItem}
-                    onEndReachedThreshold={0}
+                    onEndReachedThreshold={0.1}
                 />
             </View>
         </View>
@@ -189,7 +189,8 @@ const styles = StyleSheet.create({
     },
     loaderStyle: {
         marginVertical: 16,
-        alignItems: "center"
+        alignItems: "center",
+        justifyContent: "center"
     }
 
 });

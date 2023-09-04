@@ -20,7 +20,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.shansapp.android"
@@ -34,13 +34,13 @@
       }
     },
     "owner": "shansapp"
-  },
-  "web": {
-    "favicon": "./assets/favicon.png"
-  },
-  "extra": {
-    "eas": {
-      "projectId": "6a8a7ab8-7afc-4aa0-b633-752df0c1adfb"
-    }
   }
+  // "web": {
+  //   "favicon": "./assets/favicon.png"
+  // },
+  // "extra": {
+  //   "eas": {
+  //     "projectId": "6a8a7ab8-7afc-4aa0-b633-752df0c1adfb"
+  //   }
+  // }
 }

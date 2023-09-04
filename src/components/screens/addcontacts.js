@@ -110,22 +110,22 @@ export default function Addcontact(){
             customer_title:'',trn_no:'',image_url:'',customer_type:''
         }}
         validationSchema={AddSchema}
-        onSubmit={(values,{setFormSubmitted})=>{
+        onSubmit={(values)=>{
             
-            setFormSubmitted(true);
+            // setFormSubmitted(true);
             // axios.post(imageUrl,result).then((res)=>setFieldValue('file_upload', res.data))
             axios.post(contactUrl,values).then(
                 (res)=>{
                     Alert.alert("Contact Successfully added")
                     console.log(values)
-                    setFormSubmitted(false)
+                    // setFormSubmitted(false)
                     navigation.navigate('Contactsviewnav');
                     
 
                 }
             ).catch((err)=>{
                 Alert.alert(err,"Contact not added")
-                setFormSubmitted(false);
+                // setFormSubmitted(false);
             })
         
         }
