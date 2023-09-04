@@ -1,9 +1,46 @@
 import React from "react";
 import { ScrollView } from "react-native";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet,TouchableOpacity, } from "react-native";
+import { useNavigation ,useRoute} from "@react-navigation/native";
+
+const CustomButton = ({ title, onPress }) => {
+    return (
+        <TouchableOpacity onPress={onPress}>
+            <View style={styles.buttonContainerExit}>
+                <View style={styles.buttonContent}>
+                
+                    <Text style={styles.buttonText}>{title}</Text>
+                </View>
+            </View>
+        </TouchableOpacity>
+    );
+};
+
+const CustomButtonExit = ({ title, onPress }) => {
+    return (
+        <TouchableOpacity onPress={onPress}>
+            <View style={styles.buttonContainer}>
+                <View style={styles.buttonContent}>
+                
+                    <Text style={styles.buttonText}>{title}</Text>
+                </View>
+            </View>
+        </TouchableOpacity>
+    );
+};
 
 
 export default function Privacy() {
+
+    const navigation=useNavigation();
+
+    const route = useRoute();
+
+    const updateCheckedState = route.params?.updateCheckedState;
+
+    console.log("route",route);
+
+    
 
     return (
         <ScrollView>
@@ -59,7 +96,7 @@ export default function Privacy() {
                     കമ്പനിയുടെ ആവശ്യങ്ങൾക്ക് വേണ്ടി എല്ലാ ഗ്രൂപ്പ്‌ മെമ്പേഴ്സിനും  USER NAME ഉം പാസ്സ്‌വേർഡും നൽകിയുട്ടുണ്ട് .അത്‌ മറ്റുള്ളവർ ഉപയോഗിച്ചു വല്ല ക്രമക്കേടും നടന്നാൽ അതിന്റെ ഉത്തരവാദിത്തം കമ്പനി ഏറ്റെടുക്കുന്നതല്ല{'\n'}
 
 
-                    1 – SALES IN CHARGE{'\n'}{'\n'}
+                    <Text style={styles.heading}>  1 – SALES IN CHARGE</Text>{'\n'}{'\n'}
 
 
                     1. കസ്റ്റമർ വന്നാൽ അവരോടു നമ്മുടെ  പ്രൊഡക്ടുകളെ പറ്റി വിശദീകരിക്കുക. നമ്മുടെ കൈയിൽ ഇല്ലാത്തതാണെങ്കിൽ  കൂടെ അവരെ അറിയിക്കാതിരിക്കുക. ഇല്ലാത്തപ്രൊഡക്ടുകൾഎവിടെനിന്നെങ്കിലുംസംഘടിപ്പിച്ചുകൊടുക്കാൻശ്രമിക്കുക.{'\n'}{'\n'}
@@ -111,7 +148,7 @@ export default function Privacy() {
                     • എല്ലാ ദിവസവും പുതിയ സാധനങ്ങൾ വിപണിയിൽ ഇറങ്ങി കൊണ്ടിരിക്കുകയാണ്. ആരെങ്കിലും പുതിയ മോഡൽ സാധനങ്ങൾ അന്വേഷിച്ചു വന്നാൽ നമ്മുടെ കൈയിൽ ഇല്ലാത്തതാണെങ്കിൽ ആ പ്രോഡക്റ്റ്മൊബൈൽ ആപ്പ്ളിക്കേഷനിൽ അപ്‌ലോഡ്ചെയ്യുക.{'\n'}
 
                     Every day new items are coming into the market. If someone is looking for a new model and we don\'t have one, upload that product into the mobile application.{'\n'}{'\n'}
-                    2 - CREDIT COLLECTION  {'\n'}
+                    <Text style={styles.heading}> 2 - CREDIT COLLECTION </Text>  {'\n'}
 
 
                     അപ്പ്രൂവ്ഡ്കസ്റ്റമേഴ്സിന്കമ്പനി ക്രെഡിറ്റ്ലിമിറ്റ്നിശ്ചയിച്ചിട്ടുണ്ട് {'\n'}
@@ -132,7 +169,7 @@ export default function Privacy() {
 
                     Many customers do not repay their debts without calling for the debt, and after a few days they may not be in the spot or do accept the information. Lots of money has been lost by the company due to this reason.{'\n'}{'\n'}
 
-                    3 - SHIPMENT FOR CUSTOMER{'\n'}
+                    <Text style={styles.heading}>  3 - SHIPMENT FOR CUSTOMER</Text>{'\n'}
 
 
 
@@ -143,7 +180,7 @@ export default function Privacy() {
 
 
 
-                    4 - CREDIT PAYMENT RECEIPT{'\n'}
+                    <Text style={styles.heading}> 4 - CREDIT PAYMENT RECEIPT</Text>{'\n'}
 
 
                     കടം വാങ്ങിയ പണം തിരിച്ചടക്കുമ്പോൾ ശ്രദ്ധിക്കേണ്ട കാര്യങ്ങൾ {'\n'}
@@ -174,7 +211,7 @@ export default function Privacy() {
 
                     When the customer signs up, they understand their balance amount.  They will know that it is their own account{'\n'}{'\n'}
 
-                    5 - EXPENSES AND PAYMENTS {'\n'}
+                    <Text style={styles.heading}> 5 - EXPENSES AND PAYMENTS </Text>{'\n'}
 
 
                     1. 	കൺട്രോൾറൂമിലെ അനുവാദം ഉള്ളവർ മാത്രമേ ഈ ഇടപാടുകൾ  ചെയ്യാൻ പാടുള്ളു{'\n'}
@@ -189,7 +226,7 @@ export default function Privacy() {
 
                     Upload complete proof of payment. Whenever there is a question from the control room, reply.{'\n'}{'\n'}
 
-                    6 - RMA {'\n'}
+                    <Text style={styles.heading}> 6 - RMA </Text>{'\n'}
 
 
                     1. 	പ്രോഡക്റ്റ്നമ്മുടേത്ആണോന്നു  തിരിച്ചറിയുക {'\n'}
@@ -211,7 +248,7 @@ export default function Privacy() {
 
                     An application has been created to accept RMA. All information about RMA has to be uploaded in that application{'\n'}{'\n'}
 
-                    7 - SERVICE ATTENDING
+                    <Text style={styles.heading}>  7 - SERVICE ATTENDING </Text>{'\n'}
 
 
                     1.	ജോബ് എന്റർ ചെയ്യാതെ ഒരു ഡിവൈസും സർവീസ്സെന്ററിൽ കയറ്റാൻ പാടില്ല. {'\n'}
@@ -242,7 +279,7 @@ export default function Privacy() {
 
                     When the technician has finished the work, keep the device ready for delivery to the customer{'\n'}{'\n'}
 
-                    8 – TECHNICIANS{'\n'}
+                    <Text style={styles.heading}> 8 – TECHNICIANS </Text>{'\n'}
 
                     1 	ജോബ്ഷീറ്റ് ഇല്ലാതെ ഒരു ഡിവൈസുകളും സ്വീകരിക്കാൻ പാടില്ല. {'\n'}
                     No devices should be accepted without a job sheet.{'\n'}
@@ -273,7 +310,7 @@ export default function Privacy() {
 
                     If a job is cancelled, see if any parts of the job are issued. Job cancellation canbe done only if it is returned.{'\n'}{'\n'}
 
-                    9 – CASHIER OR IN CHARGE - {'\n'}
+                    <Text style={styles.heading}> 9 – CASHIER OR IN CHARGE -</Text> {'\n'}
 
                     1. Salesman ഷോപ്പിൽ ഇല്ലെങ്കിൽ കസ്റ്റമറിനെ ഡീൽ ചെയ്യുക.{'\n'}
                     Deal with the customer if the salesman is not in the shop{'\n'}
@@ -284,7 +321,7 @@ export default function Privacy() {
                     3. Follow instructions 1 to 5{'\n'}{'\n'}
 
 
-                    10 – ACCOUNTANT / BACKGROUND + SALES{'\n'}
+                    <Text style={styles.heading}> 10 – ACCOUNTANT / BACKGROUND + SALES </Text>{'\n'}
 
                     1. അക്കൗണ്ടന്റ് ആയിട്ടുള്ള വ്യക്‌തി ഷോപ്പിൽ ഇരിക്കേണ്ടി വന്നാൽ  I മുതൽ VII വരെഉള്ള  നിർദ്ദേശങ്ങൾ പാലിക്കുക.{'\n'}
 
@@ -338,6 +375,13 @@ export default function Privacy() {
 
                     This is because tax paid for a company will be refunded.  Sowe can figure out how much tax for the money we spend by a single click.{'\n'}{'\n'}
                 </Text>
+                <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                    <CustomButton title="Accept" onPress={()=>{if(updateCheckedState){updateCheckedState(true)} navigation.goBack()}}/>
+
+                    <CustomButtonExit title="Reject" onPress={()=>{if(updateCheckedState){updateCheckedState(false)} navigation.goBack()}}/>
+
+                </View>
+                
 
 
 
@@ -356,6 +400,44 @@ const styles = StyleSheet.create({
 
     heading: {
         fontWeight: 'bold',
-        marginBottom: 10,
+        marginBottom: 14,
     },
+
+    buttonContainer: {
+        // backgroundColor: "white",
+        borderRadius: 15,
+        marginVertical: 10,
+        borderWidth:1,
+        borderColor: "#ffa600",
+        // width: "80%",
+    
+        
+    },
+    buttonContent: {
+        flexDirection: "row",
+        
+        // marginLeft: 10,
+        // marginBottom: 12,
+        alignItems: "center",
+        
+        padding: 5
+    },
+
+    buttonText: {
+        marginHorizontal: 20,
+        fontSize: 16,
+        color: "black", 
+        fontWeight: "bold"
+    },
+    buttonContainerExit: {
+        borderRadius: 15,
+        marginVertical: 10,
+        borderWidth:1,
+        borderColor: "#ffa600",
+        // width: "80%",
+
+    }, 
+    exitText: {
+        fontWeight: "bold"
+    }
 });
