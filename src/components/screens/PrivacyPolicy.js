@@ -43,7 +43,9 @@ export default function Privacy() {
     
 
     return (
+       
         <ScrollView>
+
             <View style={styles.container}>
                 {/* <Text style={styles.heading}>GENERAL INSTRUCTIONS</Text>
             <Text>1	SALES IN CHARGE</Text>
