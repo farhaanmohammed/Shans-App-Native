@@ -43,7 +43,7 @@ const LoginScreen = ({ navigation }) => {
       handleError('Please input password', 'password');
       isValid = false;
     }
-    if(checked== false){
+    if(!checked){
       handleError('Please Agree to Privacy Policy','checked')
       isValid = false;
     }

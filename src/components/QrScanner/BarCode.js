@@ -20,7 +20,7 @@ export default function BarCode() {
 
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
-  
+    console.log("data------", data)
     navigation.navigate('ProductDetails', {barScanner: data});
     alert(`Bar code with type ${type} and data ${data} has been scanned!`);
   };
