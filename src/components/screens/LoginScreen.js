@@ -10,6 +10,7 @@ import { baseUrl } from '../../api/const';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
+import PopupModal from '../Modal/PopupModal';
 
 
 
@@ -18,18 +19,13 @@ const LoginScreen = ({ navigation }) => {
   // destructuring Styles
   const { container, tinyLogo, imageContainer } = styles;
 
-  const showToast = () => {
-    Toast.show({
-        type: 'error',
-        text1: 'Hello',
-        
-    });
-}
+  
 
   const [inputs, setInputs] = useState({ user_name: '', password: '' });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [checked, setChecked] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
   const validate = () => {
     Keyboard.dismiss();
     let isValid = true;
@@ -91,6 +87,11 @@ const LoginScreen = ({ navigation }) => {
     setErrors((prevState) => ({ ...prevState, [input]: error }));
   };
 
+  const toggleModal = () => {
+    setModalVisible(!modalVisible);
+    setChecked(checked);
+  };
+
   return (
     <SafeAreaView style={container}>
       <Loader visible={loading} />
@@ -116,14 +117,23 @@ const LoginScreen = ({ navigation }) => {
             error={errors.password}
             password
           />
-           <View style={{ marginVertical: 5, flexDirection: "row", alignItems: "center"}}>
-          <Checkbox
-            status={checked ? 'checked' : 'unchecked'}
-            label="Item" 
-            onPress={() => {
-              setChecked(!checked);
-             
-            }}
+          <View style={{ marginVertical: 5, flexDirection: "row", alignItems: "center"}}>
+            <Checkbox
+              status={checked ? 'checked' : 'unchecked'}
+              label="Item" 
+              onPress={() => {
+                navigation.navigate('PrivacyPolicy');
+              
+              }}
+          />
+          <PopupModal
+            isVisible={modalVisible}
+            onClose={toggleModal}
+            message={
+              <View  style={styles.container}>
+                <Text style={{fontWeight:'bold',}}>GENERAL INSTRUCTIONS</Text>
+              </View>
+            }
           />
           <Text>I agree to the Privacy Policy</Text>
           </View>
