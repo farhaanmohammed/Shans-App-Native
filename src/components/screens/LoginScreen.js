@@ -9,12 +9,22 @@ import Loader from '../Loader';
 import { baseUrl } from '../../api/const';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import Toast from 'react-native-toast-message';
+
 
 
 
 const LoginScreen = ({ navigation }) => {
   // destructuring Styles
   const { container, tinyLogo, imageContainer } = styles;
+
+  const showToast = () => {
+    Toast.show({
+        type: 'error',
+        text1: 'Hello',
+        
+    });
+}
 
   const [inputs, setInputs] = useState({ user_name: '', password: '' });
   const [errors, setErrors] = useState({});
@@ -117,11 +127,14 @@ const LoginScreen = ({ navigation }) => {
           />
           <Text>I agree to the Privacy Policy</Text>
           </View>
-          <Text style={styles.label}>Forgot Password ?</Text>
+          <View>
+
+          </View>
+          <Text style={styles.label} onPress={()=>{Toast.show({type:'error',text1:'Please Contact Admin'})}}>Forgot Password ?</Text>
         </View>
         <View style={styles.bottom}>
 
-          <Text
+          {/* <Text
             onPress={() => navigation.navigate('RegistrationScreen')}
             style={{
               color: COLORS.black,
@@ -129,8 +142,8 @@ const LoginScreen = ({ navigation }) => {
               textAlign: 'center',
               fontSize: 16,
             }}>
-           New User? Register Now
-          </Text>
+            New User? Register Now
+          </Text> */}
               <Button title="Sign In" onPress={validate}/>
         </View>
       </View>
