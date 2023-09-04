@@ -6,14 +6,18 @@ import QuantityChanger from "../QuantityChanger/QuantityChanger";
 
 export default function OrderSummery({product,index,updateTotalPrice,removeProduct, productquantity,productunitprice}){
         // console.log("Product details",product)
+<<<<<<< HEAD
         const [price, setPrice] = useState(product.sale_price || 0);
         const [currency,setCurrency]=useState("QAR")
+=======
+        const [price, setPrice] = useState(product.productCost || 0);
+>>>>>>> 4e498a814633f644da37567609bd9cd57b08b03b
         
         const[quantity,setQuantity]=useState(1);
         
         useEffect(() => {
-            if (product.sale_price != null) {
-                    setPrice(product.sale_price || 0);
+            if (product.productCost != null) {
+                    setPrice(product.productCost || 0);
                 
             }
         }, [product]);

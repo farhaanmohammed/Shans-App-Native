@@ -1,5 +1,6 @@
 import React from "react";
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Image } from "react-native";
+import { createBottomTabNavigator, } from '@react-navigation/bottom-tabs';
 import ProfileScreen from "../components/screens/Profile";
 import CategoriesScreen from "../components/screens/Categories";
 import MyOrdersScreen from "../components/screens/Myorders";
@@ -23,35 +24,50 @@ export default function BottomDrawer() {
 
                     if (route.name === 'Home') {
 
-                        iconName = "home";
+                        return (<Image source={require("../../assets/bottomDrawer/home.png")} style={{
+                            width: 25,
+                            height: 25,
+                        }} />)
 
                     }
 
                     if (route.name === 'Categories') {
 
-                        iconName = "category";
+                        return (<Image source={require("../../assets/bottomDrawer/category.png")} style={{
+                            width: 25,
+                            height: 25,
+                        }} />)
 
                     }
 
                     if (route.name === 'Dash') {
 
-                        iconName = "dashboard";
+                        return (<Image source={require("../../assets/bottomDrawer/dashboard.png")} style={{
+                            width: 25,
+                            height: 25,
+                        }} />)
 
                     }
 
                     if (route.name === 'MyOrders') {
 
-                        iconName = "border-all";
+                        return (<Image source={require("../../assets/bottomDrawer/myorder.png")} style={{
+                            width: 25,
+                            height: 20,
+                        }} />)
 
                     }
 
                     if (route.name === 'Profile') {
 
-                        iconName = "6-ft-apart";
+                        return (<Image source={require("../../assets/bottomDrawer/profile.png")} style={{
+                            width: 25,
+                            height: 25,
+                        }} />)
 
                     }
 
-                    return (<MaterialIcons name={iconName} size={20} color={"white"} />);
+                    // return (<MaterialIcons name={iconName} size={20} color={"white"} />);
                 }
             })}
 
