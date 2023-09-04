@@ -142,9 +142,10 @@ const CategoriesScreen = () => {
                     keyExtractor={(item) => item._id}
                     renderItem={({ item }) => <CategoriesList item={item} contact={contact} />}
                     numColumns={numColumns}
-                    ListFooterComponent={renderLoader}
+                    // ListFooterComponent={loadingMore ? renderLoader : null}
                     onEndReached={loadMoreItem}
                     onEndReachedThreshold={0.1}
+                    ListFooterComponent={renderLoader}
                 />
             </View>
         </View>
