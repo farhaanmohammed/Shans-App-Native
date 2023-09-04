@@ -94,7 +94,7 @@ const LoginScreen = ({ navigation }) => {
           Alert.alert('Error', 'User does not exist');
         }
       } catch (error) {
-        console.error('Axios Error:', error)
+        console.log('Axios Error:', error)
         Alert.alert('Error', 'An error occurred while logging in');
       }
     }, 3000);
