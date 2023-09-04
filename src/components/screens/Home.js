@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { View, StyleSheet, Text, Image, StatusBar, FlatList } from "react-native";
+import { View, StyleSheet, Text, Image, StatusBar, FlatList, BackHandler } from "react-native";
 import { FontAwesome } from '@expo/vector-icons';
 import { FAB, ActivityIndicator } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -9,11 +9,15 @@ import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { baseUrl } from "../../api/const";
 import HomeProductList from "./HomeProductList";
+import ExitConfirmationModal from "../Modal/ExitConfirmationModal";
 
 
 const productUrl = `${baseUrl}/viewProducts`;
 
 export default function Home() {
+
+    const [exitModalVisible, setExitModalVisible] = useState(false); // State for showing the exit confirmation modal
+
     const numColumns = 2
 
     const [productNames, setProductNames] = useState([]);
@@ -29,6 +33,18 @@ export default function Home() {
         );
     };
 
+     // Handle the back button press
+     const handleBackPress = () => {
+        // Show the exit confirmation modal when the back button is pressed
+        setExitModalVisible(true);
+        return true; // Prevent default behavior
+    };
+
+  // Exit the app
+  const handleExitConfirm = () => {
+    BackHandler.exitApp();
+};
+
 
     const loadMoreItem = () => {
         console.log("y first u load : ", loadingMore)
@@ -41,6 +57,14 @@ export default function Home() {
 
     useEffect(() => {
         fetchProducts()
+
+        // Add the event listener for the back button press
+        BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+
+        // Remove the event listener when the component unmounts
+        return () => {
+            BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+        };
     }, [offset])
 
 
@@ -66,6 +90,11 @@ export default function Home() {
 
     return (
         <View style={styles.container}>
+             <ExitConfirmationModal
+                visible={exitModalVisible}
+                onClose={() => setExitModalVisible(false)}
+                onConfirm={handleExitConfirm}
+            />
             <StatusBar backgroundColor="#ffa600" />
 
             <View style={styles.imageContainer} >
