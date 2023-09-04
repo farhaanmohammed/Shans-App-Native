@@ -106,7 +106,7 @@ const App = () => {
         })}>
           <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false, }} />
           <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false, }}  />
-          <Stack.Screen name="PrivacyPolicy" component={Privacy}   title="Privacy Policy"/>
+          <Stack.Screen name="PrivacyPolicy" component={Privacy}  options={{ headerStyle: { backgroundColor: '#ffa600', }, headerTintColor: "white", title: "Privacy Policy", headerLeft: null,}}/>
           <Stack.Screen name="RegistrationScreen" component={RegistrationScreen} />
           <Stack.Screen name="Drawer" component={BottomDrawer} options={{ headerShown: false, }}/>
           <Stack.Screen name="Homenav" component={Home} options={{ headerShown: false, }} />

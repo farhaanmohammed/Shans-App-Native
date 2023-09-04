@@ -44,7 +44,8 @@ const LoginScreen = ({ navigation }) => {
       isValid = false;
     }
     if(!checked){
-      handleError('Please Agree to Privacy Policy','checked')
+      // Alert.alert("Please agree to privacy Policy")
+      Toast.show({type:'error',text1:'Please agree to privacy Policy',position:'bottom'})
       isValid = false;
     }
     if (isValid) {
