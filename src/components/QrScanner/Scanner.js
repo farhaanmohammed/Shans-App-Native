@@ -7,7 +7,7 @@ import { useNavigation,useRoute } from '@react-navigation/native';
 export default function Scanner() {
     const navigation = useNavigation();
     const [hasPermission, setHasPermission] = useState(null);
-    // const [scanned, setScanned] = useState(false);
+    const [scanned, setScanned] = useState(false);
     // const [data, setData] = useState(null);
     // const [customerName, setCustomerName] = useState(null);
     const [serialMode, setSerialMode] = useState(false);
@@ -27,7 +27,7 @@ export default function Scanner() {
     const handleBarCodeScanned =({ type, data }) => {
 
         console.log('daaaaaaaaaaaaaaaaaaata', data)
-        // setScanned(true);
+        setScanned(true);
 
         // if(serialMode){
             
@@ -73,11 +73,11 @@ export default function Scanner() {
                 onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
                 style={StyleSheet.absoluteFillObject}
             />
-
+{/* 
             <Button
                 title={serialMode ? 'Exit Serial Mode' : 'Enter Serial Mode'}
                 onPress={() => setSerialMode(!serialMode)} // Toggle the serial scanning mode
-            />
+            /> */}
             {scanned && (
                 <View>
                     {/* <Text>Scanned Data: {data}</Text>

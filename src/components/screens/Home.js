@@ -7,6 +7,7 @@ import {
     StatusBar,
     FlatList,
     BackHandler,
+    TouchableOpacity,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { FAB, ActivityIndicator } from "react-native-paper";
@@ -24,9 +25,9 @@ const productUrl = `${baseUrl}/viewProducts`;
 export default function Home() {
     const route = useRoute();
 
-    
+
     const numColumns = 2;
-    
+
     const [productNames, setProductNames] = useState([]);
     const [offset, setOffset] = useState(0);
     const [loadingMore, setLoadingMore] = useState(false); // Track loading state for loadMore
@@ -122,7 +123,9 @@ export default function Home() {
                     textcolor="#ffa600"
                     onPress={() => navigation.navigate("OptionScreen")}
                 />
-                <AntDesign name="barcode" size={22} color="white" />
+                <TouchableOpacity onPress={() => navigation.navigate('BarCode')}>
+                    <AntDesign name="barcode" size={22} color="white" />
+                </TouchableOpacity>
             </View>
             <View>
                 <Text style={{ fontWeight: "500", textAlign: "center", marginTop: 8, fontSize: 16 }}>

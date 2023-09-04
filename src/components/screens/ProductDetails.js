@@ -5,7 +5,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import axios from "axios";
 import { baseUrl } from "../../api/const";
 
-const productDetailsUrl = `${baseUrl}/viewProducts/`;
+// const productDetailsUrl = `${baseUrl}/viewProducts/`;
 
 
 
@@ -33,40 +33,53 @@ const CustomAddButton = ({ title, onPress }) => {
   );
 };
 
-
-
 const ProductDetails = () => {
-  const route = useRoute()
-  const id = route.params.item._id;
-  // const {item} =route.params
-
-  const contact = route.params.contact
+  const route = useRoute();
+  const id = route.params?.item?._id;
+  const barcodeData = route.params?.barScanner;
+  const contact = route.params.contact;
 
   const [detail, setDetail] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    axios.get(productDetailsUrl + id).then((res) => {
-      const productItems = res.data.data[0]; // Assuming there's only one item in the array
+    // Construct the productDetailsUrl based on barcodeData and id
+    let productDetailsUrl;
 
-      if (productItems) {
-        const details = {
-          productID: productItems._id,
-          productName: productItems.product_name,
-          productCategory: productItems.category_name,
-          productQuantity: productItems.total_product_quantity,
-          totalProductQuantity: productItems.total_product_quantity,
-          productArea: productItems.area,
-          alternateProduct: productItems.alternate_products,
-          productCost: productItems.cost,
-          productCode: productItems.product_code,
-          productDesc: productItems.product_description, 
-          minSalePrice: productItems.minimal_sales_price,
-          sale_price: productItems.sale_price,
-        };
-        setDetail(details);
-      }
-    });
-  }, [id]);
+    if (barcodeData) {
+      // If barcodeData is available, use it to fetch data
+      productDetailsUrl = `${baseUrl}/viewProducts?product_name=${barcodeData}`;
+    } else if (id) {
+      // If barcodeData is not available but id is, use id to fetch data
+      productDetailsUrl = `${baseUrl}/viewProducts/${id}`;
+    }
+
+    if (productDetailsUrl) {
+      setLoading(true);
+      axios.get(productDetailsUrl).then((res) => {
+        const productItems = res.data.data[0]; // Assuming there's only one item in the array
+
+        if (productItems) {
+          const details = {
+            productID: productItems._id,
+            productName: productItems.product_name,
+            productCategory: productItems.category_name,
+            productQuantity: productItems.total_product_quantity,
+            totalProductQuantity: productItems.total_product_quantity,
+            productArea: productItems.area,
+            alternateProduct: productItems.alternate_products,
+            productCost: productItems.cost,
+            productCode: productItems.product_code,
+            productDesc: productItems.product_description,
+            minSalePrice: productItems.minimal_sales_price,
+            sale_price: productItems.sale_price,
+          };
+          setDetail(details);
+        }
+        setLoading(false);
+      });
+    }
+  }, [id, barcodeData]);
 
   const navigation = useNavigation();
 
@@ -163,10 +176,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 15
   },
   productName: {
-    
+
     fontWeight: "bold",
     fontSize: 14,
-    maxWidth: "83%", 
+    maxWidth: "83%",
   },
   rowContainer: {
     flexDirection: "column",
@@ -200,7 +213,7 @@ const styles = StyleSheet.create({
   addbutton: {
     position: "absolute",
     bottom: 20, // Adjust the distance from the bottom as needed
-    left:10,
+    left: 10,
     right: 10,
     padding: 10,
     alignItems: "center",

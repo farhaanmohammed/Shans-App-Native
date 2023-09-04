@@ -30,6 +30,7 @@ const Stack = createNativeStackNavigator();
 import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
 import TaskManager from "./src/components/screens/TaskManager";
 import AddTask from "./src/components/screens/AddTask";
+import BarCode from "./src/components/QrScanner/BarCode";
 
 /*
   1. Create the config
@@ -125,6 +126,7 @@ const App = () => {
           <Stack.Screen name="Sign"  component={Sign} options={{ headerStyle: { backgroundColor: '#ffa600' }, headerShown: false, title: "Scanner" }} />
           <Stack.Screen name="TaskManager" component={TaskManager} options={{ headerStyle: { backgroundColor: '#ffa600' }, headerShown: false, title: "Task Manager" }} />
           <Stack.Screen name="AddTask" component={AddTask} options={{ headerStyle: { backgroundColor: '#ffa600' }, headerShown: false, title: "Add Task" }} />
+          <Stack.Screen name="BarCode" component={BarCode} options={{ headerStyle: { backgroundColor: '#ffa600' }, headerShown: false, title: "Bar Code" }} />
         </Stack.Navigator>
         <Toast config={toastConfig} />
       </View>
