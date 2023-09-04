@@ -161,7 +161,7 @@ const LoginScreen = ({ navigation }) => {
           <View>
 
           </View>
-          <Text style={styles.label} onPress={()=>{Toast.show({type:'error',text1:'Please Contact Admin'})}}>Forgot Password ?</Text>
+          <Text style={styles.label} onPress={()=>{Toast.show({type:'error',text1:'Please Contact Admin',position:'bottom'})}}>Forgot Password ?</Text>
         </View>
         <View style={styles.bottom}>
 

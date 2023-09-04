@@ -74,6 +74,7 @@ export default function ContactDetails({ route, navigation }) {
   const CreateinvoiceUrl = `${baseUrl}/createCombinedInvoicePaymentReceived`
 
   const[totalPrice,setTotalprice]=useState([]);
+  const [currency,setCurrency]=useState("QAR")
 
   const updateTotalPrice = (newTotalPrice, index) => {
     setTotalprice(prevPrices => {
@@ -308,7 +309,7 @@ console.log("date",formattedDate)
                   <Text style={styles.productLabel}>Total Quantity: {addedProducts.length}</Text>
                   <View style={{ flexDirection: "row" }}>
                     <Text style={styles.productLabel}>Price items  </Text>
-                    <Text style={styles.productText}> {totalPriceSum} AED</Text>
+                    <Text style={styles.productText}> {totalPriceSum} {currency}</Text>
                   </View>
                 </View>
                 <View style={styles.submitButtonContainer}>

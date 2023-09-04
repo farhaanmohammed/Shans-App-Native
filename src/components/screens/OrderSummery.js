@@ -6,6 +6,8 @@ import QuantityChanger from "../QuantityChanger/QuantityChanger";
 
 export default function OrderSummery({product,index,updateTotalPrice,removeProduct, productquantity,productunitprice}){
         // console.log("Product details",product)
+        
+        const [currency,setCurrency]=useState("QAR")
         const [price, setPrice] = useState(product.productCost || 0);
         
         const[quantity,setQuantity]=useState(1);
@@ -75,7 +77,7 @@ export default function OrderSummery({product,index,updateTotalPrice,removeProdu
                         <View style={styles.priceContainer}>
                             <TextInput keyboardType="numeric" onChangeText={(text)=>{handlePriceChange(text) } } value={price.toString()}></TextInput>
                         </View>
-                        <Text style={styles.priceText}>AED</Text>
+                        <Text style={styles.priceText}>{currency}</Text>
                     </View>
                     
                     <View style={styles.removeContainer}>

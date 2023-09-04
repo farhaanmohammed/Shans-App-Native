@@ -73,6 +73,8 @@ const ProductDetails = () => {
             productDesc: productItems.product_description,
             minSalePrice: productItems.minimal_sales_price,
             sale_price: productItems.sale_price,
+            image_url:productItems.image_url,
+            
           };
           setDetail(details);
         }
@@ -95,14 +97,14 @@ const ProductDetails = () => {
           <Image
             style={styles.tinyLogo}
             source={{
-              uri: 'https://cdn1.iconfinder.com/data/icons/scenarium-silver-vol-8/128/044_error_not_found_page-1024.png',
+              uri: detail.image_url ||  'https://cdn1.iconfinder.com/data/icons/scenarium-silver-vol-8/128/044_error_not_found_page-1024.png',
             }}
           />
           <View style={styles.productInfoContainer}>
             <Text style={styles.productName}>{detail.productName}</Text>
             <View style={styles.rowContainer}>
               <Text style={styles.rowText}>In Stock</Text>
-              <Text style={styles.infoText}>{detail.productCost} AED</Text>
+              <Text style={styles.infoText}>{detail.productCost} QAR</Text>
             </View>
           </View>
         </View>
