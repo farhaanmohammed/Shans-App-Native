@@ -27,7 +27,7 @@ const CustomButton = ({ title, onPress }) => {
 const AddTask = () => {
   // let [started, setStarted] = useState(false);
   // let [results, setResults] = useState([]);
-  
+
 
   // useEffect(() => {
   //   Voice.onSpeechError = onSpeechError;
@@ -61,7 +61,7 @@ const AddTask = () => {
 
   const navigation = useNavigation()
 
-  
+
 
   return (
     <View style={styles.container}>
@@ -87,10 +87,10 @@ const AddTask = () => {
           numberOfLines={4}
           style={styles.taskInput}
           placeholder='Voice Text'
-      
+
         />
-  <View style={styles.button}></View>
-{/* 
+        <View style={styles.button}></View>
+        {/* 
   {!started ? <Button title='Start Speech to Text' onPress={startSpeechToText} /> : undefined}
       {started ? <Button title='Stop Speech to Text' onPress={stopSpeechToText} /> : undefined}
       {results.map((result, index) => <Text key={index}>{result}</Text>)} */}
@@ -98,10 +98,10 @@ const AddTask = () => {
 
         <View style={styles.alignRight}>
           <TouchableOpacity>
-           
-              <FontAwesome name="stop-circle" size={24} color="black" />
-              <MaterialIcons name="keyboard-voice" size={24} color="black" />
-          
+
+            <FontAwesome name="stop-circle" size={24} color="black" />
+            <MaterialIcons name="keyboard-voice" size={24} color="black" />
+
           </TouchableOpacity>
 
         </View>
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
   },
   button: {
     flex: 1,
-    alignItems:"center"
+    alignItems: "center"
   }
 
 

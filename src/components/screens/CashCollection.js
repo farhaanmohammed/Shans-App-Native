@@ -35,7 +35,7 @@ const listAuditingUrl = `${baseUrl}/viewAuditing`;
 
 
 const CashCollection = () => {
-    
+
 
     // const auditingList = dummyAuditingList
     const [auditingList, setAuditingList] = useState([]);
@@ -61,22 +61,22 @@ const CashCollection = () => {
     const navigation = useNavigation();
 
     return (
-        
-        
+
+
         <View style={styles.container}>
             <ScrollView>
-            {auditingList.length === 0 ? (
-                <Text style={styles.notFoundText}>No Collections found</Text>
-            ) : (
-                auditingList.map((data, index) => (
-                    <View style={styles.detailsContainer} key={data.id}>
-                        <Text style={styles.label}>{data.customerName}</Text>
-                        <Text  style={styles.label}>{data.totalAmount}</Text>
-                        <Text  style={styles.label}>{data.sequenceNum}</Text>
-                    </View>
-                ))
-            )}
-                </ScrollView>
+                {auditingList.length === 0 ? (
+                    <Text style={styles.notFoundText}>No Collections found</Text>
+                ) : (
+                    auditingList.map((data, index) => (
+                        <View style={styles.detailsContainer} key={data.id}>
+                            <Text style={styles.label}>{data.customerName}</Text>
+                            <Text style={styles.label}>{data.totalAmount}</Text>
+                            <Text style={styles.label}>{data.sequenceNum}</Text>
+                        </View>
+                    ))
+                )}
+            </ScrollView>
             <TouchableOpacity
                 onPress={() => navigation.navigate('NewCollection')}
                 style={styles.fab}

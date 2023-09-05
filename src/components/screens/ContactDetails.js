@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Text, TouchableWithoutFeedback, TouchableOpacity, TextInput, Button, ScrollView,FlatList } from "react-native";
+import { StyleSheet, View, Text, TouchableWithoutFeedback, TouchableOpacity, TextInput, Button, ScrollView, FlatList } from "react-native";
 import { MaterialIcons, AntDesign } from '@expo/vector-icons';
 import axios from "axios";
 import OrderSummery from "./OrderSummery";
@@ -38,43 +38,43 @@ export default function ContactDetails({ route, navigation }) {
   const { item, product } = route.params;
   console.log("Product prop:", product);
 
-  console.log("contact",item)
+  console.log("contact", item)
   // console.log("pipeline_id..............",item.customer_credit_ledger)
 
   // const[warehouseName,setWarehouseName]=useState('');
   // const[warehouseId,setWarehouseId]=useState('');
-  const[user ,setUser]=useState('');
+  const [user, setUser] = useState('');
 
-  useEffect(()=>{
-      const fetchData = async()=>{
+  useEffect(() => {
+    const fetchData = async () => {
 
-        try {
-          const StoredData=await AsyncStorage.getItem('userData')
+      try {
+        const StoredData = await AsyncStorage.getItem('userData')
 
-          console.log("storedData:",StoredData);
+        console.log("storedData:", StoredData);
 
-          if (StoredData!==null){
-            const userData=JSON.parse(StoredData)
-            setUser(userData);
-          }else{
-            setUser('No data Found')
-          }
-        } catch(error){
-          console.log('error fetching data',error)
+        if (StoredData !== null) {
+          const userData = JSON.parse(StoredData)
+          setUser(userData);
+        } else {
+          setUser('No data Found')
         }
+      } catch (error) {
+        console.log('error fetching data', error)
       }
+    }
 
-      fetchData();
+    fetchData();
 
-  },[])
+  }, [])
 
-  console.log("Login user data",user);
-  
+  console.log("Login user data", user);
+
 
   const CreateinvoiceUrl = `${baseUrl}/createCombinedInvoicePaymentReceived`
 
-  const[totalPrice,setTotalprice]=useState([]);
-  const [currency,setCurrency]=useState("QAR")
+  const [totalPrice, setTotalprice] = useState([]);
+  const [currency, setCurrency] = useState("QAR")
 
   const updateTotalPrice = (newTotalPrice, index) => {
     setTotalprice(prevPrices => {
@@ -84,75 +84,72 @@ export default function ContactDetails({ route, navigation }) {
     });
   };
 
-  const[prquantity,setPrQuantity]=useState([])
+  const [prquantity, setPrQuantity] = useState([])
 
-  const productquantity=(quantity,index)=>{
-      setPrQuantity(prevQuantity=>{
-        const newquantity=[...prevQuantity];
-        newquantity[index]=quantity;
-        return newquantity;
-      })
+  const productquantity = (quantity, index) => {
+    setPrQuantity(prevQuantity => {
+      const newquantity = [...prevQuantity];
+      newquantity[index] = quantity;
+      return newquantity;
+    })
   };
 
-  const[unitprice,setUnitPrice]=useState([])
+  const [unitprice, setUnitPrice] = useState([])
 
-  const productunitprice=(price,index)=>{
-    setUnitPrice(prevunitprice=>{
-      const newunitprice=[...prevunitprice];
-      newunitprice[index]=price;
+  const productunitprice = (price, index) => {
+    setUnitPrice(prevunitprice => {
+      const newunitprice = [...prevunitprice];
+      newunitprice[index] = price;
       return newunitprice;
     });
   }
 
   const totalPriceSum = totalPrice.reduce((sum, value) => sum + value, 0);
 
-  const removeProduct = (productIDToRemove,index) => {
+  const removeProduct = (productIDToRemove, index) => {
     setAddedProducts(prevProducts => prevProducts.filter(p => p.productID !== productIDToRemove));
     setTotalprice(prevPrices => {
       const newPrices = [...prevPrices];
       newPrices.splice(index, 1); // Remove the value at the specified index
       return newPrices;
-  });
-};
+    });
+  };
 
-  const[addedProducts,setAddedProducts]=useState([]);
-  useEffect(()=>{
-    if(product ){
-        const productExists=addedProducts.some(p=>p.productID===product.productID)
-      if(!productExists){
+  const [addedProducts, setAddedProducts] = useState([]);
+  useEffect(() => {
+    if (product) {
+      const productExists = addedProducts.some(p => p.productID === product.productID)
+      if (!productExists) {
         setAddedProducts(prevProducts => [...prevProducts, product]);
       }
-      
+
     }
-  },[product])
-  
-console.log("pushed products:---------------------",addedProducts);
+  }, [product])
+
+  console.log("pushed products:---------------------", addedProducts);
 
 
-// console.log("UpdatedTotalPrice in Contactdetails page",totalPrice);
+  // console.log("UpdatedTotalPrice in Contactdetails page",totalPrice);
 
-const orderItems=addedProducts.map((product,index)=>({
-  "product_id":product.productID,
-  "product_name":product.productName,
-  "tax_type_id":"648d9b8fef9cd868dfbfa37f",
-  "tax_value":0,
-  "uom":null,
-  "qty":prquantity[index],
-  "unit_price":unitprice[index]*prquantity[index],
-  "discount_percentage": 0,
-  "remarks": null,
-  "total": totalPrice[index],
-  "unit_cost": product.productCost,
-  "total_cost": prquantity[index]*product.productCost,
-  "return_quantity": 0
-}))
+  const orderItems = addedProducts.map((product, index) => ({
+    "product_id": product.productID,
+    "product_name": product.productName,
+    "tax_type_id": "648d9b8fef9cd868dfbfa37f",
+    "tax_value": 0,
+    "uom": null,
+    "qty": prquantity[index],
+    "unit_price": unitprice[index] * prquantity[index],
+    "discount_percentage": 0,
+    "remarks": null,
+    "total": totalPrice[index],
+    "unit_cost": product.productCost,
+    "total_cost": prquantity[index] * product.productCost,
+    "return_quantity": 0
+  }))
 
-console.log("ordersummery",orderItems);
+  console.log("ordersummery", orderItems);
 
-// console.log("contact details",item._id,item.name,item.warehouse_id,item.warehousename)
-
-
-
+  // console.log("contact details",item._id,item.name,item.warehouse_id,item.warehousename)
 
 
 
@@ -161,24 +158,27 @@ console.log("ordersummery",orderItems);
 
 
 
-const currentDate = new Date();
-const year = currentDate.getFullYear();
-const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Adding 1 to month since it's zero-based
-const day = currentDate.getDate().toString().padStart(2, '0');
 
-const formattedDate = `${year}-${month}-${day}`;
-console.log("date",formattedDate)
+
+
+  const currentDate = new Date();
+  const year = currentDate.getFullYear();
+  const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Adding 1 to month since it's zero-based
+  const day = currentDate.getDate().toString().padStart(2, '0');
+
+  const formattedDate = `${year}-${month}-${day}`;
+  console.log("date", formattedDate)
 
 
   function handlesubmit() {
 
-    const payload=  {
-      "total_amount":totalPriceSum,
+    const payload = {
+      "total_amount": totalPriceSum,
       "date": formattedDate,
       "amounts": totalPriceSum,
-      "payment_status":"un_paid",
+      "payment_status": "un_paid",
       "invoice_status": "un_paid",
-      "total_tax_amount":0,
+      "total_tax_amount": 0,
       "remarks": null,
       "trn_no": item.trn_no,
       "delivery_address": item.address,
@@ -188,7 +188,7 @@ console.log("date",formattedDate)
       "customer_id": item._id,
       "customer_name": item.name,
       "warehouse_id": user.warehouse.warehouse_id,
-      "warehouse_name":user.warehouse.warehouse_name,
+      "warehouse_name": user.warehouse.warehouse_name,
       "pipeline_id": null,
       "payment_terms_id": null,
       "delivery_method_id": null,
@@ -226,29 +226,29 @@ console.log("date",formattedDate)
       "Pdc_status": ""
     }
 
-    console.log("payload.....................",payload)
+    console.log("payload.....................", payload)
 
-    
 
-    
+
+
 
 
 
     axios.post(CreateinvoiceUrl, payload).then(res => {
       // console.log("payload",payload)
-      console.log("response-----------------------------------------",res.data);
-      if(res.data.success=="true"){
+      console.log("response-----------------------------------------", res.data);
+      if (res.data.success == "true") {
         alert("Invoice Success")
 
-      } else{
+      } else {
         alert(res.data.message)
       }
-      
+
       // console.log("success");
       navigation.navigate('Contactsviewnav');
     }).catch(err => console.log(err))
-    }
-  
+  }
+
 
   // console.log("total price in contact page",totalPrice);
   // console.log("quantity",prquantity);
@@ -261,14 +261,14 @@ console.log("date",formattedDate)
 
 
 
-  
-  
 
 
-  
 
 
-  
+
+
+
+
   return (
 
     <View style={styles.container}>
@@ -287,21 +287,21 @@ console.log("date",formattedDate)
       <View style={styles.addButtonContainer}>
         <CustomAddButton
           title="Add Products(s)"
-          onPress={() => { navigation.navigate('ProductScreen', { contact: item });  }}
+          onPress={() => { navigation.navigate('ProductScreen', { contact: item }); }}
         />
       </View>
-      {product && addedProducts.length > 0 &&(
+      {product && addedProducts.length > 0 && (
         // <View>
         //   <Text>{addedProducts[0].productName}</Text>
         // </View>
         <View style={styles.scroll}>
           <FlatList
-              data={addedProducts}
-              keyExtractor={item=>item.productID}
-              renderItem={({item,index})=><OrderSummery product={item} index={index} updateTotalPrice={updateTotalPrice} removeProduct={removeProduct} productquantity={productquantity} productunitprice={productunitprice}/>}
+            data={addedProducts}
+            keyExtractor={item => item.productID}
+            renderItem={({ item, index }) => <OrderSummery product={item} index={index} updateTotalPrice={updateTotalPrice} removeProduct={removeProduct} productquantity={productquantity} productunitprice={productunitprice} />}
           />
 
-          
+
           <View style={styles.bottomContainer}>
             {addedProducts.every(product => product.totalProductQuantity > 0) ? (
               <>
@@ -324,24 +324,24 @@ console.log("date",formattedDate)
             )}
           </View>
 
-          
-          
-          
+
+
+
 
         </View>
 
       )}
-      
-      
-      
+
+
+
 
 
     </View>
 
-    )
-  }
-    
-  
+  )
+}
+
+
 
 
 

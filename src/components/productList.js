@@ -2,11 +2,11 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View, Image } from "react-native";
 import { useNavigation } from '@react-navigation/native'
 
-const ProductList = ({ item ,contact}) => {
+const ProductList = ({ item, contact }) => {
     console.log('Product List ++++++++++++ ')
 
 
-    console.log("contact Iist",contact)
+    console.log("contact Iist", contact)
 
     const navigation = useNavigation();
     const { productName, productCost, imageUrl } = item
@@ -21,8 +21,8 @@ const ProductList = ({ item ,contact}) => {
 
     const shortenedProductName = getShortProductName(productName, 20);
 
-    return (          
-        <TouchableOpacity onPress={() => navigation.navigate('ProductDetails', { item: item, contact:contact})}>
+    return (
+        <TouchableOpacity onPress={() => navigation.navigate('ProductDetails', { item: item, contact: contact })}>
             <View style={[styles.box]} >
                 <Image
                     style={styles.tinyLogo}
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         borderWidth: 0.5,
-        borderColor:"#ffa600"
+        borderColor: "#ffa600"
     },
     textFam: {
         fontFamily: "sans-serif",

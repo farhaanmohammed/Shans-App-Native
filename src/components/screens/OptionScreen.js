@@ -71,30 +71,30 @@ const OptionScreen = () => {
             </View>
             <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
                 <TouchableOpacity
-                 onPress={() => navigation.navigate('CashCollection')}>
+                    onPress={() => navigation.navigate('CashCollection')}>
 
-                <View style={[styles.boxDiffer, { backgroundColor: '#ebebeb' }]} >
-                    <Image
-                        source={require('../../../assets/optionsIcons/cashCollection.png')}
-                        fadeDuration={0}
-                        style={{ width: 45, height: 45 }}
-                    />
-                    <Text style={styles.textFam}>Cash Collection</Text>
-                </View>
+                    <View style={[styles.boxDiffer, { backgroundColor: '#ebebeb' }]} >
+                        <Image
+                            source={require('../../../assets/optionsIcons/cashCollection.png')}
+                            fadeDuration={0}
+                            style={{ width: 45, height: 45 }}
+                        />
+                        <Text style={styles.textFam}>Cash Collection</Text>
+                    </View>
                 </TouchableOpacity>
 
                 {/* task manager in the below opacity */}
                 <TouchableOpacity
-                 onPress={() => navigation.navigate('AddTask')}> 
+                    onPress={() => navigation.navigate('AddTask')}>
 
-                <View style={[styles.boxDiffer, { backgroundColor: '#ebebeb' }]} >
-                    <Image
-                        source={require('../../../assets/optionsIcons/task.png')}
-                        fadeDuration={0}
-                        style={{ width: 45, height: 45 }}
-                    />
-                    <Text style={styles.textFam}>Task Manager</Text>
-                </View>
+                    <View style={[styles.boxDiffer, { backgroundColor: '#ebebeb' }]} >
+                        <Image
+                            source={require('../../../assets/optionsIcons/task.png')}
+                            fadeDuration={0}
+                            style={{ width: 45, height: 45 }}
+                        />
+                        <Text style={styles.textFam}>Task Manager</Text>
+                    </View>
                 </TouchableOpacity>
             </View>
         </View>

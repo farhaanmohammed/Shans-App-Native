@@ -25,7 +25,7 @@ const searchUrl = `${baseUrl}/viewProducts?product_name=`;
 const ProductScreen = () => {
 
     const [offset, setOffset] = useState(0);
-    const [loadingMore, setLoadingMore] = useState(false); 
+    const [loadingMore, setLoadingMore] = useState(false);
     const [productNames, setProductNames] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [filteredProducts, setFilteredProducts] = useState([]);
@@ -63,7 +63,7 @@ const ProductScreen = () => {
         ? `${baseUrl}/viewProducts?product_name=${category}`
         : `${baseUrl}/viewProducts`;
 
-   
+
 
 
     useEffect(() => {
@@ -81,7 +81,7 @@ const ProductScreen = () => {
                     productCost: item.cost,
                 }));
                 setProductNames((prevProductNames) => [...prevProductNames, ...productNamesArr]);
-                setLoadingMore(false); 
+                setLoadingMore(false);
             })
             .catch((err) => console.log(err));
     };
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     },
     loaderStyle: {
         marginVertical: 16,
-        alignItems: "center", 
+        alignItems: "center",
         justifyContent: "center",
     }
 
