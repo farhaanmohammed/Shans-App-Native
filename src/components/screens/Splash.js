@@ -112,11 +112,8 @@ const Splash = () => {
 
   return (
     <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
-      {userLoggedIn ? (
-        <BottomDrawer /> // User is logged in, navigate to the main app screen
-      ) : (
-        <LoginScreen navigation={navigation} /> // User is not logged in, show the login screen
-      )}
+      <LoginScreen navigation={navigation} />
+      {/* <BottomDrawer/> */}
     </View>
   );
 };
