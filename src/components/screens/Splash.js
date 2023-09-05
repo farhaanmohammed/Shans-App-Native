@@ -57,7 +57,6 @@
 // }
 
 // export default Splash;
-
 import React, { useCallback, useEffect, useState } from 'react';
 import { View } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
@@ -83,7 +82,6 @@ const Splash = () => {
         // Check if the user is logged in by retrieving a stored token or data
         const userToken = await AsyncStorage.getItem('userToken');
         if (userToken) {
-          console.log("userToken: " + userToken);
           setUserLoggedIn(true); // User is logged in
         }
         // Artificially delay for two seconds to simulate a slow loading
@@ -112,8 +110,11 @@ const Splash = () => {
 
   return (
     <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
-      <LoginScreen navigation={navigation} />
-      {/* <BottomDrawer/> */}
+      {userLoggedIn ? (
+        <BottomDrawer /> // User is logged in, navigate to the main app screen
+      ) : (
+        <LoginScreen navigation={navigation} /> // User is not logged in, show the login screen
+      )}
     </View>
   );
 };
