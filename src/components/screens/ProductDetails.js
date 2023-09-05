@@ -63,18 +63,20 @@ const ProductDetails = () => {
           const details = {
             productID: productItems._id,
             productName: productItems.product_name,
-            productCategory: productItems.category_name,
+            productCategory: productItems.category.category_name,
             productQuantity: productItems.total_product_quantity,
             totalProductQuantity: productItems.total_product_quantity,
-            productArea: productItems.area,
-            alternateProduct: productItems.alternate_products,
+            productArea: productItems.area.area_name,
+            // alternateProduct: productItems.alternate_products,
             productCost: productItems.cost,
-            productCode: productItems.product_code,
+            productCode: productItems.barcode,
             productDesc: productItems.product_description,
             minSalePrice: productItems.minimal_sales_price,
             sale_price: productItems.sale_price,
-            image_url:productItems.image_url,
-            
+            image_url: productItems.image_url,
+            alternateProduct: productItems.alternateproduct,
+            productLocation: productItems.product_location
+
           };
           setDetail(details);
         }
@@ -82,6 +84,8 @@ const ProductDetails = () => {
       });
     }
   }, [id, barcodeData]);
+
+  console.log("alternateproduct", detail.alternateProduct);
 
   const navigation = useNavigation();
 
@@ -97,7 +101,7 @@ const ProductDetails = () => {
           <Image
             style={styles.tinyLogo}
             source={{
-              uri: detail.image_url ||  'https://cdn1.iconfinder.com/data/icons/scenarium-silver-vol-8/128/044_error_not_found_page-1024.png',
+              uri: detail.image_url || 'https://cdn1.iconfinder.com/data/icons/scenarium-silver-vol-8/128/044_error_not_found_page-1024.png',
             }}
           />
           <View style={styles.productInfoContainer}>
@@ -130,12 +134,26 @@ const ProductDetails = () => {
         </View>
         <View style={styles.columnContainer}>
           <Text style={styles.productDetails}>Product Location</Text>
-          <Text style={styles.columnText}>{ }</Text>
+          <Text style={styles.columnText}>{detail.productLocation}</Text>
         </View>
         <View style={styles.columnContainer}>
           <Text style={styles.productDetails}>Area</Text>
-          <Text style={styles.columnText}>Area 1</Text>
+          <Text style={styles.columnText}>{detail.productArea}</Text>
         </View>
+        <View style={styles.columnContainer}>
+          <Text style={styles.productDetails}>Alternate Products</Text>
+          {detail.alternateProduct && detail.alternateProduct.length > 0 ? (
+            detail.alternateProduct.map((alternate, index) => (
+           
+              <Text key={index} style={styles.columnText}>
+                {alternate.product_name}
+              </Text>
+            ))
+          ) : (
+            <Text style={styles.columnText}>No alternate products available</Text>
+          )}
+        </View>
+
       </View>
 
       {/* navigate to the contact component have item(contacts, name, mobile number and others) */}

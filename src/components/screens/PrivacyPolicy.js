@@ -397,7 +397,7 @@ const styles = StyleSheet.create({
         flex: 1,
         marginTop: 10,
         // marginLeft: 14,
-        marginHorizontal: 10
+        marginHorizontal: 20
     },
 
     heading: {

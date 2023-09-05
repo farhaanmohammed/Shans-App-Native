@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Keyboard, StyleSheet, Image, Alert } from 'react-native';
 import { Checkbox } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -22,10 +22,21 @@ const LoginScreen = ({ navigation }) => {
   const { container, tinyLogo, imageContainer } = styles;
 
 
-  LogBox.ignoreLogs([
-    'Non-serializable values were found in the navigation state',
-  ]);
-  
+  // LogBox.ignoreLogs([
+  //   'Non-serializable values were found in the navigation state',
+  // ]);
+
+
+  // useEffect(() => {
+  //   const checkLoggedIn = async () => {
+  //     const userToken = await AsyncStorage.getItem('userToken');
+  //     if (userToken) {
+  //       navigation.navigate('Drawer');
+  //     }
+  //   };
+  //   checkLoggedIn();
+  // }, []);
+
 
   const [inputs, setInputs] = useState({ user_name: '', password: '' });
   const [errors, setErrors] = useState({});
@@ -43,11 +54,11 @@ const LoginScreen = ({ navigation }) => {
       handleError('Please input password', 'password');
       isValid = false;
     }
-    if(!checked){
-      // Alert.alert("Please agree to privacy Policy")
-      Toast.show({type:'error',text1:'Please agree to privacy Policy',position:'bottom'})
-      isValid = false;
-    }
+    // if (!checked) {
+    //   // Alert.alert("Please agree to privacy Policy")
+    //   Toast.show({ type: 'error', text1: 'Please agree to privacy Policy', position: 'bottom' })
+    //   isValid = false;
+    // }
     if (isValid) {
       login();
     }
@@ -83,7 +94,7 @@ const LoginScreen = ({ navigation }) => {
           Alert.alert('Error', 'User does not exist');
         }
       } catch (error) {
-        console.error('Axios Error:', error)
+        console.log('Axios Error:', error)
         Alert.alert('Error', 'An error occurred while logging in');
       }
     }, 3000);
@@ -98,13 +109,13 @@ const LoginScreen = ({ navigation }) => {
     setErrors((prevState) => ({ ...prevState, [input]: error }));
   };
 
-  const updateCheckedState = (value) => {
-    setChecked(value);
-  };
+  // const updateCheckedState = (value) => {
+  //   setChecked(value);
+  // };
 
-  
 
-  
+
+
 
   return (
     <SafeAreaView style={container}>
@@ -131,26 +142,26 @@ const LoginScreen = ({ navigation }) => {
             error={errors.password}
             password
           />
-          <View style={{ marginVertical: 5, flexDirection: "row", alignItems: "center"}}>
-            <Checkbox
+          <View style={{ marginVertical: 5, flexDirection: "row", alignItems: "center" }}>
+            {/* <Checkbox
               status={checked ? 'checked' : 'unchecked'}
-              label="Item" 
+              label="Item"
               onPress={() => {
-                navigation.navigate('PrivacyPolicy',{
+                navigation.navigate('PrivacyPolicy', {
                   updateCheckedState: updateCheckedState,
                 });
 
-              
+
               }}
-          />
-          {/* <Privacy   updateCheckedState={updateCheckedState}/> */}
-          
-          <Text>I agree to the Privacy Policy</Text>
+            /> */}
+            {/* <Privacy   updateCheckedState={updateCheckedState}/> */}
+
+            {/* <Text>I agree to the Privacy Policy</Text> */}
           </View>
           <View>
 
           </View>
-          <Text style={styles.label} onPress={()=>{Toast.show({type:'error',text1:'Please Contact Admin',position:'bottom'})}}>Forgot Password ?</Text>
+          <Text style={styles.label} onPress={() => { Toast.show({ type: 'error', text1: 'Please Contact Admin', position: 'bottom' }) }}>Forgot Password ?</Text>
         </View>
         <View style={styles.bottom}>
 
@@ -164,7 +175,7 @@ const LoginScreen = ({ navigation }) => {
             }}>
             New User? Register Now
           </Text> */}
-              <Button title="Sign In" onPress={validate}/>
+          <Button title="Sign In" onPress={validate} />
         </View>
       </View>
     </SafeAreaView>
@@ -192,7 +203,7 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     fontSize: 14,
     color: COLORS.grey,
-    marginLeft: 180, 
+    marginLeft: 180,
     marginTop: 15
   },
 });
