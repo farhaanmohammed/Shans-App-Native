@@ -25,18 +25,18 @@ const LoginScreen = ({ navigation }) => {
   LogBox.ignoreLogs([
     'Non-serializable values were found in the navigation state',
   ]);
-  
 
-  useEffect(() => {
-    const checkLoggedIn = async () => {
-      const userToken = await AsyncStorage.getItem('userToken');
-      if (userToken) {
-        navigation.navigate('Drawer');
-      }
-    };
-    checkLoggedIn();
-  }, []);
-  
+
+  // useEffect(() => {
+  //   const checkLoggedIn = async () => {
+  //     const userToken = await AsyncStorage.getItem('userToken');
+  //     if (userToken) {
+  //       navigation.navigate('Drawer');
+  //     }
+  //   };
+  //   checkLoggedIn();
+  // }, []);
+
 
   const [inputs, setInputs] = useState({ user_name: '', password: '' });
   const [errors, setErrors] = useState({});
@@ -54,9 +54,9 @@ const LoginScreen = ({ navigation }) => {
       handleError('Please input password', 'password');
       isValid = false;
     }
-    if(!checked){
+    if (!checked) {
       // Alert.alert("Please agree to privacy Policy")
-      Toast.show({type:'error',text1:'Please agree to privacy Policy',position:'bottom'})
+      Toast.show({ type: 'error', text1: 'Please agree to privacy Policy', position: 'bottom' })
       isValid = false;
     }
     if (isValid) {
@@ -113,9 +113,9 @@ const LoginScreen = ({ navigation }) => {
     setChecked(value);
   };
 
-  
 
-  
+
+
 
   return (
     <SafeAreaView style={container}>
@@ -142,26 +142,26 @@ const LoginScreen = ({ navigation }) => {
             error={errors.password}
             password
           />
-          <View style={{ marginVertical: 5, flexDirection: "row", alignItems: "center"}}>
+          <View style={{ marginVertical: 5, flexDirection: "row", alignItems: "center" }}>
             <Checkbox
               status={checked ? 'checked' : 'unchecked'}
-              label="Item" 
+              label="Item"
               onPress={() => {
-                navigation.navigate('PrivacyPolicy',{
+                navigation.navigate('PrivacyPolicy', {
                   updateCheckedState: updateCheckedState,
                 });
 
-              
+
               }}
-          />
-          {/* <Privacy   updateCheckedState={updateCheckedState}/> */}
-          
-          <Text>I agree to the Privacy Policy</Text>
+            />
+            {/* <Privacy   updateCheckedState={updateCheckedState}/> */}
+
+            <Text>I agree to the Privacy Policy</Text>
           </View>
           <View>
 
           </View>
-          <Text style={styles.label} onPress={()=>{Toast.show({type:'error',text1:'Please Contact Admin',position:'bottom'})}}>Forgot Password ?</Text>
+          <Text style={styles.label} onPress={() => { Toast.show({ type: 'error', text1: 'Please Contact Admin', position: 'bottom' }) }}>Forgot Password ?</Text>
         </View>
         <View style={styles.bottom}>
 
@@ -175,7 +175,7 @@ const LoginScreen = ({ navigation }) => {
             }}>
             New User? Register Now
           </Text> */}
-              <Button title="Sign In" onPress={validate}/>
+          <Button title="Sign In" onPress={validate} />
         </View>
       </View>
     </SafeAreaView>
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     fontSize: 14,
     color: COLORS.grey,
-    marginLeft: 180, 
+    marginLeft: 180,
     marginTop: 15
   },
 });
