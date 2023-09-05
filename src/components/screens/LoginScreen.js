@@ -26,18 +26,6 @@ const LoginScreen = ({ navigation }) => {
     'Non-serializable values were found in the navigation state',
   ]);
 
-
-  // useEffect(() => {
-  //   const checkLoggedIn = async () => {
-  //     const userToken = await AsyncStorage.getItem('userToken');
-  //     if (userToken) {
-  //       navigation.navigate('Drawer');
-  //     }
-  //   };
-  //   checkLoggedIn();
-  // }, []);
-
-
   const [inputs, setInputs] = useState({ user_name: '', password: '' });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -73,11 +61,11 @@ const LoginScreen = ({ navigation }) => {
           user_name: inputs.user_name,
           password: inputs.password,
         });
-        // console.log('Server Response:', response.data); // Log the server response
+        console.log('Server Response:', response.data); // Log the server response
         if (response.data.success === "true") {
           const userData = response.data.data[0]; // Access the first user object in the 'data' array
-          // console.log('User Input:', inputs); // Log the user input
-          // console.log('User Data:', userData); // Log the user data received from the server
+          console.log('User Input:', inputs); // Log the user input
+          console.log('User Data:', userData); // Log the user data received from the server
           if (
             inputs.user_name === userData.user_name &&
             inputs.password === userData.password
@@ -95,6 +83,7 @@ const LoginScreen = ({ navigation }) => {
         }
       } catch (error) {
         console.log('Axios Error:', error)
+        console.log(error.message)
         Alert.alert('Error', 'An error occurred while logging in');
       }
     }, 3000);
