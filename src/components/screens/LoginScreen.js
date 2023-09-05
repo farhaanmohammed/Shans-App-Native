@@ -22,9 +22,9 @@ const LoginScreen = ({ navigation }) => {
   const { container, tinyLogo, imageContainer } = styles;
 
 
-  // LogBox.ignoreLogs([
-  //   'Non-serializable values were found in the navigation state',
-  // ]);
+  LogBox.ignoreLogs([
+    'Non-serializable values were found in the navigation state',
+  ]);
 
 
   // useEffect(() => {
@@ -54,11 +54,11 @@ const LoginScreen = ({ navigation }) => {
       handleError('Please input password', 'password');
       isValid = false;
     }
-    // if (!checked) {
-    //   // Alert.alert("Please agree to privacy Policy")
-    //   Toast.show({ type: 'error', text1: 'Please agree to privacy Policy', position: 'bottom' })
-    //   isValid = false;
-    // }
+    if (!checked) {
+      // Alert.alert("Please agree to privacy Policy")
+      Toast.show({ type: 'error', text1: 'Please agree to privacy Policy', position: 'bottom' })
+      isValid = false;
+    }
     if (isValid) {
       login();
     }
@@ -109,9 +109,9 @@ const LoginScreen = ({ navigation }) => {
     setErrors((prevState) => ({ ...prevState, [input]: error }));
   };
 
-  // const updateCheckedState = (value) => {
-  //   setChecked(value);
-  // };
+  const updateCheckedState = (value) => {
+    setChecked(value);
+  };
 
 
 
@@ -143,7 +143,7 @@ const LoginScreen = ({ navigation }) => {
             password
           />
           <View style={{ marginVertical: 5, flexDirection: "row", alignItems: "center" }}>
-            {/* <Checkbox
+            <Checkbox
               status={checked ? 'checked' : 'unchecked'}
               label="Item"
               onPress={() => {
@@ -153,10 +153,10 @@ const LoginScreen = ({ navigation }) => {
 
 
               }}
-            /> */}
-            {/* <Privacy   updateCheckedState={updateCheckedState}/> */}
+            />
+            <Privacy   updateCheckedState={updateCheckedState}/>
 
-            {/* <Text>I agree to the Privacy Policy</Text> */}
+            <Text>I agree to the Privacy Policy</Text>
           </View>
           <View>
 
