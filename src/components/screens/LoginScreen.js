@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, Keyboard, StyleSheet, Image, Alert } from 'react-native';
-// import { Checkbox } from 'react-native-paper';
+import { Checkbox } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import COLORS from '../../consts/colors';
 import Button from '../Button';
@@ -10,8 +10,7 @@ import { baseUrl } from '../../api/const';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
-
-// import { LogBox } from 'react-native';
+import { LogBox } from 'react-native';
 
 
 
@@ -20,7 +19,6 @@ const LoginScreen = ({ navigation }) => {
   // destructuring Styles
   const { container, tinyLogo, imageContainer } = styles;
 
-
   LogBox.ignoreLogs([
     'Non-serializable values were found in the navigation state',
   ]);
@@ -28,7 +26,7 @@ const LoginScreen = ({ navigation }) => {
   const [inputs, setInputs] = useState({ user_name: '', password: '' });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  // const [checked, setChecked] = useState(false);
+  const [checked, setChecked] = useState(false);
 
   const validate = () => {
     Keyboard.dismiss();
@@ -60,7 +58,7 @@ const LoginScreen = ({ navigation }) => {
           user_name: inputs.user_name,
           password: inputs.password,
         });
-        
+
         console.log('Server Response:', response.data); // Log the server response
         if (response.data.success === "true") {
           const userData = response.data.data[0]; // Access the first user object in the 'data' array
@@ -143,7 +141,7 @@ const LoginScreen = ({ navigation }) => {
 
               }}
             />
-            <Privacy   updateCheckedState={updateCheckedState}/>
+            {/* <Privacy   updateCheckedState={updateCheckedState}/> */}
 
             <Text>I agree to the Privacy Policy</Text>
           </View>

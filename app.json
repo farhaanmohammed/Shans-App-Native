@@ -35,12 +35,4 @@
     },
     "owner": "shansapp"
   }
-  // "web": {
-  //   "favicon": "./assets/favicon.png"
-  // },
-  // "extra": {
-  //   "eas": {
-  //     "projectId": "6a8a7ab8-7afc-4aa0-b633-752df0c1adfb"
-  //   }
-  // }
 }
