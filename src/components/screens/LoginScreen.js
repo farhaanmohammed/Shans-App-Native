@@ -143,7 +143,7 @@ const LoginScreen = ({ navigation }) => {
 
               }}
             />
-            <Privacy   updateCheckedState={updateCheckedState}/>
+            {/* <Privacy   updateCheckedState={updateCheckedState}/> */}
 
             <Text>I agree to the Privacy Policy</Text>
           </View>
