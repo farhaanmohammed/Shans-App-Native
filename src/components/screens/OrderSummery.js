@@ -1,85 +1,85 @@
 import React, { useEffect, useState } from "react";
-import { Text,View,StyleSheet,TextInput,TouchableOpacity } from "react-native";
+import { Text, View, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import QuantityChanger from "../QuantityChanger/QuantityChanger";
 
 
 
-export default function OrderSummery({product,index,updateTotalPrice,removeProduct, productquantity,productunitprice}){
-        // console.log("Product details",product)
-        
-        const [currency,setCurrency]=useState("QAR")
-        const [price, setPrice] = useState(product.productCost || 0);
-        
-        const[quantity,setQuantity]=useState(1);
-        
-        useEffect(() => {
-            if (product.productCost != null) {
-                    setPrice(product.productCost || 0);
-                
-            }
-        }, [product]);
+export default function OrderSummery({ product, index, updateTotalPrice, removeProduct, productquantity, productunitprice }) {
+    // console.log("Product details",product)
 
-        
+    const [currency, setCurrency] = useState("QAR")
+    const [price, setPrice] = useState(product.productCost || 0);
 
-        
-        
-        const handlePriceChange = (value) => {
-            setPrice(parseFloat(value));
-            
+    const [quantity, setQuantity] = useState(1);
+
+    useEffect(() => {
+        if (product.productCost != null) {
+            setPrice(product.productCost || 0);
+
+        }
+    }, [product]);
+
+
+
+
+
+    const handlePriceChange = (value) => {
+        setPrice(parseFloat(value));
+
+    }
+
+    const increaseQuantity = () => {
+        if (quantity < product.productQuantity) {
+            setQuantity(quantity + 1);
         }
 
-        const increaseQuantity = () => {
-            if(quantity<product.productQuantity){
-                setQuantity(quantity + 1);
-            }
-            
-        };
-        
-        const decreaseQuantity = () => {
-            if (quantity > 1) {
-            setQuantity(quantity - 1);
-            }
-        };
+    };
 
-        
+    const decreaseQuantity = () => {
+        if (quantity > 1) {
+            setQuantity(quantity - 1);
+        }
+    };
+
+
     useEffect(() => {
         const subtotal = price * quantity;
         updateTotalPrice(subtotal, index); // Passing the index along with subtotal
-        productquantity(quantity,index);
-        productunitprice(price,index);
+        productquantity(quantity, index);
+        productunitprice(price, index);
     }, [price, quantity]);
 
 
-        const handleRemoveProduct = () => {
-            removeProduct(product.productID,index); // Call the removeProduct function with the product ID
-        };
-        // console.log("array of rpices in ordersummery",productPrices)
+    const handleRemoveProduct = () => {
+        removeProduct(product.productID, index); // Call the removeProduct function with the product ID
+    };
+    // console.log("array of rpices in ordersummery",productPrices)
 
-        
-        
-        
 
-    return(
+
+
+
+    return (
         <View style={styles.Summery}>
-            {product.totalProductQuantity !=0 ? (
+            {product.totalProductQuantity != 0 ? (
                 <View>
                     <View style={styles.titlemargin}>
                         <Text style={styles.titletext}>
                             {product.productName}
                         </Text>
                     </View>
-                    <View style={styles.fieldmargin}> 
+                    <View style={styles.fieldmargin}>
                         <Text style={styles.fieldtext}>Availability:</Text>
                         <Text style={styles.instock}>In Stock</Text>
                     </View>
-                    <View style={styles.fieldmargin}> 
+                    <View style={styles.fieldmargin}>
                         <Text style={styles.fieldtext}>Price:</Text>
                         <View style={styles.priceContainer}>
-                            <TextInput keyboardType="numeric" onChangeText={(text)=>{handlePriceChange(text) } } value={price.toString()}></TextInput>
+                            <TextInput keyboardType="numeric" onChangeText={(text) => { handlePriceChange(text) }} value={price.toString()}></TextInput>
                         </View>
                         <Text style={styles.priceText}>{currency}</Text>
                     </View>
-                    
+
                     <View style={styles.removeContainer}>
                         <QuantityChanger
                             quantity={quantity}
@@ -88,14 +88,14 @@ export default function OrderSummery({product,index,updateTotalPrice,removeProdu
                             setQuantity={setQuantity} // Add this line
                         />
 
-                        
+
                         <TouchableOpacity onPress={handleRemoveProduct}>
                             <Text style={styles.removeButtonText}>REMOVE</Text>
                         </TouchableOpacity>
-                        </View>
+                    </View>
 
-                        
-            
+
+
                     <View style={styles.fieldmargin}>
                         <Text style={styles.fieldtext}>Product Code:</Text>
                         <Text>{product.productCode}</Text>
@@ -120,74 +120,74 @@ export default function OrderSummery({product,index,updateTotalPrice,removeProdu
                         <Text>Total:</Text>
                         <Text>{subtotal}</Text>
                     </View> */}
-                    
+
                 </View>
-            ):(
+            ) : (
                 <View>
                     <View style={styles.titlemargin}>
                         <Text style={styles.titletext}>
                             {product.productName}
                         </Text>
                     </View>
-                    <View style={styles.fieldmargin}> 
+                    <View style={styles.fieldmargin}>
                         <Text style={styles.fieldtext}>Availability:</Text>
                         <Text style={styles.outofstock}>Out Of Stock</Text>
-                        
-                        
+
+
                     </View>
 
                     <View>
-                            <TouchableOpacity onPress={handleRemoveProduct}>
-                                <Text style={styles.removeButtonText}>REMOVE</Text>
-                            </TouchableOpacity>
+                        <TouchableOpacity onPress={handleRemoveProduct}>
+                            <Text style={styles.removeButtonText}>REMOVE</Text>
+                        </TouchableOpacity>
 
 
                     </View>
-                    
+
                 </View>
             )}
-            
+
 
 
         </View>
     )
 
-    
+
 }
 
 
-const styles= StyleSheet.create({
-    Summery:{
+const styles = StyleSheet.create({
+    Summery: {
         marginHorizontal: 25,
     },
 
-    titlemargin:{
+    titlemargin: {
         fontSize: 15,
         fontWeight: "bold",
         textTransform: "uppercase",
-        marginVertical:15,
-        
-
-    },
-    titletext:{
-        fontSize:15,
-        fontWeight:'800',
+        marginVertical: 15,
 
 
     },
-    fieldmargin:{
-        flexDirection:'row',
-        marginBottom:10,
-        
+    titletext: {
+        fontSize: 15,
+        fontWeight: '800',
+
+
     },
-    fieldtext:{
-        marginRight:6,
-        fontSize:14,
-        fontWeight:'500',
+    fieldmargin: {
+        flexDirection: 'row',
+        marginBottom: 10,
+
     },
-    instock:{
-        color:"#ffa600",
-        fontWeight:'500',
+    fieldtext: {
+        marginRight: 6,
+        fontSize: 14,
+        fontWeight: '500',
+    },
+    instock: {
+        color: "#ffa600",
+        fontWeight: '500',
     },
 
     priceContainer: {
@@ -201,9 +201,9 @@ const styles= StyleSheet.create({
         flexDirection: "row"
     },
 
-    priceText:{
-        fontWeight:'500',
-        fontSize:14,
+    priceText: {
+        fontWeight: '500',
+        fontSize: 14,
     },
 
     removeButtonText: {
@@ -217,10 +217,10 @@ const styles= StyleSheet.create({
         justifyContent: "space-between",
     },
 
-    outofstock:{
-        color:"red",
-        fontWeight:'500',
+    outofstock: {
+        color: "red",
+        fontWeight: '500',
     },
 
-    
+
 });

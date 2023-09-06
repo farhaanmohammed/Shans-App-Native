@@ -1003,10 +1003,10 @@ export default function AddJob(){
                                 {selectedDocument.length > 0 ? (
                                         selectedDocument.map((document, index) => (
                                             // console.log("documents==============",document)
-                                                <View key={index} style={{flexDirection:'row'}}>
+                                            <View key={index} style={{ flexDirection: 'row' }}>
                                                     <Image style={styles.tinyLogo} source={{uri: document.uri}}/>
-                                                    <Text style={{fontSize:15,fontWeight:'700',}}>{document.name}</Text>
-                                                    <Feather name="trash" size={24} color="black" onPress={() => removeImage(index)}/>
+                                                <Text style={{ fontSize: 15, fontWeight: '700', }}>{document.name}</Text>
+                                                <Feather name="trash" size={24} color="black" onPress={() => removeImage(index)} />
 
                                                 </View>
                                                 

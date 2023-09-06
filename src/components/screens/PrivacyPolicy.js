@@ -1,14 +1,14 @@
 import React from "react";
 import { ScrollView } from "react-native";
-import { Text, View, StyleSheet,TouchableOpacity, } from "react-native";
-import { useNavigation ,useRoute} from "@react-navigation/native";
+import { Text, View, StyleSheet, TouchableOpacity, } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 const CustomButton = ({ title, onPress }) => {
     return (
         <TouchableOpacity onPress={onPress}>
             <View style={styles.buttonContainerExit}>
                 <View style={styles.buttonContent}>
-                
+
                     <Text style={styles.buttonText}>{title}</Text>
                 </View>
             </View>
@@ -21,7 +21,7 @@ const CustomButtonExit = ({ title, onPress }) => {
         <TouchableOpacity onPress={onPress}>
             <View style={styles.buttonContainer}>
                 <View style={styles.buttonContent}>
-                
+
                     <Text style={styles.buttonText}>{title}</Text>
                 </View>
             </View>
@@ -32,18 +32,18 @@ const CustomButtonExit = ({ title, onPress }) => {
 
 export default function Privacy() {
 
-    const navigation=useNavigation();
+    const navigation = useNavigation();
 
     const route = useRoute();
 
     const updateCheckedState = route.params?.updateCheckedState;
 
-    console.log("route",route);
+    console.log("route", route);
 
-    
+
 
     return (
-       
+
         <ScrollView>
 
             <View style={styles.container}>
@@ -377,13 +377,13 @@ export default function Privacy() {
 
                     This is because tax paid for a company will be refunded.  Sowe can figure out how much tax for the money we spend by a single click.{'\n'}{'\n'}
                 </Text>
-                <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-                    <CustomButton title="Accept" onPress={()=>{if(updateCheckedState){updateCheckedState(true)} navigation.goBack()}}/>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <CustomButton title="Accept" onPress={() => { if (updateCheckedState) { updateCheckedState(true) } navigation.goBack() }} />
 
-                    <CustomButtonExit title="Reject" onPress={()=>{if(updateCheckedState){updateCheckedState(false)} navigation.goBack()}}/>
+                    <CustomButtonExit title="Reject" onPress={() => { if (updateCheckedState) { updateCheckedState(false) } navigation.goBack() }} />
 
                 </View>
-                
+
 
 
 
@@ -409,36 +409,36 @@ const styles = StyleSheet.create({
         // backgroundColor: "white",
         borderRadius: 15,
         marginVertical: 10,
-        borderWidth:1,
+        borderWidth: 1,
         borderColor: "#ffa600",
         // width: "80%",
-    
-        
+
+
     },
     buttonContent: {
         flexDirection: "row",
-        
+
         // marginLeft: 10,
         // marginBottom: 12,
         alignItems: "center",
-        
+
         padding: 5
     },
 
     buttonText: {
         marginHorizontal: 20,
         fontSize: 16,
-        color: "black", 
+        color: "black",
         fontWeight: "bold"
     },
     buttonContainerExit: {
         borderRadius: 15,
         marginVertical: 10,
-        borderWidth:1,
+        borderWidth: 1,
         borderColor: "#ffa600",
         // width: "80%",
 
-    }, 
+    },
     exitText: {
         fontWeight: "bold"
     }

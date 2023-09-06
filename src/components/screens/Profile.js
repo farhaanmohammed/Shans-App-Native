@@ -3,8 +3,8 @@ import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Text, Image } from "react-native";
 import Button from "../Button";
 import { useNavigation } from "@react-navigation/native";
-import { AntDesign } from '@expo/vector-icons'; 
-import { Feather } from '@expo/vector-icons'; 
+import { AntDesign } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 
 export default function ProfileScreen() {
     const [adminDetails, setAdminDetails] = useState({});
@@ -12,8 +12,8 @@ export default function ProfileScreen() {
 
     const handleLogout = async () => {
         try {
-            await AsyncStorage.removeItem('userData'); 
-            navigation.navigate('LoginScreen'); 
+            await AsyncStorage.removeItem('userData');
+            navigation.navigate('LoginScreen');
         } catch (error) {
             console.error("Error logging out:", error);
         }
@@ -38,10 +38,10 @@ export default function ProfileScreen() {
         <View style={styles.container}>
             <View style={styles.top}>
                 <Text style={styles.headText}>Profile</Text>
-                <View style={{flexDirection: "row", marginLeft: 250, marginRight: 5}}>
+                <View style={{ flexDirection: "row", marginLeft: 250, marginRight: 5 }}>
 
-                <AntDesign name="unlock" size={25} color="white" />
-                <Feather name="edit" size={25} color="white" />
+                    <AntDesign name="unlock" size={25} color="white" />
+                    <Feather name="edit" size={25} color="white" />
                 </View>
             </View>
             <View style={styles.imageContainer}>
@@ -58,9 +58,9 @@ export default function ProfileScreen() {
 
             </View>
             <View style={styles.bottomButton}>
-                <Button  title=" Logout" onPress={handleLogout}/>
+                <Button title=" Logout" onPress={handleLogout} />
             </View>
-            
+
         </View>
     );
 }
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#ffa600",
         padding: 20,
         flexDirection: "row",
-        
+
     },
     headText: {
         color: "white",
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     bottomButton: {
         marginVertical: 370,
         marginHorizontal: 85
-    }, 
+    },
     capText: {
         textTransform: "uppercase",
         fontWeight: "bold"

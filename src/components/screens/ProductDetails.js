@@ -144,7 +144,7 @@ const ProductDetails = () => {
           <Text style={styles.productDetails}>Alternate Products</Text>
           {detail.alternateProduct && detail.alternateProduct.length > 0 ? (
             detail.alternateProduct.map((alternate, index) => (
-           
+
               <Text key={index} style={styles.columnText}>
                 {alternate.product_name}
               </Text>

@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, TextInput, StyleSheet} from 'react-native';
+import { View, Text, TextInput, StyleSheet } from 'react-native';
 import COLORS from '../consts/colors';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 const Input = ({
@@ -7,13 +7,13 @@ const Input = ({
   iconName,
   error,
   password,
-  onFocus = () => {},
+  onFocus = () => { },
   ...props
 }) => {
   const [hidePassword, setHidePassword] = React.useState(password);
   const [isFocused, setIsFocused] = React.useState(false);
   return (
-    <View style={{marginBottom: 20}}>
+    <View style={{ marginBottom: 20 }}>
       <Text style={style.label}>{label}</Text>
       <View
         style={[
@@ -22,14 +22,14 @@ const Input = ({
             borderColor: error
               ? COLORS.red
               : isFocused
-              ? COLORS.darkBlue
-              : COLORS.light,
+                ? COLORS.darkBlue
+                : COLORS.light,
             alignItems: 'center',
           },
         ]}>
         <Icon
           name={iconName}
-          style={{color: COLORS.darkBlue, fontSize: 22, marginRight: 10}}
+          style={{ color: COLORS.darkBlue, fontSize: 22, marginRight: 10 }}
         />
         <TextInput
           autoCorrect={false}
@@ -39,19 +39,19 @@ const Input = ({
           }}
           onBlur={() => setIsFocused(false)}
           secureTextEntry={hidePassword}
-          style={{color: COLORS.darkBlue, flex: 1}}
+          style={{ color: COLORS.darkBlue, flex: 1 }}
           {...props}
         />
         {password && (
           <Icon
             onPress={() => setHidePassword(!hidePassword)}
             name={hidePassword ? 'eye-outline' : 'eye-off-outline'}
-            style={{color: COLORS.darkBlue, fontSize: 22}}
+            style={{ color: COLORS.darkBlue, fontSize: 22 }}
           />
         )}
       </View>
       {error && (
-        <Text style={{marginTop: 7, color: COLORS.red, fontSize: 12}}>
+        <Text style={{ marginTop: 7, color: COLORS.red, fontSize: 12 }}>
           {error}
         </Text>
       )}
