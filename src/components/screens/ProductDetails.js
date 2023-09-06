@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableWithoutFeedback, StyleSheet, Image } from "react-native";
+import { View, Text, TouchableWithoutFeedback, StyleSheet, Image, ScrollView } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import axios from "axios";
@@ -73,7 +73,7 @@ const ProductDetails = () => {
             productDesc: productItems.product_description,
             minSalePrice: productItems.minimal_sales_price,
             sale_price: productItems.sale_price,
-            image_url: productItems.image_url,
+            imageUrl: productItems.image_url,
             alternateProduct: productItems.alternateproduct,
             productLocation: productItems.product_location
 
@@ -98,12 +98,18 @@ const ProductDetails = () => {
       <CustomButton title="Product Details" onPress={() => navigation.goBack()} />
       <View style={styles.detailsContainer}>
         <View style={styles.imgNameContainer}>
-          <Image
-            style={styles.tinyLogo}
-            source={{
-              uri: detail.image_url || 'https://cdn1.iconfinder.com/data/icons/scenarium-silver-vol-8/128/044_error_not_found_page-1024.png',
-            }}
-          />
+          <TouchableWithoutFeedback
+            onPress={() =>
+              navigation.navigate("FullImage", { imageUrl: detail.imageUrl })
+            }
+          >
+            <Image
+              style={[styles.tinyLogo, { backgroundColor: 'lightgrey', borderRadius: 4 }]}
+              source={{
+                uri: detail.imageUrl || 'https://cdn1.iconfinder.com/data/icons/scenarium-silver-vol-8/128/044_error_not_found_page-1024.png',
+              }}
+            />
+          </TouchableWithoutFeedback>
           <View style={styles.productInfoContainer}>
             <Text style={styles.productName}>{detail.productName}</Text>
             <View style={styles.rowContainer}>
@@ -140,19 +146,24 @@ const ProductDetails = () => {
           <Text style={styles.productDetails}>Area</Text>
           <Text style={styles.columnText}>{detail.productArea}</Text>
         </View>
-        <View style={styles.columnContainer}>
+
+        <View style={styles.alternateProductsContainer}>
           <Text style={styles.productDetails}>Alternate Products</Text>
           {detail.alternateProduct && detail.alternateProduct.length > 0 ? (
-            detail.alternateProduct.map((alternate, index) => (
-
-              <Text key={index} style={styles.columnText}>
-                {alternate.product_name}
-              </Text>
-            ))
+            <Text style={styles.alternateProductText}>
+              {detail.alternateProduct.map((alternate, index) => (
+                <Text key={index}>
+                  {index > 0 ? ", " : ""}
+                  {alternate.product_name}
+                </Text>
+              ))}
+            </Text>
           ) : (
             <Text style={styles.columnText}>No alternate products available</Text>
           )}
         </View>
+
+
 
       </View>
 
@@ -230,6 +241,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between"
   },
+  // alternateProductsContainer: {
+  //   justifyContent: "space-between",
+  //   flexDirection: "row",
+  //   maxWidth: "100%"
+  // },
   addbutton: {
     position: "absolute",
     bottom: 20, // Adjust the distance from the bottom as needed
@@ -239,6 +255,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#ffa600",
     borderRadius: 13,
+  },
+  // alternateProductText: {
+  //   // justifyContent: "space-between"
+  // }
+  alternateProductsContainer: {
+    flexDirection: "column",
+    marginTop: 10,
+
+  },
+  alternateProductText: {
+    flexDirection: "row",
+    color: "black",
+    fontSize: 16,
+    marginTop: 10,
   },
 
 });

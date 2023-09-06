@@ -7,8 +7,9 @@ import {
     StatusBar,
     FlatList,
     BackHandler,
-    TouchableOpacity,
+    TouchableOpacity
 } from "react-native";
+import { Dimensions } from 'react-native';
 import { FontAwesome } from "@expo/vector-icons";
 import { FAB, ActivityIndicator } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -19,20 +20,31 @@ import axios from "axios";
 import { baseUrl } from "../../api/const";
 import HomeProductList from "./HomeProductList";
 import ExitConfirmationModal from "../Modal/ExitConfirmationModal";
+import Carousel, { Pagination } from 'react-native-snap-carousel';
+
+
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 const productUrl = `${baseUrl}/viewProducts`;
 
+const data = [
+    { image: require('../../../assets/huaweibanner.jpg') },
+    { image: require('../../../assets/iphone.jpg') },
+    { image: require('../../../assets/huawei.jpg') },
+];
+
+
+
+
 export default function Home() {
+
     const route = useRoute();
-
-
     const numColumns = 2;
-
     const [productNames, setProductNames] = useState([]);
     const [offset, setOffset] = useState(0);
     const [loadingMore, setLoadingMore] = useState(false); // Track loading state for loadMore
     const [exitModalVisible, setExitModalVisible] = useState(false); // State for showing the exit confirmation modal
-
+    const [activeSlide, setActiveSlide] = useState(0); // Add state for tracking the active slide index
     const renderLoader = () => {
         return (
             <View style={styles.loaderStyle}>
@@ -132,8 +144,29 @@ export default function Home() {
                     Discount available for Bulk Purchase
                 </Text>
             </View>
-            <View>
-                <Image source={require("../../../assets/huaweibanner.jpg")} style={{ width: 450, height: 200, resizeMode: "stretch" }} />
+            <View style={styles.bannerContainer}>
+                {/* <Image source={require("../../../assets/huaweibanner.jpg")} style={{ width: 450, height: 200, resizeMode: "stretch" }} /> */}
+                <Carousel
+                    data={data}
+                    renderItem={({ item }) => (
+                        <View style={styles.item}>
+                            <Image source={item.image} style={styles.image} />
+                        </View>
+                    )}
+                    sliderWidth={screenWidth} // Set the slider width to match the screen width
+                    itemWidth={screenWidth}   // Set the item width to match the screen width
+                    autoplay={true}           // Enable autoplay
+                    autoplayInterval={3000}
+                    onSnapToItem={(index) => setActiveSlide(index)} // Add this callback to track the active slide
+                />
+                <Pagination
+                    dotsLength={data.length} // Specify the number of dots (should match the number of items in your data array)
+                    activeDotIndex={activeSlide} // Set the active dot based on the active slide index
+                    containerStyle={styles.paginationContainer} // Add your custom styles here
+                    dotStyle={styles.paginationDot} // Add your custom dot styles here
+                    inactiveDotOpacity={0.4} // Set the opacity of inactive dots (optional)
+                    inactiveDotScale={0.6} // Set the scale of inactive dots (optional)
+                />
             </View>
             <View style={styles.button}>
                 <View style={styles.buttonicon}>
@@ -247,5 +280,26 @@ const styles = StyleSheet.create({
     productListContainer: {
         // alignSelf: "center",
         alignItems: "center"
-    }
+    },
+    image: {
+        width: "100%",
+        height: 200,
+        borderRadius: 5,
+    },
+    bannerContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    paginationContainer: {
+        paddingVertical: 10, // Adjust the vertical spacing as needed
+        paddingHorizontal: 10, // Adjust the horizontal spacing as needed
+        alignItems: 'center', // Center the dots horizontally
+    },
+    paginationDot: {
+        width: 8, // Adjust the dot width as needed
+        height: 8, // Adjust the dot height as needed
+        borderRadius: 4, // Make it a circle
+        marginHorizontal: 6, // Adjust the horizontal spacing between dots
+        backgroundColor: '#ffa600', // Active dot color
+    },
 });

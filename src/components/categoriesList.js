@@ -24,6 +24,8 @@ const CategoriesList = ({ item, contact }) => {
     const shortenedCategoryName = getShortcategoryName(categoryName, 20);
 
     return (
+        <View style={styles.container}>
+
         <TouchableOpacity onPress={() => navigation.navigate('ProductScreen', { category: categoryName })}>
             <View style={[styles.box]} >
                 <Image
@@ -37,6 +39,7 @@ const CategoriesList = ({ item, contact }) => {
                 {/* <Text style={styles.textPrice}>Price : {landingCost} QAR</Text> */}
             </View>
         </TouchableOpacity>
+        </View>
     );
 }
 

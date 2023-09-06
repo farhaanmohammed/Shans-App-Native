@@ -31,6 +31,11 @@ import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
 import TaskManager from "./src/components/screens/TaskManager";
 import AddTask from "./src/components/screens/AddTask";
 import BarCode from "./src/components/QrScanner/BarCode";
+import FullImageScreen from "./src/components/screens/FullImageScreen";
+
+
+
+// console.disableYellowBox = true;
 
 /*
   1. Create the config
@@ -91,6 +96,7 @@ const toastConfig = {
 
 
 const App = () => {
+  
   return (
     <NavigationContainer>
       <View style={styles.container}>
@@ -127,6 +133,7 @@ const App = () => {
           <Stack.Screen name="TaskManager" component={TaskManager} options={{ headerStyle: { backgroundColor: '#ffa600' }, headerShown: false, title: "Task Manager" }} />
           <Stack.Screen name="AddTask" component={AddTask} options={{ headerStyle: { backgroundColor: '#ffa600' }, headerShown: false, title: "Add Task" }} />
           <Stack.Screen name="BarCode" component={BarCode} options={{ headerStyle: { backgroundColor: '#ffa600' }, headerShown: false, title: "Bar Code" }} />
+          <Stack.Screen name="FullImage" component={FullImageScreen} options={{ headerShown: false }}/>
         </Stack.Navigator>
         <Toast config={toastConfig} />
       </View>

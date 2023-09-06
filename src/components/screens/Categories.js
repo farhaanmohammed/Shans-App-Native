@@ -39,7 +39,7 @@ const CategoriesScreen = () => {
     };
 
 
-    const searchUrl = `${baseUrl}/viewCategories?category_name=&offset=${offset}&limit=20`;
+    const searchUrl = `${baseUrl}/viewCategories?category_name=`;
 
     const loadMoreItem = () => {
         console.log("y first u load : ", loadingMore)
