@@ -23,7 +23,17 @@
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"
       },
+      
+      
       "package": "com.shansapp.android"
+    },
+
+    "buildGradle":{
+      "configurations":{
+        "compileOnly":{
+          "arguments":  ["-Xlint:deprecation"]
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"

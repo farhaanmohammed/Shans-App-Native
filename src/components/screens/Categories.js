@@ -146,6 +146,7 @@ const CategoriesScreen = () => {
                     onEndReached={loadMoreItem}
                     onEndReachedThreshold={0.1}
                     ListFooterComponent={renderLoader}
+                    
                 />
             </View>
         </View>

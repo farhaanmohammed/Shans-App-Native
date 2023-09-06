@@ -52,14 +52,15 @@ const OptionScreen = () => {
                 </View>
             </View>
             <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
-                <View style={[styles.box, { backgroundColor: '#ebebeb' }]} >
+                <TouchableOpacity style={[styles.box, { backgroundColor: '#ebebeb' }]} onPress={() => navigation.navigate('ProductEnquiry')}>
                     <Image
                         source={require('../../../assets/optionsIcons/productEnquery.png')}
                         fadeDuration={0}
                         style={{ width: 45, height: 45 }}
+                        
                     />
                     <Text style={styles.textFam}>Product Enquiry</Text>
-                </View>
+                </TouchableOpacity>
                 <View style={[styles.box, { backgroundColor: '#ebebeb' }]} >
                     <Image
                         source={require('../../../assets/optionsIcons/productPurchase.png')}
