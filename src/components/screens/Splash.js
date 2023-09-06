@@ -73,7 +73,7 @@ SplashScreen.preventAutoHideAsync();
 const Splash = () => {
   const navigation = useNavigation();
   const [appIsReady, setAppIsReady] = useState(false);
-  const [userLoggedIn, setUserLoggedIn] = useState(false); // Track user login state
+  const [userLoggedIn, setUserLoggedIn] = useState(true); // Track user login state
 
   useEffect(() => {
     async function prepare() {

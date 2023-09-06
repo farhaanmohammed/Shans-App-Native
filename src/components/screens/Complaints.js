@@ -4,6 +4,8 @@ import { Formik } from "formik";
 import { Picker } from "@react-native-community/picker";
 import { baseUrl } from "../../api/const";
 import axios from "axios";
+import { Dropdown ,MultiSelect } from 'react-native-element-dropdown';
+import { AntDesign } from '@expo/vector-icons';
 
 
 
@@ -14,6 +16,17 @@ export default function Complaints({onSubmitted,Closebutton}){
     const complaint_request_url=`${baseUrl}/viewComplaintRequest/complaint_request_list/complaint_request_dropdown`
     const[complaint_type,setComplaint_type]=React.useState([]);
     const[complaint_request,setComplaint_request]=React.useState([]);
+    const [isFocus, setIsFocus] = React.useState(false);
+
+    const renderItem = item => {
+        return (
+            <View style={styles.item}>
+                {/* <CheckBox checked={isSelected} color="black" style={styles.checkbox} /> */}
+                <Text style={styles.selectedTextStyle}>{item.complaint_name}</Text>
+                <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
+            </View>
+            );
+        };
     
     
 
@@ -48,23 +61,30 @@ export default function Complaints({onSubmitted,Closebutton}){
 
     return(
         <Formik
-            initialValues={{complaint_request_type:'',complaint_request:'',remarks:'',}}
+            initialValues={{complaint_request_type:[],complaint_request:'',remarks:'',}}
             onSubmit={(values)=>{console.log("complaint values",values)
                                         const selectedComplaintType_name = complaint_type.find(item => item.id === values.complaint_request_type)?.complaint_type_name || '';
-                                        const selectedComplaintRequest_name = complaint_request.find(item => item.id === values.complaint_request)?.complaint_name || '';
-                                        console.log("namessss+++++++++++++++===============",selectedComplaintType_name,selectedComplaintRequest_name)
+                                        // const selectedComplaintRequest_name = complaint_request.find(item => item.id === values.complaint_request[0])?.complaint_name || '';
+                                        const selectedComplaintRequest_names = values.complaint_request.map(itemId => {
+                                            const item = complaint_request.find(item => item.id === itemId);
+                                            return item ? item.complaint_name : '';
+                                        });
+                                        console.log("namessss+++++++++++++++===============",selectedComplaintType_name,selectedComplaintRequest_names)
 
                                         const submitObjects={
                                             complaint_type_name:selectedComplaintType_name,
-                                            complaint_request_name:selectedComplaintRequest_name,
-                                            complaint_type_id:values.complaint_request_type,
-                                            complaint_request_ids:values.complaint_request,
+                                            complaint_request_name:selectedComplaintRequest_names,
+                                            complaint_type_id:values.complaint_request,
+                                            complaint_request_ids:values.complaint_request_type,
                                             remarks:values.remarks
 
                                         }
+
+                                        console.log("submitted objests___+==>>>>>>>>>>>>>>>",submitObjects);
                                     
                                         onSubmitted(submitObjects);
                                         Closebutton(false);
+                                        
                                         
                                         
         }}
@@ -73,7 +93,7 @@ export default function Complaints({onSubmitted,Closebutton}){
                 <View style={styles.container}> 
                     <View style={styles.fieldmargin}>
                         <Text style={styles.fieldtext}>Complaints/Service Request type:</Text>
-                        <Picker
+                        {/* <Picker
                             style={styles.input}
                             enabled={true}
                             mode="dropdown"
@@ -92,14 +112,35 @@ export default function Complaints({onSubmitted,Closebutton}){
                                 
                                 />
                             ))}
-                        </Picker>
+                        </Picker> */}
+                        <Dropdown
+                                style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+                                data={complaint_type}
+                                search
+                                maxHeight={300}
+                                labelField="complaint_type_name"
+                                valueField="id"
+                                placeholder={props.values.complaint_request_type ?props.values.complaint_request_type : "Select Complaint type"     }
+                                searchPlaceholder="Search Complaint type"
+                                value={props.values?.complaint_request_type}
+                                onFocus={() => setIsFocus(true)}
+                                onBlur={() => setIsFocus(false)}
+                                onChange={item=>{
+                                    console.log('complaint type????????????????????',item)
+                                    // props.setFieldValue('customer',item)
+                                    props.setFieldValue('complaint_request_type', item.id);
+                                    
+                                    
+                                
+                                }}
+                            />
 
                     </View>
 
                     <View style={styles.fieldmargin}>
                         <Text style={styles.fieldtext}>Complaints/Service Request:</Text>
 
-                        <Picker
+                        {/* <Picker
                             style={styles.input}
                             enabled={true}
                             mode="dropdown"
@@ -129,7 +170,35 @@ export default function Complaints({onSubmitted,Closebutton}){
 
 
 
-                        </Picker>
+                        </Picker> */}
+                        <MultiSelect 
+                                style={styles.dropdown}
+                                // placeholderStyle={styles.placeholderStyle}
+                                selectedTextStyle={styles.selectedTextStyle}
+                                inputSearchStyle={styles.inputSearchStyle}
+                                data={filtercomplaint=complaint_request.filter(request=>request.complaint_type_id==props.values.complaint_request_type)}
+                                labelField="complaint_name"
+                                valueField="id"
+                                placeholder="Select Request Type"
+                                value={props.values?.complaint_request}
+                                search
+                                searchPlaceholder="Search Request Type"
+                                onChange={(item)=>{
+                                    console.log("item========================",item)
+                                    
+                                    props.setFieldValue('complaint_request',item)
+                                }}
+                                renderItem={renderItem}
+                                renderSelectedItem={(item,unSelect)=>(
+                                    <TouchableOpacity onPress={()=>unSelect && unSelect(item)}>
+                                        <View style={styles.selectedStyle}>
+                                            <Text style={styles.textSelectedStyle}>{item.complaint_name}</Text>
+                                            <AntDesign color="black" name="delete" size={17} />
+                                        </View>
+                                    </TouchableOpacity>
+                                )}
+                            />
+
                     </View>
                     <View style={styles.fieldmargin}>
                         <Text style={styles.fieldtext}>Remarks:</Text>
@@ -216,6 +285,50 @@ const styles=StyleSheet.create({
             borderRadius:6,
             maxWidth:350,
             marginTop:5,
+        },
+
+        dropdown: {
+            height: 50,
+            borderColor: 'gray',
+            borderWidth: 0.5,
+            borderRadius: 8,
+            paddingHorizontal: 8,
+        },
+
+        selectedTextStyle: {
+            fontSize: 14,
+            color:"black",
+        },
+
+        textSelectedStyle: {
+            marginRight: 5,
+            fontSize: 16,
+        },
+    
+        selectedStyle: {
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 14,
+            backgroundColor: 'white',
+            shadowColor: '#000',
+            marginTop: 8,
+            marginRight: 12,
+            paddingHorizontal: 12,
+            paddingVertical: 8,
+            shadowOffset: {
+            width: 0,
+            height: 1,
+            },
+            shadowOpacity: 0.2,
+            shadowRadius: 1.41,
+            elevation: 2,
+        },
+        item: {
+            padding: 17,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
         },
     }
 

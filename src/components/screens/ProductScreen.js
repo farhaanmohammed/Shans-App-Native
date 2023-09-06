@@ -63,7 +63,7 @@ const ProductScreen = () => {
         ? `${baseUrl}/viewProducts?product_name=${category}`
         : `${baseUrl}/viewProducts`;
 
-   
+
 
 
     useEffect(() => {

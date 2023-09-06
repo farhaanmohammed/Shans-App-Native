@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Text,View,StyleSheet,ScrollView,TextInput,Modal,Button,FlatList,TouchableOpacity } from "react-native"
+import { Text,View,StyleSheet,ScrollView,TextInput,Modal,Button,FlatList,TouchableOpacity,Image } from "react-native"
 import { Picker } from "@react-native-community/picker";
 import { Formik } from "formik";
 import { baseUrl } from "../../api/const";
@@ -63,6 +63,7 @@ export default function AddJob(){
     const [selectedDocument, setSelectedDocument] = React.useState([]);
     const [scannedData, setScannedData] = React.useState('');
     const[consumermodel,setConsumerModel]=React.useState([]);
+    const[image,setImage]=React.useState([])
 
 
 
@@ -317,6 +318,7 @@ export default function AddJob(){
     
                 if (response.data && response.data.data) {
                     const uploadUrl = response.data.data;
+                    setImage(uploadUrl);
                     console.log('Upload successful. API response:', uploadUrl);  // Fixed log message
                 } else {
                     console.log('Upload failed. Unexpected API response:', response.data);
@@ -353,7 +355,7 @@ export default function AddJob(){
             <ScrollView style={styles.container}>
                 <Formik
                     initialValues={{ customer:'',customer_id:'',mobile:'',email:'',warehouse_name:'',consumer_model_id:'',consumer_model_name:'',device_id:'',device_name:'',
-                    brand_id:'',brand_name:'',jobbooking_id:'',jobbooking:'',assignedto_name:'',sales_person_name:'',
+                    brand_id:'',brand_name:'',jobbooking_id:'',jobbooking:'',sales_person_name:'',
                     estimation:'',assignedOn: '',assignedto_name:'',assignedto_id:'',remarks:'',accessories:[], email:'',serial_no:scannedData,
                 }}
                     onSubmit={(values)=> {console.log("values:",values)
@@ -596,7 +598,7 @@ export default function AddJob(){
                             <Text style={styles.fieldtext}>
                                 Device :
                             </Text>
-                            <Picker
+                            {/* <Picker
                                 style={styles.input}
                                 enabled={true}
                                 mode="dropdown"
@@ -617,14 +619,35 @@ export default function AddJob(){
                                     />
                                 ))}
 
-                            </Picker>
+                            </Picker> */}
+
+                            <Dropdown
+                                style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+                                data={device}
+                                search
+                                maxHeight={300}
+                                labelField="model_name"
+                                valueField="id"
+                                placeholder={props.values.device_id ?props.values.device_id : "Select Device"     }
+                                searchPlaceholder="Search Device"
+                                value={props.values?.device_id}
+                                onFocus={() => setIsFocus(true)}
+                                onBlur={() => setIsFocus(false)}
+                                onChange={item=>{
+                                    console.log("devicesssssss",item)
+                                    props.setFieldValue('device_id',item.id)
+                                    props.setFieldValue('device_name',item.model_name)
+                                
+                                
+                                }}
+                            />
 
 
                         </View>
                         <View style={styles.fieldmargin}>
                             <Text style={styles.fieldtext}>Brand:</Text>
 
-                            <Picker
+                            {/* <Picker
                                 style={styles.input}
                                 enabled={true}
                                 mode="dropdown"
@@ -649,14 +672,35 @@ export default function AddJob(){
                                     />
                                 ))}
 
-                            </Picker>
+                            </Picker> */}
+
+                            <Dropdown
+                                style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+                                data={brand}
+                                search
+                                maxHeight={300}
+                                labelField="brand_name"
+                                valueField="brand_id"
+                                placeholder={props.values.brand_id ?props.values.brand_id : "Select Brand"     }
+                                searchPlaceholder="Search Brand"
+                                value={props.values?.brand_id}
+                                onFocus={() => setIsFocus(true)}
+                                onBlur={() => setIsFocus(false)}
+                                onChange={item=>{
+                                    console.log("Bramndssss++++++++++",item)
+                                    props.setFieldValue('brand_id',item.brand_id)
+                                    props.setFieldValue('brand_name',item.brand_name)
+                                
+                                
+                                }}
+                            />
                             
 
                         </View>
                         <View style={styles.fieldmargin}>
                             <Text style={styles.fieldtext}>Consumer Model:</Text>
 
-                            <Picker
+                            {/* <Picker
                                 style={styles.input}
                                 enabled={true}
                                 mode="dropdown"
@@ -683,8 +727,27 @@ export default function AddJob(){
                                 } 
                                 )}
 
-                            </Picker>
-                            
+                            </Picker> */}
+                            <Dropdown
+                                style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+                                data={filterconsumer=consumermodel.filter(model=>model.job_device_id==props.values.device_id && model.job_brand_id==props.values.brand_id)}
+                                search
+                                maxHeight={300}
+                                labelField="model_name"
+                                valueField="id"
+                                placeholder={props.values.consumer_model_id ?props.values.consumer_model_id : "Select Consumer Model"     }
+                                searchPlaceholder="Search Model"
+                                value={props.values?.consumer_model_id}
+                                onFocus={() => setIsFocus(true)}
+                                onBlur={() => setIsFocus(false)}
+                                onChange={item=>{
+                                    console.log("Consumersssss++++++++++",item)
+                                    props.setFieldValue('consumer_model_id',item.id)
+                                    props.setFieldValue('consumer_model_name',item.model_name)
+                                
+                                
+                                }}
+                            />
 
                         </View>
                                 
@@ -821,7 +884,7 @@ export default function AddJob(){
                             </Text>
                             
 
-                            <Picker
+                            {/* <Picker
                                 style={styles.input}
                                 enabled={true}
                                 mode="dropdown"
@@ -846,7 +909,29 @@ export default function AddJob(){
                                     />
                                 ))}
 
-                            </Picker>
+                            </Picker> */}
+
+                            <Dropdown
+                                style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+                                data={employee}
+                                search
+                                maxHeight={300}
+                                labelField="name"
+                                valueField="id"
+                                placeholder={props.values.assignedto_id ?props.values.assignedto_id : "Select Customer"     }
+                                searchPlaceholder="Search Customers"
+                                value={props.values?.assignedto_id}
+                                onFocus={() => setIsFocus(true)}
+                                onBlur={() => setIsFocus(false)}
+                                onChange={item=>{
+                                    console.log("employee+++++",item)
+                                    // props.setFieldValue('customer',item)
+                                    props.setFieldValue('assignedto_id', item.id);
+                                    props.setFieldValue('assignedto_name', item.name); // Set the customer ID
+                                    
+                                
+                                }}
+                            />
 
 
                         </View>
@@ -919,6 +1004,7 @@ export default function AddJob(){
                                         selectedDocument.map((document, index) => (
                                             // console.log("documents==============",document)
                                                 <View key={index} style={{flexDirection:'row'}}>
+                                                    <Image style={styles.tinyLogo} source={{uri: document.uri}}/>
                                                     <Text style={{fontSize:15,fontWeight:'700',}}>{document.name}</Text>
                                                     <Feather name="trash" size={24} color="black" onPress={() => removeImage(index)}/>
 
