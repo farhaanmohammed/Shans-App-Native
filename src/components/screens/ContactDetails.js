@@ -49,7 +49,7 @@ export default function ContactDetails({ route, navigation }) {
     const fetchData = async () => {
 
       try {
-        const StoredData = await AsyncStorage.getItem('userData')
+        const StoredData = await AsyncStorage.getItem('adminDetails')
 
         console.log("storedData:", StoredData);
 
@@ -71,10 +71,11 @@ export default function ContactDetails({ route, navigation }) {
   console.log("Login user data", user);
 
 
-  const CreateinvoiceUrl = `${baseUrl}/createCombinedInvoicePaymentReceived`
+  const CreateinvoiceUrl = `${baseUrl}/createQuotation`
 
   const [totalPrice, setTotalprice] = useState([]);
   const [currency, setCurrency] = useState("QAR")
+  
 
   const updateTotalPrice = (newTotalPrice, index) => {
     setTotalprice(prevPrices => {
@@ -96,6 +97,15 @@ export default function ContactDetails({ route, navigation }) {
 
   const [unitprice, setUnitPrice] = useState([])
 
+  const [tax, setTax] = useState({});
+
+  const productTax = (price, index) => {
+    setTax(prevTax => ({
+      ...prevTax,
+      [index]: price * 0.05,
+    }));
+  };
+
   const productunitprice = (price, index) => {
     setUnitPrice(prevunitprice => {
       const newunitprice = [...prevunitprice];
@@ -105,6 +115,9 @@ export default function ContactDetails({ route, navigation }) {
   }
 
   const totalPriceSum = totalPrice.reduce((sum, value) => sum + value, 0);
+
+  const totalTax = Object.values(tax).reduce((sum, taxValue) => sum + taxValue, 0);
+
 
   const removeProduct = (productIDToRemove, index) => {
     setAddedProducts(prevProducts => prevProducts.filter(p => p.productID !== productIDToRemove));
@@ -128,24 +141,41 @@ export default function ContactDetails({ route, navigation }) {
 
   console.log("pushed products:---------------------", addedProducts);
 
+  console.log("taxxxxxx>>>>>>>>>>>>>>>>>>>",totalTax);
+
 
   // console.log("UpdatedTotalPrice in Contactdetails page",totalPrice);
 
+  // const orderItems = addedProducts.map((product, index) => ({
+  //   "product_id": product.productID,
+  //   "product_name": product.productName,
+  //   "tax_type_id": "648d9b8fef9cd868dfbfa37f",
+  //   "tax_value": 0,
+  //   "uom": null,
+  //   "qty": prquantity[index],
+  //   "unit_price": unitprice[index] * prquantity[index],
+  //   "discount_percentage": 0,
+  //   "remarks": null,
+  //   "total": totalPrice[index],
+  //   "unit_cost": product.productCost,
+  //   "total_cost": prquantity[index] * product.productCost,
+  //   "return_quantity": 0
+  // }))
+
   const orderItems = addedProducts.map((product, index) => ({
     "product_id": product.productID,
-    "product_name": product.productName,
     "tax_type_id": "648d9b8fef9cd868dfbfa37f",
     "tax_value": 0,
-    "uom": null,
+    "uom_id": null,
+    "uom": '',
     "qty": prquantity[index],
-    "unit_price": unitprice[index] * prquantity[index],
     "discount_percentage": 0,
-    "remarks": null,
-    "total": totalPrice[index],
-    "unit_cost": product.productCost,
-    "total_cost": prquantity[index] * product.productCost,
-    "return_quantity": 0
+    "unit_price": product.productCost,
+    "remarks": '',
+    "total": prquantity[index] * product.productCost,
   }))
+
+  
 
   console.log("ordersummery", orderItems);
 
@@ -172,58 +202,73 @@ export default function ContactDetails({ route, navigation }) {
 
   function handlesubmit() {
 
-    const payload = {
-      "total_amount": totalPriceSum,
+    // const payload = {
+    //   "total_amount": totalPriceSum,
+    //   "date": formattedDate,
+    //   "amounts": totalPriceSum,
+    //   "payment_status": "un_paid",
+    //   "invoice_status": "un_paid",
+    //   "total_tax_amount": 0,
+    //   "remarks": null,
+    //   "trn_no": item.trn_no,
+    //   "delivery_address": item.address,
+    //   "due_date": null,
+    //   "paid_amount": 0,
+    //   "due_amount": totalPriceSum,
+    //   "customer_id": item._id,
+    //   "customer_name": item.name,
+    //   "warehouse_id": user.warehouse.warehouse_id,
+    //   "warehouse_name": user.warehouse.warehouse_name,
+    //   "pipeline_id": null,
+    //   "payment_terms_id": null,
+    //   "delivery_method_id": null,
+    //   "sales_person_id": user._id,
+    //   "sales_person_name": user.user_name,
+    //   "sales_channel_id": null,
+    //   "state_id": item.state_id,
+    //   "quotation_id": null,
+    //   "sales_order_id": null,
+    //   "currency_id": item.currency_id,
+    //   "crm_product_line_ids": orderItems,
+    //   "image_url": [],
+    //   "payment_date": null,
+    //   "amount": totalPriceSum,
+    //   "type": "payment",
+    //   "chq_no": null,
+    //   "chq_date": "",
+    //   "chq_type": null,
+    //   "chart_of_accounts_id": null,
+    //   "chart_of_accounts_name": null,
+    //   "status": "new",
+    //   "transaction_no": null,
+    //   "transaction": null,
+    //   "payment_method_id": "643ea581407e36e9962b9d2c",
+    //   "payment_method_name": "credit",
+    //   "journal_id": null,
+    //   "chq_bank_id": null,
+    //   "is_cheque_cleared": false,
+    //   "reference": null,
+    //   "in_amount": null,
+    //   "out_amount": null,
+    //   "due_balance": 0,
+    //   "outstanding": null,
+    //   "credit_balance": null,
+    //   "Pdc_status": ""
+    // }
+
+    const payload={
       "date": formattedDate,
-      "amounts": totalPriceSum,
-      "payment_status": "un_paid",
-      "invoice_status": "un_paid",
-      "total_tax_amount": 0,
+      "quotation_status": "new",
+      "address": item.address,
       "remarks": null,
-      "trn_no": item.trn_no,
-      "delivery_address": item.address,
-      "due_date": null,
-      "paid_amount": 0,
-      "due_amount": totalPriceSum,
       "customer_id": item._id,
-      "customer_name": item.name,
       "warehouse_id": user.warehouse.warehouse_id,
-      "warehouse_name": user.warehouse.warehouse_name,
       "pipeline_id": null,
       "payment_terms_id": null,
       "delivery_method_id": null,
-      "sales_person_id": user._id,
-      "sales_person_name": user.user_name,
-      "sales_channel_id": null,
-      "state_id": item.state_id,
-      "quotation_id": null,
-      "sales_order_id": null,
-      "currency_id": item.currency_id,
+      "untaxed_total_amount": totalPriceSum,
+      "total_amount": totalPriceSum,
       "crm_product_line_ids": orderItems,
-      "image_url": [],
-      "payment_date": null,
-      "amount": totalPriceSum,
-      "type": "payment",
-      "chq_no": null,
-      "chq_date": "",
-      "chq_type": null,
-      "chart_of_accounts_id": null,
-      "chart_of_accounts_name": null,
-      "status": "new",
-      "transaction_no": null,
-      "transaction": null,
-      "payment_method_id": "643ea581407e36e9962b9d2c",
-      "payment_method_name": "credit",
-      "journal_id": null,
-      "chq_bank_id": null,
-      "is_cheque_cleared": false,
-      "reference": null,
-      "in_amount": null,
-      "out_amount": null,
-      "due_balance": 0,
-      "outstanding": null,
-      "credit_balance": null,
-      "Pdc_status": ""
     }
 
     console.log("payload.....................", payload)
@@ -238,7 +283,7 @@ export default function ContactDetails({ route, navigation }) {
       // console.log("payload",payload)
       console.log("response-----------------------------------------", res.data);
       if (res.data.success == "true") {
-        alert("Invoice Success")
+        alert("Quotation Success")
 
       } else {
         alert(res.data.message)
@@ -298,7 +343,7 @@ export default function ContactDetails({ route, navigation }) {
           <FlatList
             data={addedProducts}
             keyExtractor={item => item.productID}
-            renderItem={({ item, index }) => <OrderSummery product={item} index={index} updateTotalPrice={updateTotalPrice} removeProduct={removeProduct} productquantity={productquantity} productunitprice={productunitprice} />}
+            renderItem={({ item, index }) => <OrderSummery product={item} index={index} updateTotalPrice={updateTotalPrice} removeProduct={removeProduct} productquantity={productquantity} productunitprice={productunitprice} productTax={productTax} />}
           />
 
 
@@ -307,8 +352,16 @@ export default function ContactDetails({ route, navigation }) {
               <>
                 <View style={{ flexDirection: "column" }}>
                   <Text style={styles.productLabel}>Total Quantity: {addedProducts.length}</Text>
+                  {/* <View style={{ flexDirection: "row" }}>
+                    <Text style={styles.productLabel}>Untaxed Amount:  </Text>
+                    <Text style={styles.productText}> {totalPriceSum} {currency}</Text>
+                  </View>
                   <View style={{ flexDirection: "row" }}>
-                    <Text style={styles.productLabel}>Price items  </Text>
+                    <Text style={styles.productLabel}>Tax Amount:  </Text>
+                    <Text style={styles.productText}> {totalTax} {currency}</Text>
+                  </View> */}
+                  <View style={{ flexDirection: "row" }}>
+                    <Text style={styles.productLabel}>Total Amount:  </Text>
                     <Text style={styles.productText}> {totalPriceSum} {currency}</Text>
                   </View>
                 </View>
@@ -476,5 +529,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
+
 
 });
