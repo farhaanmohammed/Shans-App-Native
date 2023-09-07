@@ -93,23 +93,23 @@ const LoginScreen = ({ navigation }) => {
         user_name: inputs.user_name,
         password: inputs.password,
       });
-  
+
       console.log('Server Response:', response.data); // Log the server response
       if (response.data.success === 'true') {
         const userData = response.data.data[0]; // Access the first user object in the 'data' array
         console.log('User Input:', inputs); // Log the user input
         console.log('User Data:', userData); // Log the user data received from the server
-  
+
         if (
           inputs.user_name === userData.user_name &&
           inputs.password === userData.password
         ) {
           // Store the user token in AsyncStorage
           await AsyncStorage.setItem('userToken', userData.token);
-  
+
           // Store adminDetails in AsyncStorage
           await AsyncStorage.setItem('adminDetails', JSON.stringify(userData));
-  
+
           // Navigate to the main app screen (Drawer or any other screen)
           navigation.navigate('Drawer');
         } else {
@@ -126,7 +126,7 @@ const LoginScreen = ({ navigation }) => {
       setLoading(false);
     }
   };
-  
+
   const handleOnchange = (text, input) => {
     setInputs((prevState) => ({ ...prevState, [input]: text }));
   };

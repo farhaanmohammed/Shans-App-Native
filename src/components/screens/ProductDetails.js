@@ -75,7 +75,8 @@ const ProductDetails = () => {
             sale_price: productItems.sale_price,
             imageUrl: productItems.image_url,
             alternateProduct: productItems.alternateproduct,
-            productLocation: productItems.product_location
+            productLocation: productItems.product_location, 
+            alternateProductQuantity: productItems?.alternateproduct[0]?.total_quantity
 
           };
           setDetail(details);
@@ -154,7 +155,7 @@ const ProductDetails = () => {
               {detail.alternateProduct.map((alternate, index) => (
                 <Text key={index}>
                   {index > 0 ? ", " : ""}
-                  {alternate.product_name}
+                  {alternate.product_name}({detail.alternateProductQuantity})
                 </Text>
               ))}
             </Text>
@@ -266,8 +267,7 @@ const styles = StyleSheet.create({
   },
   alternateProductText: {
     flexDirection: "row",
-    color: "black",
-    fontSize: 16,
+
     marginTop: 10,
   },
 
