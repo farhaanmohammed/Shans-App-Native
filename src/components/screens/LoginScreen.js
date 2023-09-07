@@ -49,45 +49,84 @@ const LoginScreen = ({ navigation }) => {
     }
   };
 
-  const login = () => {
+  // const login = () => {
+  //   setLoading(true);
+  //   setTimeout(async () => {
+  //     setLoading(false);
+  //     try {
+  //       const response = await axios.post(`${baseUrl}/viewuser/login`, {
+  //         user_name: inputs.user_name,
+  //         password: inputs.password,
+  //       });
+
+  //       console.log('Server Response:', response.data); // Log the server response
+  //       if (response.data.success === "true") {
+  //         const userData = response.data.data[0]; // Access the first user object in the 'data' array
+  //         console.log('User Input:', inputs); // Log the user input
+  //         console.log('User Data:', userData); // Log the user data received from the server
+  //         if (
+  //           inputs.user_name === userData.user_name &&
+  //           inputs.password === userData.password
+  //         ) {
+  //           AsyncStorage.setItem(
+  //             'userData',
+  //             JSON.stringify({ ...userData, loggedIn: true }),
+  //           );
+  //           navigation.navigate('Drawer');
+  //         } else {
+  //           Alert.alert('Error', 'Invalid Details');
+  //         }
+  //       } else {
+  //         Alert.alert('Error', 'User does not exist');
+  //       }
+  //     } catch (error) {
+  //       console.log('Axios Error:', error)
+  //       console.log(error.message)
+  //       Alert.alert('Error', 'An error occurred while logging in');
+  //     }
+  //   }, 3000);
+  // };
+  const login = async () => {
     setLoading(true);
-    setTimeout(async () => {
-      setLoading(false);
-      try {
-        const response = await axios.post(`${baseUrl}/viewuser/login`, {
-          user_name: inputs.user_name,
-          password: inputs.password,
-        });
-
-        console.log('Server Response:', response.data); // Log the server response
-        if (response.data.success === "true") {
-          const userData = response.data.data[0]; // Access the first user object in the 'data' array
-          console.log('User Input:', inputs); // Log the user input
-          console.log('User Data:', userData); // Log the user data received from the server
-          if (
-            inputs.user_name === userData.user_name &&
-            inputs.password === userData.password
-          ) {
-            navigation.navigate('Drawer');
-            AsyncStorage.setItem(
-              'userData',
-              JSON.stringify({ ...userData, loggedIn: true }),
-            );
-          } else {
-            Alert.alert('Error', 'Invalid Details');
-          }
+    try {
+      const response = await axios.post(`${baseUrl}/viewuser/login`, {
+        user_name: inputs.user_name,
+        password: inputs.password,
+      });
+  
+      console.log('Server Response:', response.data); // Log the server response
+      if (response.data.success === 'true') {
+        const userData = response.data.data[0]; // Access the first user object in the 'data' array
+        console.log('User Input:', inputs); // Log the user input
+        console.log('User Data:', userData); // Log the user data received from the server
+  
+        if (
+          inputs.user_name === userData.user_name &&
+          inputs.password === userData.password
+        ) {
+          // Store the user token in AsyncStorage
+          await AsyncStorage.setItem('userToken', userData.token);
+  
+          // Store adminDetails in AsyncStorage
+          await AsyncStorage.setItem('adminDetails', JSON.stringify(userData));
+  
+          // Navigate to the main app screen (Drawer or any other screen)
+          navigation.navigate('Drawer');
         } else {
-          Alert.alert('Error', 'User does not exist');
+          Alert.alert('Error', 'Invalid Details');
         }
-      } catch (error) {
-        console.log('Axios Error:', error)
-        console.log(error.message)
-        Alert.alert('Error', 'An error occurred while logging in');
+      } else {
+        Alert.alert('Error', 'User does not exist');
       }
-    }, 3000);
+    } catch (error) {
+      console.log('Axios Error:', error);
+      console.log(error.message);
+      Alert.alert('Error', 'An error occurred while logging in');
+    } finally {
+      setLoading(false);
+    }
   };
-
-
+  
   const handleOnchange = (text, input) => {
     setInputs((prevState) => ({ ...prevState, [input]: text }));
   };

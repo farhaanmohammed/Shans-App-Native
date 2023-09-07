@@ -23,15 +23,14 @@
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"
       },
-      
-      
       "package": "com.shansapp.android"
     },
-
-    "buildGradle":{
-      "configurations":{
-        "compileOnly":{
-          "arguments":  ["-Xlint:deprecation"]
+    "buildGradle": {
+      "configurations": {
+        "compileOnly": {
+          "arguments": [
+            "-Xlint:deprecation"
+          ]
         }
       }
     },
@@ -40,9 +39,8 @@
     },
     "extra": {
       "eas": {
-        "projectId": "9ef1e5ec-cd9a-4b0e-8163-22e8cec3ffd7"
+        "projectId": "37ca30c9-bf48-4512-8c08-bc4a09262567"
       }
-    },
-    "owner": "shansapp"
+    }
   }
 }

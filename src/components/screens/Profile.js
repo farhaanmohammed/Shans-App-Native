@@ -12,17 +12,29 @@ export default function ProfileScreen() {
 
     const handleLogout = async () => {
         try {
-            await AsyncStorage.removeItem('userData');
+          await AsyncStorage.removeItem('userToken');
+          await AsyncStorage.removeItem('adminDetails');
+          console.log('User data removed from AsyncStorage');
+          
+          // Check if user data still exists in AsyncStorage
+          const userData = await AsyncStorage.getItem('userToken');
+          console.log('User data found in AsyncStorage', userData);
+          if (!userData) {
+            console.log('User data successfully removed.');
             navigation.navigate('LoginScreen');
+          } else {userData
+            console.log('User data still exists in AsyncStorage:', userData);
+          }
         } catch (error) {
-            console.error("Error logging out:", error);
+          console.error("Error logging out:", error);
         }
-    };
+      };
+      
 
     useEffect(() => {
         const fetchAdminDetails = async () => {
             try {
-                const adminDetails = await AsyncStorage.getItem('userData');
+                const adminDetails = await AsyncStorage.getItem('adminDetails');
                 if (adminDetails !== null) {
                     const parsedAdminDetails = JSON.parse(adminDetails);
                     setAdminDetails(parsedAdminDetails);
