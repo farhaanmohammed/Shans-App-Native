@@ -120,7 +120,7 @@ export default function Complaints({onSubmitted,Closebutton}){
                                 maxHeight={300}
                                 labelField="complaint_type_name"
                                 valueField="id"
-                                placeholder={props.values.complaint_request_type ?props.values.complaint_request_type : "Select Complaint type"     }
+                                placeholder={ "Select Complaint type"     }
                                 searchPlaceholder="Search Complaint type"
                                 value={props.values?.complaint_request_type}
                                 onFocus={() => setIsFocus(true)}
@@ -275,8 +275,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
     },
-
-        input:{
+    input:{
             borderWidth:0.5,
             borderColor:"black",
             paddingHorizontal: 10,
@@ -285,7 +284,37 @@ const styles = StyleSheet.create({
             borderRadius:6,
             maxWidth:350,
             marginTop:5,
+    },
+    dropdown: {
+            height: 50,
+            borderColor: 'gray',
+            borderWidth: 0.5,
+            borderRadius: 8,
+            paddingHorizontal: 8,
+    },
+    selectedStyle: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 14,
+        backgroundColor: 'white',
+        shadowColor: '#000',
+        marginTop: 8,
+        marginRight: 12,
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        shadowOffset: {
+        width: 0,
+        height: 1,
         },
+        shadowOpacity: 0.2,
+        shadowRadius: 1.41,
+        elevation: 2,
+    },
+    textSelectedStyle: {
+        marginRight: 5,
+        fontSize: 16,
+    },
     }
 
 

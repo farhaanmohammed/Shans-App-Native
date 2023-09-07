@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Text, View, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import QuantityChanger from "../QuantityChanger/QuantityChanger";
+import { useRoute } from "@react-navigation/native";
 
 
 
-export default function OrderSummery({ product, index, updateTotalPrice, removeProduct, productquantity, productunitprice }) {
+
+export default function OrderSummery({ product, index, updateTotalPrice, removeProduct, productquantity, productunitprice ,productTax}) {
     // console.log("Product details",product)
+
+    const route=useRoute();
 
     const [currency, setCurrency] = useState("QAR")
     const [price, setPrice] = useState(product.productCost || 0);
@@ -18,6 +22,8 @@ export default function OrderSummery({ product, index, updateTotalPrice, removeP
 
         }
     }, [product]);
+
+    // console.log("profucrt taa+++++++++++++++",route.params)
 
 
 
@@ -43,10 +49,15 @@ export default function OrderSummery({ product, index, updateTotalPrice, removeP
 
 
     useEffect(() => {
+
+        
         const subtotal = price * quantity;
         updateTotalPrice(subtotal, index); // Passing the index along with subtotal
         productquantity(quantity, index);
         productunitprice(price, index);
+        productTax(subtotal,index);
+
+        console.log("subttoal++++++++",subtotal)
     }, [price, quantity]);
 
 
