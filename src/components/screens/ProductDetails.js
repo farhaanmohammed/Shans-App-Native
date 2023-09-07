@@ -58,7 +58,7 @@ const ProductDetails = () => {
       setLoading(true);
       axios.get(productDetailsUrl).then((res) => {
         const productItems = res.data.data[0]; // Assuming there's only one item in the array
-
+        console.log("productItems", productItems)
         if (productItems) {
           const details = {
             productID: productItems._id,
@@ -74,9 +74,13 @@ const ProductDetails = () => {
             minSalePrice: productItems.minimal_sales_price,
             sale_price: productItems.sale_price,
             imageUrl: productItems.image_url,
-            alternateProduct: productItems.alternateproduct,
-            productLocation: productItems.product_location, 
-            alternateProductQuantity: productItems?.alternateproduct[0]?.total_quantity
+            alternateProduct: productItems.alternateproduct || [],
+            productLocation: productItems.product_location,
+            // alternateProductQuantity:
+            // productItems.alternateproduct &&
+            // productItems.alternateproduct.length > 0
+            //   ? productItems.alternateproduct[0].total_quantity
+            //   : 0, 
 
           };
           setDetail(details);
@@ -86,7 +90,10 @@ const ProductDetails = () => {
     }
   }, [id, barcodeData]);
 
-  console.log("alternateproduct", detail.alternateProduct);
+
+  // console.log("product details url: ", detail)
+  console.log("alternateproduct-----", detail.alternateProduct);
+
 
   const navigation = useNavigation();
 
@@ -155,7 +162,7 @@ const ProductDetails = () => {
               {detail.alternateProduct.map((alternate, index) => (
                 <Text key={index}>
                   {index > 0 ? ", " : ""}
-                  {alternate.product_name}({detail.alternateProductQuantity})
+                  {alternate.product_name}({alternate.total_quantity !== undefined ? alternate.total_quantity : 0})
                 </Text>
               ))}
             </Text>
