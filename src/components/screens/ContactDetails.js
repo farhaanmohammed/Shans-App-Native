@@ -360,7 +360,7 @@ export default function ContactDetails({ route, navigation }) {
                     <Text style={styles.productLabel}>Tax Amount:  </Text>
                     <Text style={styles.productText}> {totalTax} {currency}</Text>
                   </View> */}
-                  <View style={{ flexDirection: "row" }}>
+                  <View style={{ flexDirection: "row", }}>
                     <Text style={styles.productLabel}>Total Amount:  </Text>
                     <Text style={styles.productText}> {totalPriceSum} {currency}</Text>
                   </View>
@@ -529,6 +529,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
+  submitButtonContainer:{
+    marginRight:12,
+  }
 
 
 });

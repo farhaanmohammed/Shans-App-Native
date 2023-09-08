@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     },
 
     productContainer: {
-        marginVertical: 20,
+        marginTop: 9,
         padding: 30,
         borderBottomColor: "#ffa600",
         borderBottomWidth: 5.5,
