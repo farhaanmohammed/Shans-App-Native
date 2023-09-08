@@ -40,6 +40,8 @@ export default function MyOrdersScreen() {
         console.error("Error fetching invoice:", error);
       });
   }, []);
+    
+  
 
   console.log("invoice", invoice);
   const navigation = useNavigation();
@@ -49,20 +51,40 @@ export default function MyOrdersScreen() {
       <CustomButton title="My Orders" onPress={() => navigation.goBack()} />
       <ScrollView>
 
-        {invoice.map((item, index) => (
-          <TouchableWithoutFeedback key={index} onPress={() => navigation.navigate('OrderDetails', { item: item })}>
-            <View style={styles.container}>
-              <View style={styles.cardTitle}>
-                <Text>{item.sequenceNum}</Text>
-                <Text>{item.paymentDate}</Text>
-              </View>
-              <View style={styles.cardContent}>
-                <Text style={styles.paidAmount} variant="bodyMedium">QAR {item.paidAmount}</Text>
-                {/* <Text style={styles.paidSuccess} variant="titleLarge">{item.invoiceStatus ? "Paid" : "Not Paid"}</Text> */}
-              </View>
-            </View>
-          </TouchableWithoutFeedback>
-        ))}
+        {invoice.map((item, index) =>{ 
+          
+          const originalDate = new Date(invoice[0].paymentDate);
+
+          console.log("date+++++++++++++",originalDate)
+
+          // Format date as 'mm/dd/yyyy'
+              const formattedDate = originalDate.toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+              });
+              
+              // Format time as 'hh:mm AM/PM'
+              // const formattedTime = originalDate.toLocaleTimeString('en-US', {
+              // hour: '2-digit',
+              // minute: '2-digit',
+              // hour12: true,
+              // });
+          
+          return (
+                <TouchableWithoutFeedback key={index} onPress={() => navigation.navigate('OrderDetails', { item: item })}>
+                  <View style={styles.container}>
+                    <View style={styles.cardTitle}>
+                      <Text>{item.sequenceNum}</Text>
+                      <Text> {formattedDate}</Text>
+                    </View>
+                    <View style={styles.cardContent}>
+                      <Text style={styles.paidAmount} variant="bodyMedium">QAR {item.paidAmount}</Text>
+                      {/* <Text style={styles.paidSuccess} variant="titleLarge">{item.invoiceStatus ? "Paid" : "Not Paid"}</Text> */}
+                    </View>
+                  </View>
+                </TouchableWithoutFeedback>
+        )})}
       </ScrollView>
     </View>
   );
