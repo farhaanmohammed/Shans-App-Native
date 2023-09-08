@@ -11,6 +11,7 @@ import WritingPad from "../../WritingPad/WritingPad";
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 
+
 const CustomButton = ({ title, onPress }) => {
 
     return (
@@ -36,6 +37,7 @@ const CustomAddButton = ({ title, onPress }) => {
 export default function Enquiry(){
 
     const imageUploadUrl=`${baseUrl}/fileUpload?folder_name=products`;
+    const createProductEnquiry=`${baseUrl}/createProductEnquiryDetails`;
 
     const[openDate,setOpenDate]=React.useState(false)
     const[selectedDocument,setSelectedDocument]=React.useState('')
@@ -121,6 +123,16 @@ export default function Enquiry(){
 
                     onSubmit={(values)=>{
                         console.log(values)
+
+                        const body={
+
+                            "date": values.date,
+                            "submitted_by": "643d63fd557ea77a3fe8a1d3",
+                            "product_detail": values.details,
+                            "product_description": "descrption",
+                            "product_image": "productimage.url",
+                            "customer_details": values.customer,
+                        }
                         
                     }}
                 
