@@ -13,6 +13,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import * as DocumentPicker from 'expo-document-picker';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import * as Yup from 'yup';
 
 
 const CustomButton = ({ title, onPress }) => {
@@ -25,6 +26,14 @@ const CustomButton = ({ title, onPress }) => {
         </TouchableOpacity>
     );
 };
+
+export const AddSchema = Yup.object().shape({
+    name: Yup.string().required('Please enter your Name'),
+    customer_mobile: Yup.number().required('Please enter you Phone Number'),
+    customer_email: Yup.string().email('Invalid email').required("Please etner you email"),
+
+
+})
 
 
 
@@ -358,6 +367,7 @@ export default function AddJob(){
                     brand_id:'',brand_name:'',jobbooking_id:'',jobbooking:'',sales_person_name:'',
                     estimation:'',assignedOn: '',assignedto_name:'',assignedto_id:'',remarks:'',accessories:[], email:'',serial_no:scannedData,
                 }}
+                    // validationSchema={AddSchema}
                     onSubmit={(values)=> {console.log("values:",values)
                         console.log("Selected customer:");
                         const body= {

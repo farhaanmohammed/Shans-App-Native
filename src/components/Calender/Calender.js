@@ -1,64 +1,38 @@
-import { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, ScrollView } from 'react-native'
-import moment from 'moment'
-import Date from './Date'
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { Agenda } from 'react-native-calendars';
 
-export default function Calender({onSelected,selcted}){
-    const [dates, setDates] = useState([])
-    const [scrollPosition, setScrollPosition] = useState(0)
-    const [currentMonth, setCurrentMonth] = useState()
-
-    const getDates=()=>{
-        const _dates=[]
-        for(let i=0;i<10;i++){
-            const date = moment().add(i,'days')
-            _dates.push(date)
-        }
-    }
-    useEffect(()=>{
-        getDates()
-    },[])
-
-    return(
-        <>
-        <View style={styles.centered}>
-            <Text style={styles.title}>Current month</Text>
-        </View>
-        <View style={styles.dateSection}>
-            <View style={styles.scroll}>
-            <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-            >
-                {dates.map((date, index) => (
-                <Date
-                    key={index}
-                    date={date}
-                    onSelectDate={onSelectDate}
-                    selected={selected}
-                />
-                ))}
-            </ScrollView>
+const HorizontalCalendar = () => {
+    return (
+        <View style={styles.container}>
+        <Agenda
+            // Customize the appearance and behavior of the agenda calendar here
+            // For more options, check the documentation: https://github.com/wix/react-native-calendars
+            items={{
+            '2023-09-08': [{ name: 'Event 1', time: '10:00 AM' }],
+            
+            // Add your agenda items here, with date as the key and an array of events for that date
+            }}
+            renderItem={(item) => (
+            <View style={styles.agendaItem}>
+                <Text>{item.name}</Text>
+                <Text>{item.time}</Text>
             </View>
+            )}
+        />
         </View>
-    </>
-    )
-}
+    );
+};
 
 const styles = StyleSheet.create({
-    centered: {
-        justifyContent: 'center',
-        alignItems: 'center',
+    container: {
+        flex: 1,
     },
-    title: {
-        fontSize: 20,
-        fontWeight: 'bold',
+    agendaItem: {
+        padding: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
     },
-    dateSection: {
-        width: '100%',
-        padding: 20,
-    },
-    scroll: {
-        height: 150,
-    },
-})
+});
+
+export default HorizontalCalendar;
