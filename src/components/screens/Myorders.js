@@ -7,7 +7,7 @@ import { baseUrl } from "../../api/const";
 
 
 
-const invoiceUrl = `${baseUrl}/viewInvoice`
+const invoiceUrl = `${baseUrl}/viewQuotation`
 
 //Custom button navigation
 const CustomButton = ({ title, onPress }) => {
@@ -32,7 +32,7 @@ export default function MyOrdersScreen() {
           sequenceNum: item.sequence_no,
           paymentDate: item.date,
           invoiceStatus: item.invoice_status,
-          paidAmount: item.paid_amount
+          paidAmount: item.total_amount
         }));
         setInvoice(customerDetails);
       })
@@ -57,8 +57,8 @@ export default function MyOrdersScreen() {
                 <Text>{item.paymentDate}</Text>
               </View>
               <View style={styles.cardContent}>
-                <Text style={styles.paidAmount} variant="bodyMedium">Rs {item.paidAmount}</Text>
-                <Text style={styles.paidSuccess} variant="titleLarge">{item.invoiceStatus ? "Paid" : "Not Paid"}</Text>
+                <Text style={styles.paidAmount} variant="bodyMedium">QAR {item.paidAmount}</Text>
+                {/* <Text style={styles.paidSuccess} variant="titleLarge">{item.invoiceStatus ? "Paid" : "Not Paid"}</Text> */}
               </View>
             </View>
           </TouchableWithoutFeedback>

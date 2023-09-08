@@ -5,7 +5,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import axios from "axios";
 import { baseUrl } from "../../api/const";
 
-const invoiceUrl = `${baseUrl}/viewInvoice/`;
+const invoiceUrl = `${baseUrl}/viewQuotation/`;
 
 const CustomButton = ({ title, onPress }) => {
     return (
@@ -42,7 +42,8 @@ const OrderDetails = () => {
                     // productName: invoiceDetails.product_name,
                     date: invoiceDetails.date,
                     total: invoiceDetails.total_amount,
-                    customerName: invoiceDetails.customer.customer_name,
+                    customerName: invoiceDetails.customer.name,
+                    products:invoiceDetails.crm_product_lines,
                     // warehouseName: invoiceDetails.warehouses_name
                 }
                 setInvoice(details)
@@ -52,6 +53,27 @@ const OrderDetails = () => {
             // console.log("Invoice details -----+++++++++++++++++++-----", invoiceDetails)
         });
     }, []);
+        const originalDate = new Date(invoice.date);
+
+    // Format date as 'mm/dd/yyyy'
+        const formattedDate = originalDate.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        });
+        
+        // Format time as 'hh:mm AM/PM'
+        const formattedTime = originalDate.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+        });
+    
+    console.log('Formatted Date:', formattedDate);
+    console.log('Formatted Time:', formattedTime);
+
+    console.log("products+++++++++++++++++++++++++++",invoice.products)
+    
 
     console.log("Invoic details -----+++++++++++++++++++-----", invoice)
     const navigation = useNavigation();
@@ -68,15 +90,11 @@ const OrderDetails = () => {
 
                 <View style={styles.columnContainer}>
                     <Text style={styles.label}>Date & Time:</Text>
-                    <Text style={styles.text}>{invoice.date}</Text>
+                    <Text style={styles.text}>{formattedTime} {formattedDate}</Text>
                 </View>
                 <View style={styles.columnContainer}>
                     <Text style={styles.label}>Total Amount:</Text>
                     <Text style={styles.text}>{invoice.total}</Text>
-                </View>
-                <View style={styles.columnContainer}>
-                    <Text style={styles.label}>Status:</Text>
-                    <Text style={styles.text}>{invoice.invoiceStatus}</Text>
                 </View>
                 <View style={styles.columnContainer}>
                     <Text style={styles.label}>Customer Name:</Text>
@@ -87,6 +105,30 @@ const OrderDetails = () => {
                     <Text style={styles.label}>Warehouse Name:</Text>
                     <Text style={styles.text}>{invoice.warehouseName}</Text>
                 </View> */}
+                {invoice.products.map((item,index)=>(
+                            <View key={index} style={styles.container}>
+                                <View style={styles.cardTitle}>
+                                    <Text style={{fontWeight:'700'}}>{item.product.product_name}</Text>
+                                    {/* <Text>{item.paymentDate}</Text> */}
+                                </View>
+                                <View style={styles.cardContent}>
+                                    <View style={{flexDirection:'row'}}>
+                                        <Text>Price:</Text>
+                                        <Text>{item.total}</Text>
+                                    </View>
+                                    <View style={{flexDirection:'row'}}>
+                                        <Text>Quantity:</Text>
+                                        <Text>{item.qty}</Text>
+                                    </View>
+                                    
+                                    {/* <Text style={styles.paidAmount} variant="bodyMedium">QAR {item.paidAmount}</Text>
+                                    <Text style={styles.paidSuccess} variant="titleLarge">{item.invoiceStatus ? "Paid" : "Not Paid"}</Text> */}
+                                </View>
+                            </View>
+
+                ))}
+                
+                
 
             </View>
         </>
@@ -126,7 +168,35 @@ const styles = StyleSheet.create({
     columnContainer: {
         flexDirection: "row",
         justifyContent: "space-between"
-    }
+    },
+
+    container: {
+        marginTop: 25,
+        marginHorizontal: 20,
+        borderBottomColor: "#ffa600",
+        borderBottomWidth: 2.5,
+        borderWidth: 1.5,
+        borderRightWidth: 2.5,
+        borderLeftColor: "#ccc",
+        borderTopColor: "#ccc",
+        borderRadius: 25
+    },
+
+    cardTitle: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        backgroundColor: "#f0f0f0",
+        borderBottomWidth: 1,
+        borderBottomColor: "#ccc",
+    },
+    cardContent: {
+        padding: 10,
+        // flexDirection: "row",
+        // justifyContent: "space-between"
+    },
 });
 
 export default OrderDetails;
