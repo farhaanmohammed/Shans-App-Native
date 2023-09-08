@@ -175,7 +175,8 @@ export default function Home() {
                 </View>
                 <View style={styles.buttonicon}>
                     <Image source={require("../../../assets/homeIcons/ic_shan_service.png")} style={{ width: 90, height: 50, resizeMode: "stretch" }} />
-                    <CustomButton title="Services" color="#fe0000" onPress={() => navigation.navigate("Jobscreen")} />
+                    {/* <CustomButton title="Services" color="#fe0000" onPress={() => navigation.navigate("Jobscreen")} /> */}
+                    <CustomButton title="Services" color="#fe0000" />
                 </View>
                 <View style={styles.buttonicon}>
                     <Image source={require("../../../assets/homeIcons/ic_dashboard_contacts.png")} style={{ width: 90, height: 50, resizeMode: "stretch" }} />

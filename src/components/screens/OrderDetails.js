@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, TouchableWithoutFeedback, StyleSheet, Text } from "react-native";
+import { View, TouchableWithoutFeedback, StyleSheet, Text, ScrollView } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import axios from "axios";
@@ -43,7 +43,7 @@ const OrderDetails = () => {
                     date: invoiceDetails.date,
                     total: invoiceDetails.total_amount,
                     customerName: invoiceDetails.customer.name,
-                    products:invoiceDetails.crm_product_lines,
+                    products: invoiceDetails.crm_product_lines,
                     // warehouseName: invoiceDetails.warehouses_name
                 }
                 setInvoice(details)
@@ -53,33 +53,34 @@ const OrderDetails = () => {
             // console.log("Invoice details -----+++++++++++++++++++-----", invoiceDetails)
         });
     }, []);
-        const originalDate = new Date(invoice.date);
+    const originalDate = new Date(invoice.date);
 
     // Format date as 'mm/dd/yyyy'
-        const formattedDate = originalDate.toLocaleDateString('en-US', {
+    const formattedDate = originalDate.toLocaleDateString('en-US', {
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',
-        });
-        
-        // Format time as 'hh:mm AM/PM'
-        const formattedTime = originalDate.toLocaleTimeString('en-US', {
+    });
+
+    // Format time as 'hh:mm AM/PM'
+    const formattedTime = originalDate.toLocaleTimeString('en-US', {
         hour: '2-digit',
         minute: '2-digit',
         hour12: true,
-        });
-    
+    });
+
     console.log('Formatted Date:', formattedDate);
     console.log('Formatted Time:', formattedTime);
 
-    console.log("products+++++++++++++++++++++++++++",invoice.products)
-    
+    console.log("products+++++++++++++++++++++++++++", invoice.products)
+
 
     console.log("Invoic details -----+++++++++++++++++++-----", invoice)
     const navigation = useNavigation();
     return (
-        <>
+        <View style={styles.container}>
             <CustomButton title="Invoice Details" onPress={() => navigation.goBack()} />
+
             <View style={styles.content}>
                 <Text style={styles.sectionTitle}>{invoice.sequenceNum}</Text>
 
@@ -100,42 +101,44 @@ const OrderDetails = () => {
                     <Text style={styles.label}>Customer Name:</Text>
                     <Text style={styles.text}>{invoice.customerName}</Text>
                 </View>
-
+                <ScrollView>
                 {/* <View style={styles.columnContainer}>
                     <Text style={styles.label}>Warehouse Name:</Text>
                     <Text style={styles.text}>{invoice.warehouseName}</Text>
                 </View> */}
-                {invoice.products.map((item,index)=>(
-                            <View key={index} style={styles.container}>
-                                <View style={styles.cardTitle}>
-                                    <Text style={{fontWeight:'700'}}>{item.product.product_name}</Text>
-                                    {/* <Text>{item.paymentDate}</Text> */}
+                {invoice.products ? (
+                    invoice.products.map((item, index) => (
+                        <View key={index} style={styles.productContainer}>
+                            <View style={styles.cardTitle}>
+                                <Text style={{ fontWeight: '700' }}>{item.product?.product_name}</Text>
+                                {/* <Text>{item.paymentDate}</Text> */}
+                            </View>
+                            <View style={styles.cardContent}>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <Text>Price:</Text>
+                                    <Text>{item.total}</Text>
                                 </View>
-                                <View style={styles.cardContent}>
-                                    <View style={{flexDirection:'row'}}>
-                                        <Text>Price:</Text>
-                                        <Text>{item.total}</Text>
-                                    </View>
-                                    <View style={{flexDirection:'row'}}>
-                                        <Text>Quantity:</Text>
-                                        <Text>{item.qty}</Text>
-                                    </View>
-                                    
-                                    {/* <Text style={styles.paidAmount} variant="bodyMedium">QAR {item.paidAmount}</Text>
-                                    <Text style={styles.paidSuccess} variant="titleLarge">{item.invoiceStatus ? "Paid" : "Not Paid"}</Text> */}
+                                <View style={{ flexDirection: 'row' }}>
+                                    <Text>Quantity:</Text>
+                                    <Text>{item.qty}</Text>
                                 </View>
                             </View>
-
-                ))}
-                
-                
-
+                        </View>
+                    ))
+                ) : (
+                    <Text>No products available</Text>
+                )}
+                </ScrollView>
             </View>
-        </>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
+
+    container: {
+        flex: 1
+    },
     button: {
         flexDirection: "row",
         alignItems: "center",
@@ -170,16 +173,18 @@ const styles = StyleSheet.create({
         justifyContent: "space-between"
     },
 
-    container: {
-        marginTop: 25,
-        marginHorizontal: 20,
+    productContainer: {
+        marginVertical: 20,
+        padding: 30,
         borderBottomColor: "#ffa600",
-        borderBottomWidth: 2.5,
+        borderBottomWidth: 5.5,
         borderWidth: 1.5,
-        borderRightWidth: 2.5,
-        borderLeftColor: "#ccc",
-        borderTopColor: "#ccc",
-        borderRadius: 25
+        borderRightWidth: 5.5,
+        // borderLeftColor: "#ccc",
+        // borderTopColor: "#ccc",
+        borderTopRightRadius: 8,
+        borderBottomLeftRadius: 8,
+        paddingVertical: 30 
     },
 
     cardTitle: {
@@ -197,6 +202,7 @@ const styles = StyleSheet.create({
         // flexDirection: "row",
         // justifyContent: "space-between"
     },
+
 });
 
 export default OrderDetails;
