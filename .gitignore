@@ -1,4 +1,8 @@
+# Ignore all node_modules folders
 node_modules/
+
+# Include only the node_modules/react-native-snap-carousel folder
+!node_modules/react-native-snap-carousel/
 .expo/
 dist/
 npm-debug.*
