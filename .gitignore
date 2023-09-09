@@ -1,6 +1,7 @@
 node_modules/
 .expo/
 dist/
+!node_modules/react-native-snap-carousel/
 npm-debug.*
 *.jks
 *.p8
