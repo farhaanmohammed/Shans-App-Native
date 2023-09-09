@@ -144,7 +144,6 @@ export default function Enquiry(){
             console.log("Error:", error);
         }
     };
-
     const removeImage = () => {
         setSelectedDocument(null); // Clear the selected image
     };
@@ -156,7 +155,7 @@ export default function Enquiry(){
 
     return(
         <View style={styles.container}>
-            <ScrollView>
+            
                 <Formik 
                     initialValues={{ date:'',details:'',customer:'',}}
                     validationSchema={AddSchema}
@@ -272,15 +271,18 @@ export default function Enquiry(){
                                 <Text style={styles.errorText}>{props.errors.customer}</Text>
                                 }
                             </View >
-
-                            <View style={styles.fieldmargin}>
-                                <Text style={[{margin:10,},styles.fieldtext]}>(You can directly write here)</Text>
-                                <View style={{borderWidth:0.7,borderRadius:10,}}>
-                                    <WritingPad/>
-                                </View>
+                            <ScrollView>
+                                <View style={styles.fieldmargin}>
+                                    <Text style={[{margin:10,},styles.fieldtext]}>(You can directly write here)</Text>
+                                    <View style={{borderWidth:0.7,borderRadius:10,position:'relative'}}>
+                                        <WritingPad/>
+                                    </View>
                                 
 
-                            </View>
+                                </View>
+
+                            </ScrollView>
+                            
 
                             <View style={styles.fieldmargin}>
                                 <Text style={styles.fieldtext}> Images:</Text>
@@ -296,7 +298,7 @@ export default function Enquiry(){
                                 <CustomButton title="Select Images" onPress={selectDoc} />
                             </View>
 
-                            <View style={{marginTop:100,}}>
+                            <View style={{marginTop:7,}}>
                                 <CustomAddButton title="Submit" onPress={props.handleSubmit}/>
                             </View>
                             
@@ -307,7 +309,7 @@ export default function Enquiry(){
                     )}
 
                 </Formik>
-            </ScrollView>
+            
             
         </View>
     )
@@ -339,14 +341,14 @@ const styles=StyleSheet.create({
     fieldtext:{
         // color:"#ffa600",
         fontWeight:"400",
-        fontSize:16,
+        fontSize:14,
     },
     input:{
         borderWidth:0.5,
         borderColor:"black",
         paddingHorizontal: 10,
-        paddingVertical:7,
-        fontSize:18,
+        paddingVertical:3,
+        fontSize:12,
         borderRadius:6,
         maxWidth:390,
         marginTop:5,
@@ -361,7 +363,7 @@ const styles=StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         marginVertical: 10,
-        marginHorizontal:20,
+
     },
     buttonText: {
         color: 'white',
@@ -369,8 +371,8 @@ const styles=StyleSheet.create({
         fontWeight: 'bold',
     },
     tinyLogo: {
-        width: 100,
-        height: 100,
+        width: 90,
+        height: 90,
     },
 
     addbutton: {
@@ -381,7 +383,6 @@ const styles=StyleSheet.create({
         borderRadius: 13,
     },
     title: {
-        marginLeft: 34,
         fontSize: 15,
         color: "white"
     },
