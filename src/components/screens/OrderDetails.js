@@ -79,7 +79,7 @@ const OrderDetails = () => {
     const navigation = useNavigation();
     return (
         <View style={styles.container}>
-            <CustomButton title="Invoice Details" onPress={() => navigation.goBack()} />
+            <CustomButton title="Quotation Details" onPress={() => navigation.goBack()} />
 
             <View style={styles.content}>
                 <Text style={styles.sectionTitle}>{invoice.sequenceNum}</Text>

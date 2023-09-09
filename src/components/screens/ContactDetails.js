@@ -181,6 +181,8 @@ export default function ContactDetails({ route, navigation }) {
 
   // console.log("contact details",item._id,item.name,item.warehouse_id,item.warehousename)
 
+  console.log("admin namee",user.user_name)
+
 
 
 
@@ -269,6 +271,8 @@ export default function ContactDetails({ route, navigation }) {
       "untaxed_total_amount": totalPriceSum,
       "total_amount": totalPriceSum,
       "crm_product_line_ids": orderItems,
+      "sales_person_id":user.related_profile._id,
+      "sales_person_name":user.related_profile.name,
     }
 
     console.log("payload.....................", payload)
