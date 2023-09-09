@@ -1,5 +1,5 @@
 import React from "react";
-import { Text,View,StyleSheet,ScrollView,TextInput,TouchableOpacity,Image,TouchableWithoutFeedback } from "react-native";
+import { Text,View,StyleSheet,ScrollView,TextInput,TouchableOpacity,Image,TouchableWithoutFeedback, Alert } from "react-native";
 import { Formik } from "formik";
 import { AntDesign } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -9,6 +9,17 @@ import axios, { all } from "axios";
 import { Feather } from '@expo/vector-icons';
 import WritingPad from "../../WritingPad/WritingPad";
 import { useNavigation, useRoute } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Yup from 'yup';
+
+export const AddSchema = Yup.object().shape({
+    details: Yup.string().required('Please enter Product Details'),
+    customer: Yup.string().required('Please enter Customer Details'),
+    date:Yup.date().required("Please Select date"),
+
+
+})
+
 
 
 const CustomButton = ({ title, onPress }) => {
@@ -35,7 +46,37 @@ const CustomAddButton = ({ title, onPress }) => {
 
 export default function Enquiry(){
 
+    const navigation=useNavigation();
+
+    const [user, setUser] = React.useState('');
+
+    React.useEffect(() => {
+        const fetchData = async () => {
+    
+            try {
+            const StoredData = await AsyncStorage.getItem('adminDetails')
+    
+            console.log("storedData:", StoredData);
+    
+            if (StoredData !== null) {
+                const userData = JSON.parse(StoredData)
+                setUser(userData);
+            } else {
+                setUser('No data Found')
+            }
+            } catch (error) {
+            console.log('error fetching data', error)
+            }
+        }
+    
+        fetchData();
+    
+    }, [])
+
+    console.log("Login user data+++++++++++++++++++++++", user);
+
     const imageUploadUrl=`${baseUrl}/fileUpload?folder_name=products`;
+    const createProductEnquiry=`${baseUrl}/createProductEnquiryDetails`;
 
     const[openDate,setOpenDate]=React.useState(false)
     const[selectedDocument,setSelectedDocument]=React.useState('')
@@ -118,9 +159,33 @@ export default function Enquiry(){
             <ScrollView>
                 <Formik 
                     initialValues={{ date:'',details:'',customer:'',}}
+                    validationSchema={AddSchema}
 
                     onSubmit={(values)=>{
                         console.log(values)
+
+                        const body={
+
+                            "date": values.date,
+                            "submitted_by": user.related_profile._id,
+                            "product_detail": values.details,
+                            "product_description": WritePadUrl,
+                            "product_image": image,
+                            "customer_details": values.customer,
+                        }
+
+                        console.log("Api body",body);
+
+                        axios.post(createProductEnquiry,body).then(res=>{
+                            console.log("res++++++++++++++",res.data)
+                            if (res.data.success == "true") {
+                                alert("Product Enquiry Added")
+                                navigation.goBack();
+                        
+                            } else {
+                                alert(res.data.message)
+                            }
+                        }).catch(err=>{console.log("errpr",err)})
                         
                     }}
                 
@@ -133,7 +198,16 @@ export default function Enquiry(){
                             
 
                             <View style={[styles.input,{flexDirection:'row',justifyContent:'space-between'}]}> 
-                                <Text> {props.values.date}</Text>
+                                {/* <Text> {props.values.date}</Text> */}
+                                <TextInput
+                                    
+                                    placeholder="Select Date"
+                                    onChangeText={props.handleChange('date')}
+                                    value={props.values.date}
+                                    onBlur={props.handleBlur('date')}
+                                
+                                />
+                                
                                 <AntDesign name="calendar" size={24} color="black" onPress={()=>setOpenDate(true)} />
                             </View>
 
@@ -153,10 +227,16 @@ export default function Enquiry(){
                                         }
                                     }}
                                     display="default" 
+                                    
+                                    
 
 
                                 />
                             )}
+                            { props.touched.date && props.errors.date &&
+                                <Text style={styles.errorText}>{props.errors.date}</Text>
+                                }
+                            
                             </View>
 
                             <View style={styles.fieldmargin}>
@@ -168,8 +248,12 @@ export default function Enquiry(){
                                     placeholder="Enter Product name & Details"
                                     onChangeText={props.handleChange('details')}
                                     value={props.values.details}
+                                    onBlur={props.handleBlur('details')}
                                 
                                 />
+                                { props.touched.details && props.errors.details &&
+                                <Text style={styles.errorText}>{props.errors.details}</Text>
+                                }
                             </View>
 
                             <View style={styles.fieldmargin}>
@@ -181,8 +265,12 @@ export default function Enquiry(){
                                     placeholder="Please enter Customer Name & Number"
                                     onChangeText={props.handleChange('customer')}
                                     value={props.values.customer}
+                                    onBlur={props.handleBlur('customer')}
                                 
                                 />
+                                { props.touched.customer && props.errors.customer &&
+                                <Text style={styles.errorText}>{props.errors.customer}</Text>
+                                }
                             </View >
 
                             <View style={styles.fieldmargin}>
@@ -297,4 +385,10 @@ const styles=StyleSheet.create({
         fontSize: 15,
         color: "white"
     },
+    errorText: {
+        fontSize: 12,
+        color: 'red',
+        marginTop: 5,
+    },
+
 });

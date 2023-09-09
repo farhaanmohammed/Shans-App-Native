@@ -74,8 +74,15 @@ export default function ContactDetails({ route, navigation }) {
   const CreateinvoiceUrl = `${baseUrl}/createQuotation`
 
   const [totalPrice, setTotalprice] = useState([]);
+<<<<<<< HEAD
   const [currency, setCurrency] = useState("QAR")
 
+=======
+  const [currency, setCurrency] = useState("AED")
+  const [tax, setTax] = useState([]);
+  
+  
+>>>>>>> origin/main
 
   const updateTotalPrice = (newTotalPrice, index) => {
     setTotalprice(prevPrices => {
@@ -97,15 +104,15 @@ export default function ContactDetails({ route, navigation }) {
 
   const [unitprice, setUnitPrice] = useState([])
 
-  const [tax, setTax] = useState({});
+  
 
   const productTax = (price, index) => {
-    setTax(prevTax => ({
-      ...prevTax,
-      [index]: price * 0.05,
-    }));
+    setTax(prevTax => {
+      const newTax = [...prevTax];
+      newTax[index] = price * 0.05;
+      return newTax;
+    });
   };
-
   const productunitprice = (price, index) => {
     setUnitPrice(prevunitprice => {
       const newunitprice = [...prevunitprice];
@@ -116,7 +123,9 @@ export default function ContactDetails({ route, navigation }) {
 
   const totalPriceSum = totalPrice.reduce((sum, value) => sum + value, 0);
 
-  const totalTax = Object.values(tax).reduce((sum, taxValue) => sum + taxValue, 0);
+  const totalTax = tax.reduce((sum, value) => sum + value, 0);
+
+  
 
 
   const removeProduct = (productIDToRemove, index) => {
@@ -139,9 +148,18 @@ export default function ContactDetails({ route, navigation }) {
     }
   }, [product])
 
-  console.log("pushed products:---------------------", addedProducts);
+  // console.log("pushed products:---------------------", addedProducts);
 
+<<<<<<< HEAD
   console.log("taxxxxxx>>>>>>>>>>>>>>>>>>>", totalTax);
+=======
+  // Assuming 'tax' is an array of numbers
+
+
+
+  console.log("taxxxxxx>>>>>>>>>>>>>>>>>>>",tax);
+  console.log("taxxxxxxTotal>>>>>>>>>>>>>>>>>>>",totalTax)
+>>>>>>> origin/main
 
 
   // console.log("UpdatedTotalPrice in Contactdetails page",totalPrice);
@@ -162,20 +180,39 @@ export default function ContactDetails({ route, navigation }) {
   //   "return_quantity": 0
   // }))
 
+  // const orderItems = addedProducts.map((product, index) => ({
+  //   "product_id": product.productID,
+  //   "tax_type_id": "648d9b8fef9cd868dfbfa37f",
+  //   "tax_value": 0,
+  //   "uom_id": null,
+  //   "uom": '',
+  //   "qty": prquantity[index],
+  //   "discount_percentage": 0,
+  //   "unit_price": product.productCost,
+  //   "remarks": '',
+  //   "total": prquantity[index] * product.productCost,
+  // }))
+  // // for qatar
+
+  
   const orderItems = addedProducts.map((product, index) => ({
     "product_id": product.productID,
-    "tax_type_id": "648d9b8fef9cd868dfbfa37f",
-    "tax_value": 0,
+    "tax_type_id": "648d9b54ef9cd868dfbfa37b",
+    "tax_value": 0.05,
     "uom_id": null,
     "uom": '',
     "qty": prquantity[index],
     "discount_percentage": 0,
     "unit_price": product.productCost,
     "remarks": '',
-    "total": prquantity[index] * product.productCost,
+    "total": prquantity[index] * product.productCost,   
   }))
 
+<<<<<<< HEAD
 
+=======
+  // for Dubai
+>>>>>>> origin/main
 
   console.log("ordersummery", orderItems);
 
@@ -267,8 +304,10 @@ export default function ContactDetails({ route, navigation }) {
       "payment_terms_id": null,
       "delivery_method_id": null,
       "untaxed_total_amount": totalPriceSum,
-      "total_amount": totalPriceSum,
+      "total_amount": totalPriceSum+totalTax,
       "crm_product_line_ids": orderItems,
+      "sales_person_id":user.related_profile._id,
+      "sales_person_name":user.related_profile.name,
     }
 
     console.log("payload.....................", payload)
@@ -352,20 +391,20 @@ export default function ContactDetails({ route, navigation }) {
               <>
                 <View style={{ flexDirection: "column" }}>
                   <Text style={styles.productLabel}>Total Quantity: {addedProducts.length}</Text>
-                  {/* <View style={{ flexDirection: "row" }}>
+                  <View style={{ flexDirection: "row" }}>
                     <Text style={styles.productLabel}>Untaxed Amount:  </Text>
                     <Text style={styles.productText}> {totalPriceSum} {currency}</Text>
                   </View>
                   <View style={{ flexDirection: "row" }}>
                     <Text style={styles.productLabel}>Tax Amount:  </Text>
                     <Text style={styles.productText}> {totalTax} {currency}</Text>
-                  </View> */}
+                  </View>
                   <View style={{ flexDirection: "row" }}>
                     <Text style={styles.productLabel}>Total Amount:  </Text>
-                    <Text style={styles.productText}> {totalPriceSum} {currency}</Text>
+                    <Text style={styles.productText}> {totalPriceSum+totalTax} {currency}</Text>
                   </View>
                 </View>
-                <View style={styles.submitButtonContainer}>
+                <View style={{marginTop:15,}}>
                   <CustomSubmitButton
                     title="Place Order"
                     onPress={handlesubmit}
@@ -373,7 +412,7 @@ export default function ContactDetails({ route, navigation }) {
                 </View>
               </>
             ) : (
-              <Text style={styles.productLabel}>Some products are out of stock</Text>
+              <Text style={styles.noproductLabel}>Some products are out of stock</Text>
             )}
           </View>
 
@@ -500,11 +539,17 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   productLabel: {
+    fontSize: 14,
+    marginBottom: 5,
+    color: "black"
+  },
+  noproductLabel: {
     fontSize: 16,
     marginBottom: 5,
     color: "black"
   },
   productText: {
+    fontSize: 14,
     marginRight: 30,
     fontWeight: "500"
   },
@@ -512,6 +557,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     margintop: 80,
+    marginHorizontal:15,
   },
 
   scroll: {

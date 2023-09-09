@@ -3,16 +3,16 @@ import { Text, View, StyleSheet } from "react-native"
 import Calender from "../Calender/Calender";
 import { FAB } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
+import HorizontalCalendar from "../Calender/Calender";
 
 
 
 export default function Jobs({ navigation }) {
-    const [selectedDate, setSelectedDate] = React.useState(null);
+
     return (
         <View style={styles.container}>
-            <Calender onSelectedDate={setSelectedDate} selcted={selectedDate} />
-            <Text>Jobs screen</Text>
-
+        
+            <HorizontalCalendar/>
             <FAB
                 style={styles.fab}
                 icon={() => <MaterialIcons name="contact-page" size={24} color="white" />}
@@ -27,8 +27,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
+        // alignItems: 'center',
+        // justifyContent: 'center',
     },
 
     fab: {
