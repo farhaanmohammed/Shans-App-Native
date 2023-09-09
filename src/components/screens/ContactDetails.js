@@ -74,15 +74,10 @@ export default function ContactDetails({ route, navigation }) {
   const CreateinvoiceUrl = `${baseUrl}/createQuotation`
 
   const [totalPrice, setTotalprice] = useState([]);
-<<<<<<< HEAD
-  const [currency, setCurrency] = useState("QAR")
-
-=======
   const [currency, setCurrency] = useState("AED")
   const [tax, setTax] = useState([]);
   
   
->>>>>>> origin/main
 
   const updateTotalPrice = (newTotalPrice, index) => {
     setTotalprice(prevPrices => {
@@ -150,16 +145,12 @@ export default function ContactDetails({ route, navigation }) {
 
   // console.log("pushed products:---------------------", addedProducts);
 
-<<<<<<< HEAD
-  console.log("taxxxxxx>>>>>>>>>>>>>>>>>>>", totalTax);
-=======
   // Assuming 'tax' is an array of numbers
 
 
 
   console.log("taxxxxxx>>>>>>>>>>>>>>>>>>>",tax);
   console.log("taxxxxxxTotal>>>>>>>>>>>>>>>>>>>",totalTax)
->>>>>>> origin/main
 
 
   // console.log("UpdatedTotalPrice in Contactdetails page",totalPrice);
@@ -208,11 +199,7 @@ export default function ContactDetails({ route, navigation }) {
     "total": prquantity[index] * product.productCost,   
   }))
 
-<<<<<<< HEAD
-
-=======
   // for Dubai
->>>>>>> origin/main
 
   console.log("ordersummery", orderItems);
 
