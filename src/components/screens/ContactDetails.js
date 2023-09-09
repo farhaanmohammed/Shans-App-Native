@@ -75,7 +75,7 @@ export default function ContactDetails({ route, navigation }) {
 
   const [totalPrice, setTotalprice] = useState([]);
   const [currency, setCurrency] = useState("QAR")
-  
+
 
   const updateTotalPrice = (newTotalPrice, index) => {
     setTotalprice(prevPrices => {
@@ -141,7 +141,7 @@ export default function ContactDetails({ route, navigation }) {
 
   console.log("pushed products:---------------------", addedProducts);
 
-  console.log("taxxxxxx>>>>>>>>>>>>>>>>>>>",totalTax);
+  console.log("taxxxxxx>>>>>>>>>>>>>>>>>>>", totalTax);
 
 
   // console.log("UpdatedTotalPrice in Contactdetails page",totalPrice);
@@ -175,7 +175,7 @@ export default function ContactDetails({ route, navigation }) {
     "total": prquantity[index] * product.productCost,
   }))
 
-  
+
 
   console.log("ordersummery", orderItems);
 
@@ -256,7 +256,7 @@ export default function ContactDetails({ route, navigation }) {
     //   "Pdc_status": ""
     // }
 
-    const payload={
+    const payload = {
       "date": formattedDate,
       "quotation_status": "new",
       "address": item.address,

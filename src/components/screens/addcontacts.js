@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View, TextInput, Button, ScrollView, TouchableOpacity, Alert } from "react-native";
 import { baseUrl } from "../../api/const";
 import { Formik } from "formik";
-import { Picker } from "@react-native-community/picker";
+import { Picker } from "@react-native-picker/picker";
 import { useState } from "react";
 import { useEffect } from "react";
 import axios from "axios";

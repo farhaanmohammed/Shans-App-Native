@@ -320,3 +320,10 @@ invoice, vendor, Capital reaceipts, Capital Payments, pettyCashAllotment, pettyc
 jobinvoice, spareissue - not completed because sequnece number of jobinvoice is missing eg Invoice-JOBINV-48 Invoice getting error deployment
 
 spare issue want a field to totalamount that spare issue want also an api for sequence number searching api creating sequnece number 
+
+
+add task
+
+priority  - drop down 
+
+due date and time  calender

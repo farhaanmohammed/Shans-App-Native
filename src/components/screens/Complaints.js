@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { Text, View, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { Formik } from "formik";
-import { Picker } from "@react-native-community/picker";
 import { baseUrl } from "../../api/const";
 import axios from "axios";
 import { Dropdown ,MultiSelect } from 'react-native-element-dropdown';

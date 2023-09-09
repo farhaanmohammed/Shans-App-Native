@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native'
 import React, { useState, useEffect, useRef } from 'react'
-import { Picker } from "@react-native-community/picker";
+import { Picker } from "@react-native-picker/picker";
 import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios';
 import { baseUrl } from "../../api/const";

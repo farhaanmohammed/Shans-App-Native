@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Text,View,StyleSheet,ScrollView,TextInput,Modal,Button,FlatList,TouchableOpacity,Image } from "react-native"
-import { Picker } from "@react-native-community/picker";
+
 import { Formik } from "formik";
 import { baseUrl } from "../../api/const";
 import axios, { all } from "axios";
