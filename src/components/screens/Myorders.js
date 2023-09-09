@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { View, StyleSheet, Text, ScrollView, TouchableWithoutFeedback } from "react-native";
 import axios from "axios";
 import { baseUrl } from "../../api/const";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
@@ -22,6 +23,8 @@ const CustomButton = ({ title, onPress }) => {
 };
 export default function MyOrdersScreen() {
   const [invoice, setInvoice] = useState([]);
+  const [user, setUser] = useState('');
+  
 
   useEffect(() => {
     axios.get(invoiceUrl)
@@ -32,7 +35,8 @@ export default function MyOrdersScreen() {
           sequenceNum: item.sequence_no,
           paymentDate: item.date,
           invoiceStatus: item.invoice_status,
-          paidAmount: item.total_amount
+          paidAmount: item.total_amount,
+          salesperson_id:item.sales_person.sales_person_id,
         }));
         setInvoice(customerDetails);
       })
@@ -40,6 +44,31 @@ export default function MyOrdersScreen() {
         console.error("Error fetching invoice:", error);
       });
   }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+
+      try {
+        const StoredData = await AsyncStorage.getItem('adminDetails')
+
+        console.log("storedData:", StoredData);
+
+        if (StoredData !== null) {
+          const userData = JSON.parse(StoredData)
+          setUser(userData);
+        } else {
+          setUser('No data Found')
+        }
+      } catch (error) {
+        console.log('error fetching data', error)
+      }
+    }
+
+    fetchData();
+
+  }, [])
+
+  console.log("Login user data", user);
     
   
 
@@ -51,40 +80,36 @@ export default function MyOrdersScreen() {
       <CustomButton title="My Orders" onPress={() => navigation.goBack()} />
       <ScrollView>
 
-        {invoice.map((item, index) =>{ 
-          
+      {invoice.map((item, index) => {
+        if (user.related_profile._id === item.salesperson_id) {
           const originalDate = new Date(invoice[0].paymentDate);
 
-          console.log("date+++++++++++++",originalDate)
+          console.log("date+++++++++++++", originalDate);
 
           // Format date as 'mm/dd/yyyy'
-              const formattedDate = originalDate.toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: '2-digit',
-              day: '2-digit',
-              });
-              
-              // Format time as 'hh:mm AM/PM'
-              // const formattedTime = originalDate.toLocaleTimeString('en-US', {
-              // hour: '2-digit',
-              // minute: '2-digit',
-              // hour12: true,
-              // });
-          
+          const formattedDate = originalDate.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+          });
+
           return (
-                <TouchableWithoutFeedback key={index} onPress={() => navigation.navigate('OrderDetails', { item: item })}>
-                  <View style={styles.container}>
-                    <View style={styles.cardTitle}>
-                      <Text>{item.sequenceNum}</Text>
-                      <Text> {formattedDate}</Text>
-                    </View>
-                    <View style={styles.cardContent}>
-                      <Text style={styles.paidAmount} variant="bodyMedium">QAR {item.paidAmount}</Text>
-                      {/* <Text style={styles.paidSuccess} variant="titleLarge">{item.invoiceStatus ? "Paid" : "Not Paid"}</Text> */}
-                    </View>
-                  </View>
-                </TouchableWithoutFeedback>
-        )})}
+            <TouchableWithoutFeedback key={index} onPress={() => navigation.navigate('OrderDetails', { item: item })}>
+              <View style={styles.container}>
+                <View style={styles.cardTitle}>
+                  <Text>{item.sequenceNum}</Text>
+                  <Text> {formattedDate}</Text>
+                </View>
+                <View style={styles.cardContent}>
+                  <Text style={styles.paidAmount} variant="bodyMedium">QAR {item.paidAmount}</Text>
+                  {/* <Text style={styles.paidSuccess} variant="titleLarge">{item.invoiceStatus ? "Paid" : "Not Paid"}</Text> */}
+                </View>
+              </View>
+            </TouchableWithoutFeedback>
+          );
+        }
+      })}
+
       </ScrollView>
     </View>
   );
