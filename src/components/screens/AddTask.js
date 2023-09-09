@@ -16,7 +16,10 @@ const dropDownData = [
   { label: 'LOW', value: 'LOW' },
 ];
 
-
+const languageDropDownData = [
+  { label: "English (India)", value: "en-IN" },
+  { label: "Malayalam (India)", value: "ml-IN" },
+]
 
 const employeeUrl = `${baseUrl}/viewEmployees/employee_list/employee_dropdown`;
 const addTaskUrl = `${baseUrl}/createTaskManagment`
@@ -95,7 +98,7 @@ const AddTask = () => {
 
   const startSpeechToText = async () => {
     try {
-      await Voice.start("ml-IN");
+      await Voice.start(selectedLanguage);
       setStarted(true);
     } catch (error) {
       console.log(error);
@@ -137,106 +140,7 @@ const AddTask = () => {
   const handleSubmit = async () => {
     try {
       console.log("Loading......")
-      let addTaskData = {
-
-        "title": "task",
-        "description": "test",
-        "project": "test",
-        "start_date": "20-10-2023",
-        "due_date": "21-10-2023",
-        "estimated_time": "2:00",
-        "task_duration": "2:30",
-        "status": "test",
-        "priority": "high",
-        "parent_task_id": "63c914f880b82443459d6581",
-        "assignee_id": "63c914f880b82443459d6581",
-        "created_by_id": "63c914f880b82443459d6581",
-        "warehouse_id": "63c914f880b82443459d6581",
-        "task_type_id": "649146140916c0050a5b4bb2",
-        "is_scheduled": true,
-        "daily_scheduler": true,
-        "document": [],
-        "audio_url": "wert.jpg",
-        "machinery_availability_list_ids": [
-          "640712d697229ce1ddd349a6",
-          "6454e6aa2c6ad4b0958051f1"
-        ],
-        "weakly_scheduler": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7
-        ],
-        "monthly_scheduler": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15,
-          16,
-          17,
-          18,
-          19,
-          20,
-          21,
-          22,
-          23,
-          24,
-          25,
-          26,
-          27,
-          28,
-          29,
-          30,
-          31
-        ],
-        "participants": [
-          {
-            "employee_id": "648409287565a7b87d766bc1",
-            "employee_name": "tyler"
-          },
-          {
-            "employee_id": "648418d9ad5a111df8499aca",
-            "employee_name": "nop"
-          }
-        ],
-        "watchers": [
-          {
-            "employee_id": "648418d9ad5a111df8499aca",
-            "employee_name": "nop"
-          },
-          {
-            "employee_id": "648409287565a7b87d766bc1",
-            "employee_name": "tyler"
-          }
-        ],
-        "check_list": [
-          {
-            "field_name": "test",
-            "boolean": true,
-            "is_image_mandatory": true,
-            "image_url": "image.png"
-          }
-        ],
-        "assignee": [
-          "648409287565a7b87d766bc1",
-          "648418d9ad5a111df8499aca"
-        ]
-
-      }
+     
       const response = await axios.post(addTaskUrl, addTaskData)
       if (response.data.success === 'true') {
         Toast.show({
@@ -260,6 +164,8 @@ const AddTask = () => {
         <CustomButton title="Add Task" onPress={() => navigation.goBack()} />
       </View>
       <View style={styles.taskContainer}>
+
+        {/* Dropdown select assignee */}
         <Text style={styles.label}>Assignee:</Text>
         <Dropdown
           style={[styles.dropdown, isFocus && { borderColor: '#ffa600' }]}
@@ -276,6 +182,19 @@ const AddTask = () => {
             const { name, id } = item; // Destructure the selected item
             setFormData({ ...formData, assignee: { name, id } }); // Store the name and id in the assignee property
           }}
+        />
+        <Text style={styles.label}>Language Support:</Text>
+        <Dropdown
+          style={[styles.dropdown, isFocus && { borderColor: '#ffa600' }]}
+          data={languageDropDownData}
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          value={selectedLanguage}
+          // placeholder="English (India)"
+          onFocus={() => setIsFocus(true)}
+          onBlur={() => setIsFocus(false)}
+          onChange={(item) => setSelectedLanguage(item.value)}
         />
         <Text style={styles.label}>Enter Task:</Text>
         <TextInput
@@ -369,7 +288,7 @@ const AddTask = () => {
         />
       </View>
       {/* {results.map((result, index) => <Text key={index}>{result}</Text>)} */}
-      <CustomSubmitButton title="Submit" onPress={handleSubmit} />
+      <CustomSubmitButton title="Submit" onPress={() => console.log("Pressed")} />
     </View>
   )
 }
@@ -461,7 +380,7 @@ const styles = StyleSheet.create({
   },
   submitButtonContainer: {
     position: 'absolute',
-    bottom: 50,
+    bottom: 30,
     left: 10,
     right: 10,
   },
