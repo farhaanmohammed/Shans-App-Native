@@ -14,6 +14,7 @@ import * as DocumentPicker from 'expo-document-picker';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as Yup from 'yup';
+import { LogBox } from 'react-native';
 
 
 const CustomButton = ({ title, onPress }) => {
@@ -28,9 +29,17 @@ const CustomButton = ({ title, onPress }) => {
 };
 
 export const AddSchema = Yup.object().shape({
-    name: Yup.string().required('Please enter your Name'),
-    customer_mobile: Yup.number().required('Please enter you Phone Number'),
-    customer_email: Yup.string().email('Invalid email').required("Please etner you email"),
+    customer: Yup.string().required('Please select customer'),
+    mobile: Yup.number().required('Please enter you Phone Number'),
+    email: Yup.string().email('Invalid email').required("Please enter your email"),
+    jobbooking_id:Yup.string().required('Select Job Booking'),
+    consumer_model_id:Yup.string().required('Select Model'),
+    device_id:Yup.string().required('Select Device'),
+    brand_id:Yup.string().required('Select Brand'),
+    assignedto_id:Yup.string().required('Select Employee'),
+    assignedOn:Yup.date().required('Select Date'),
+    estimation:Yup.number().required('Enter the Estimation'),
+
 
 
 })
@@ -105,11 +114,15 @@ export default function AddJob(){
 
     const[warehouse ,setWarehouse]=React.useState('');
 
+    LogBox.ignoreLogs([
+        'Non-serializable values were found in the navigation state',
+    ]);
+
     useEffect(()=>{
             const fetchData = async()=>{
     
             try {
-                const StoredData=await AsyncStorage.getItem('userData')
+                const StoredData=await AsyncStorage.getItem('adminDetails')
     
                 // console.log("storedData:",StoredData);
     
@@ -133,7 +146,7 @@ export default function AddJob(){
         
 
         const handleScan = () => {
-            navigation.navigate('Scanner', {
+            navigation.navigate('SerialScanner', {
                 onScan: (data) => {
                     setScannedData(data); // Store the scanned data in component state
                 },
@@ -229,7 +242,10 @@ export default function AddJob(){
                 sequence_no:item.sequence_no,
                 device_id:item.device_id,
                 brand_id:item.brand_id,
+                device_name:item.device_name,
+                brand_name:item.brand_name,
                 consumer_model_id:item.consumer_model_id,
+                consumer_model_name:item.consumer_model_name,
                 serial_no:item.serial_no,
                 customer_id:item.customer_id,
                 create_date:item.create_date,
@@ -364,10 +380,10 @@ export default function AddJob(){
             <ScrollView style={styles.container}>
                 <Formik
                     initialValues={{ customer:'',customer_id:'',mobile:'',email:'',warehouse_name:'',consumer_model_id:'',consumer_model_name:'',device_id:'',device_name:'',
-                    brand_id:'',brand_name:'',jobbooking_id:'',jobbooking:'',sales_person_name:'',
+                    brand_id:'',brand_name:'',jobbooking_id:'',jobbooking:'',sales_person_name:'',sales_person_id:'',
                     estimation:'',assignedOn: '',assignedto_name:'',assignedto_id:'',remarks:'',accessories:[], email:'',serial_no:scannedData,
                 }}
-                    // validationSchema={AddSchema}
+                    validationSchema={AddSchema}
                     onSubmit={(values)=> {console.log("values:",values)
                         console.log("Selected customer:");
                         const body= {
@@ -405,7 +421,7 @@ export default function AddJob(){
                             "pickup_schedule_time": null,
                             "assignee_id": values.assignedto_id,
                             "assignee_name": values.assignedto_name,
-                            "sales_person_id": values.assignedto_name,
+                            "sales_person_id": values.sales_person_id,
                             "sales_person_name": values.sales_person_name,
                             "driver_signature": null,
                             "customer_signature": null,
@@ -419,6 +435,7 @@ export default function AddJob(){
                             "warranty_date": null,
                             "warranty_type": null,
                             "complaint_or_service_request": complaints,
+                            "product_image_list": image,
                         }
 
                         console.log("body++++++++++++====================",body);
@@ -471,6 +488,9 @@ export default function AddJob(){
                                 
                                 }}
                             />
+                            {props.touched.customer && props.errors.customer &&
+                                <Text style={styles.errorText}>{props.errors.customer}</Text>
+                            }
 
 
                         </View>
@@ -483,7 +503,12 @@ export default function AddJob(){
                                 onChangeText={props.handleChange('mobile')}
                                 value={props.values.mobile}
                                 keyboardType="numeric"
+                                onBlur={props.handleBlur('mobile')}
                             />
+
+                            {props.touched.mobile && props.errors.mobile &&
+                                <Text style={styles.errorText}>{props.errors.mobile}</Text>
+                            }
                         </View>
                         <View style={styles.fieldmargin}>
                             <Text style={styles.fieldtext}>Email:</Text>
@@ -493,7 +518,11 @@ export default function AddJob(){
                                 placeholder="Email"
                                 onChangeText={props.handleChange('email')}
                                 value={props.values.email}
+                                onBlur={props.handleBlur('email')}
                             />
+                                {props.touched.email && props.errors.email &&
+                                <Text style={styles.errorText}>{props.errors.email}</Text>
+                                }
                         </View>
                         <View style={styles.fieldmargin}>
                             <Text style={styles.fieldtext}>
@@ -556,8 +585,11 @@ export default function AddJob(){
                                     props.setFieldValue('jobbooking_id',item.id)
                                     props.setFieldValue('jobbooking',item.sequence_no)
                                     props.setFieldValue('brand_id', item.brand_id);
-                                    props.setFieldValue('device_id', item.device_id); // Set the customer ID
-                                    props.setFieldValue('consumer_model_id', item.consumer_model_id); // Set other fields like mobile if available
+                                    props.setFieldValue('brand_name',item.brand_name)
+                                    props.setFieldValue('device_id', item.device_id); 
+                                    props.setFieldValue('device_name', item.device_name);// Set the customer ID
+                                    props.setFieldValue('consumer_model_id', item.consumer_model_id); 
+                                    props.setFieldValue('consumer_model_name',item.consumer_model_name)// Set other fields like mobile if available
                                     // props.setFieldValue('serial_no', item.serial_no);
                                     props.setFieldValue('sales_person_id', item.sales_person_id); 
                                     props.setFieldValue('sales_person_name', item.sales_person_name); 
@@ -569,6 +601,9 @@ export default function AddJob(){
                                 
                                 }}
                             />
+                            {props.touched.jobbooking_id && props.errors.jobbooking_id &&
+                                <Text style={styles.errorText}>{props.errors.jobbooking_id}</Text>
+                            }
 
 
                         </View>
@@ -651,6 +686,10 @@ export default function AddJob(){
                                 
                                 }}
                             />
+                            {props.touched.device_id && props.errors.device_id &&
+                                <Text style={styles.errorText}>{props.errors.device_id}</Text>
+                            }
+                            
 
 
                         </View>
@@ -704,6 +743,9 @@ export default function AddJob(){
                                 
                                 }}
                             />
+                            {props.touched.brand_id && props.errors.brand_id &&
+                                <Text style={styles.errorText}>{props.errors.brand_id}</Text>
+                            }
                             
 
                         </View>
@@ -758,6 +800,9 @@ export default function AddJob(){
                                 
                                 }}
                             />
+                            {props.touched.consumer_model_id && props.errors.consumer_model_id &&
+                                <Text style={styles.errorText}>{props.errors.consumer_model_id}</Text>
+                            }
 
                         </View>
                                 
@@ -928,8 +973,8 @@ export default function AddJob(){
                                 maxHeight={300}
                                 labelField="name"
                                 valueField="id"
-                                placeholder={props.values.assignedto_id ?props.values.assignedto_id : "Select Customer"     }
-                                searchPlaceholder="Search Customers"
+                                placeholder={props.values.assignedto_id ?props.values.assignedto_id : "Select employee"     }
+                                searchPlaceholder="Search Employees"
                                 value={props.values?.assignedto_id}
                                 onFocus={() => setIsFocus(true)}
                                 onBlur={() => setIsFocus(false)}
@@ -942,6 +987,9 @@ export default function AddJob(){
                                 
                                 }}
                             />
+                            {props.touched.assignedto_id && props.errors.assignedto_id &&
+                                <Text style={styles.errorText}>{props.errors.assignedto_id}</Text>
+                            }
 
 
                         </View>
@@ -975,6 +1023,10 @@ export default function AddJob(){
 
                                 />
                             )}
+
+                            {props.touched.assignedOn && props.errors.assignedOn &&
+                                <Text style={styles.errorText}>{props.errors.assignedOn}</Text>
+                            }
                             
                             
                         </View>
@@ -989,6 +1041,9 @@ export default function AddJob(){
                                 value={props.values.estimation}
                                 keyboardType="numeric"
                             />
+                            {props.touched.estimation && props.errors.estimation &&
+                                <Text style={styles.errorText}>{props.errors.estimation}</Text>
+                            }
                         </View>
                         <View  style={styles.fieldmargin}>
                             <Text  style={styles.fieldtext}>Remarks</Text>
@@ -1190,6 +1245,12 @@ const styles=StyleSheet.create({
         
 
 
+    },
+
+    errorText: {
+        fontSize: 12,
+        color: 'red',
+        marginTop: 5,
     },
 
     complaintfield:{

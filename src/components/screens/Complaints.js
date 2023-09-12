@@ -61,21 +61,23 @@ export default function Complaints({onSubmitted,Closebutton}){
 
     return (
         <Formik
-            initialValues={{complaint_request_type:[],complaint_request:'',remarks:'',}}
+            initialValues={{complaint_request_type:'',complaint_request:[],remarks:'',}}
             onSubmit={(values)=>{console.log("complaint values",values)
                                         const selectedComplaintType_name = complaint_type.find(item => item.id === values.complaint_request_type)?.complaint_type_name || '';
                                         // const selectedComplaintRequest_name = complaint_request.find(item => item.id === values.complaint_request[0])?.complaint_name || '';
-                                        const selectedComplaintRequest_names = values.complaint_request.map(itemId => {
+                                        const selectedComplaintRequest_names = values.complaint_request.flatMap(itemId => {
                                             const item = complaint_request.find(item => item.id === itemId);
-                                            return item ? item.complaint_name : '';
+                                            return {
+                                                "complaint_request_id": itemId,
+                                                "complaint_request_name": item ? item.complaint_name : ''
+                                            };
                                         });
                                         console.log("namessss+++++++++++++++===============",selectedComplaintType_name,selectedComplaintRequest_names)
 
                                         const submitObjects={
                                             complaint_type_name:selectedComplaintType_name,
-                                            complaint_request_name:selectedComplaintRequest_names,
                                             complaint_type_id:values.complaint_request_type,
-                                            complaint_request_ids:values.complaint_request,
+                                            complaint_request_ids:selectedComplaintRequest_names,
                                             remarks:values.remarks
 
                                         }
