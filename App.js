@@ -22,9 +22,11 @@ import Scanner from "./src/components/QrScanner/Scanner";
 import Sign from "./src/components/Sign/Sign";
 import Privacy from "./src/components/screens/PrivacyPolicy";
 import Enquiry from "./src/components/screens/ProductEnquiry";
-
+import SerialScanner from "./src/components/QrScanner/SerialScanner";
 import Jobs from "./src/components/screens/Jobs";
 import AddJob from "./src/components/screens/AddJob";
+import JobDetails from "./src/components/screens/JobDetails";
+
 
 const Stack = createNativeStackNavigator();
 
@@ -118,7 +120,8 @@ const App = () => {
           <Stack.Screen name="RegistrationScreen" component={RegistrationScreen} />
           <Stack.Screen name="Drawer" component={BottomDrawer} options={{ headerShown: false, }}/>
           <Stack.Screen name="Homenav" component={Home} options={{ headerShown: false, }} />
-          <Stack.Screen name="Jobscreen" component={Jobs} options={{ headerStyle: { backgroundColor: '#ffa600', }, headerTintColor: "white", title: "Jobs"}}/>
+          <Stack.Screen name="JobDetail" component={JobDetails} options={{ headerStyle: { backgroundColor: '#ffa600', }, headerTintColor: "white", title: "Job details", headerShown: false}}/>
+          <Stack.Screen name="Jobscreen" component={Jobs} options={{ headerStyle: { backgroundColor: '#ffa600', }, headerTintColor: "white", title: "Jobs",headerShown: false,}}/>
           <Stack.Screen name="AddJobscreen" component={AddJob} options={{ headerStyle: { backgroundColor: '#ffa600', }, headerTintColor: "white", title: "Add Job"}}/>
           <Stack.Screen name="Contactsviewnav" component={Contacts} options={{ headerStyle: { backgroundColor: '#ffa600', }, headerTintColor: "white", title: "Contacts" }} />
           <Stack.Screen name="Contactdetails" component={ContactDetails} options={{ headerStyle: { backgroundColor: '#ffa600' }, headerTintColor: "white", title: "Order Summery" }} />
@@ -131,6 +134,7 @@ const App = () => {
           <Stack.Screen name="CashCollection" component={CashCollection} options={{ headerStyle: { backgroundColor: '#ffa600' }, headerShown: true, title: "Cash Collection" }} />
           <Stack.Screen name="NewCollection" component={NewCollection} options={{ headerStyle: { backgroundColor: '#ffa600' }, headerShown: true, title: "New Collection" }} />
           <Stack.Screen name="Scanner" component={Scanner} options={{ headerStyle: { backgroundColor: '#ffa600' }, headerShown: false, title: "Scanner" }} />
+          <Stack.Screen name="SerialScanner" component={SerialScanner} options={{ headerStyle: { backgroundColor: '#ffa600' }, headerShown: false, title: "SerialScanner" }} />
           <Stack.Screen name="Sign"  component={Sign} options={{ headerStyle: { backgroundColor: '#ffa600' }, headerShown: false, title: "Scanner" }} />
           <Stack.Screen name="TaskManager" component={TaskManager} options={{ headerStyle: { backgroundColor: '#ffa600' }, headerShown: false, title: "Task Manager" }} />
           <Stack.Screen name="AddTask" component={AddTask} options={{ headerStyle: { backgroundColor: '#ffa600' }, headerShown: false, title: "Add Task" }} />
