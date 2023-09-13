@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableWithoutFeedback, TouchableOpacity, TextInput, Image } from 'react-native'
+import { View, Text, StyleSheet, TouchableWithoutFeedback, TouchableOpacity, TextInput, Image, Button } from 'react-native'
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from "@expo/vector-icons"
@@ -9,6 +9,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 import { baseUrl } from '../../api/const';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
+import { Audio } from 'expo-av';
 
 const dropDownData = [
   { label: 'HIGH', value: 'HIGH' },
@@ -70,6 +71,69 @@ const AddTask = () => {
     priority: null, // Initialize with null or a default value
   });
 
+  //Intiliaze recording state
+  const [recording, setRecording] = useState();
+  const [recordings, setRecordings] = useState([]);
+
+
+  const startRecording = async () => {
+    try {
+      console.log("start recording")
+      const perm = await Audio.requestPermissionsAsync();
+      if (perm.status === 'granted') {
+        await Audio.setAudioModeAsync({
+          allowsRecordingIOS: true,
+          playsInSilentModeIOS: true,
+        });
+        const { recording } = await Audio.Recording.createAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
+        setRecording(recording);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const stopRecording = async () => {
+    if (recording) {
+      await recording.stopAndUnloadAsync();
+      const { sound, status } = await recording.createNewLoadedSoundAsync();
+      const allRecordings = [...recordings];
+      allRecordings.push({
+        sound: sound,
+        duration: getDurationFormatted(status.durationMillis),
+        file: recording.getURI(),
+      });
+      setRecordings(allRecordings);
+      setRecording(undefined); // Clear the current recording
+
+    }
+  };
+
+  const getDurationFormatted = (milliseconds) => {
+    const minutes = milliseconds / (1000 * 60);
+    const seconds = Math.round((minutes - Math.floor(minutes)) * 60);
+    return seconds < 10 ? `${Math.floor(minutes)}:0${seconds}` : `${Math.floor(minutes)}:${seconds}`;
+  };
+
+  const getRecordingLines = () => {
+    return recordings.map((recordingLine, index) => {
+      return (
+        <View key={index} style={styles.row}>
+          <Text style={styles.fill}>recording {index + 1} | {recordingLine.duration}</Text>
+          {/* <Button onPress={() => recordingLine.sound.replayAsync()} title="Play" /> */}
+          <TouchableOpacity onPress={() => recordingLine.sound.replayAsync()}>
+                  <Image source={require("../../../assets/addTask/play.png")} style={{ width: 30, height: 30, alignSelf: "center" }} />
+              </TouchableOpacity>
+        </View>
+      );
+    });
+  };
+
+  const clearRecordings = () => {
+    setRecordings([]);
+  };
+
+
 
   const navigation = useNavigation()
 
@@ -98,18 +162,22 @@ const AddTask = () => {
 
   const startSpeechToText = async () => {
     try {
+      console.log("i am commit to speech to text")
       await Voice.start(selectedLanguage);
       setStarted(true);
     } catch (error) {
       console.log(error);
     }
   };
+
   const stopSpeechToText = async () => {
     await Voice.stop()
     setStarted(false)
   }
 
   const onSpeechResults = (result) => {
+    console.log("onspeech results")
+    console.log(result)
     const recognizedText = result.value.join(' ');
 
     // Split the recognized text into words
@@ -140,7 +208,7 @@ const AddTask = () => {
   const handleSubmit = async () => {
     try {
       console.log("Loading......")
-     
+
       const response = await axios.post(addTaskUrl, addTaskData)
       if (response.data.success === 'true') {
         Toast.show({
@@ -156,6 +224,8 @@ const AddTask = () => {
       console.log(error)
     }
   }
+
+
 
 
   return (
@@ -206,14 +276,52 @@ const AddTask = () => {
           onChangeText={(text) => setTaskDetails(text)}
         />
         <View style={styles.alignRight}>
-          {!started ? <TouchableOpacity onPress={startSpeechToText} >
+          {/* {!started ? <TouchableOpacity onPress={startSpeechToText} >
             <MaterialIcons name="keyboard-voice" size={30} color="black" />
           </TouchableOpacity> : undefined}
           {started ? <TouchableOpacity onPress={stopSpeechToText}>
             <FontAwesome name="stop-circle" size={30} color="black" />
-          </TouchableOpacity> : undefined}
+          </TouchableOpacity> : undefined} */}
+          {/* <TouchableOpacity onPress={toggleRecordingAndSpeechToText}>
+            {!started ? (
+              <MaterialIcons name="keyboard-voice" size={30} color="black" />
+            ) : (
+              <FontAwesome name="stop-circle" size={30} color="black" />
+            )}
+          </TouchableOpacity> */}
+          {!started ? (
+            <TouchableOpacity onPress={startSpeechToText}>
+              {/* <Text>Start Speech to Text</Text> */}
+              <Image source={require("../../../assets/addTask/speech.png")} style={{ width: 30, height: 30, alignSelf: "center" }} />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity onPress={stopSpeechToText}>
+              <Image source={require("../../../assets/addTask/stop-speech.png")} style={{ width: 30, height: 30, alignSelf: "center" }} />
+            </TouchableOpacity>
+          )}
         </View>
-
+        <Text style={styles.label}>Recorder</Text>
+        <View>
+          {
+            !recording ? (
+              <TouchableOpacity onPress={startRecording}>
+                  <Image source={require("../../../assets/addTask/start-recorder.png")} style={{ width: 40, height: 40, alignSelf: "center" }} />
+              </TouchableOpacity>
+            ): 
+            (
+              <TouchableOpacity onPress={stopRecording}>
+                  <Image source={require("../../../assets/addTask/stop-recorder.png")} style={{ width: 40, height: 40, alignSelf: "center" }} />
+              </TouchableOpacity>
+            )
+          }
+          {/* <Button title={recording ? 'Stop Recording' : 'Start Recording'} onPress={recording ? stopRecording : startRecording} /> */}
+          {getRecordingLines()}
+          {recordings.length > 0 && (
+            <TouchableOpacity onPress={clearRecordings}>
+            <Image source={require("../../../assets/addTask/clear-recording.png")} style={{ width: 40, height: 40, alignSelf: "center" }} />
+        </TouchableOpacity>
+          )}
+        </View>
 
         <Text style={styles.label}>Due Date & Time:</Text>
         <View style={[styles.input, { flexDirection: 'row', justifyContent: 'space-between' }]}>
@@ -287,6 +395,7 @@ const AddTask = () => {
 
         />
       </View>
+
       {/* {results.map((result, index) => <Text key={index}>{result}</Text>)} */}
       <CustomSubmitButton title="Submit" onPress={() => console.log("Pressed")} />
     </View>
@@ -383,6 +492,16 @@ const styles = StyleSheet.create({
     bottom: 30,
     left: 10,
     right: 10,
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: 5,
+  },
+  fill: {
+    flex: 1,
+    fontSize: 16,
   },
 })
 

@@ -20,6 +20,7 @@
     "axios": "^1.4.0",
     "deprecated-react-native-prop-types": "^4.2.1",
     "expo": "^49.0.8",
+    "expo-av": "~13.4.1",
     "expo-barcode-scanner": "~12.5.3",
     "expo-dev-client": "~2.4.8",
     "expo-document-picker": "~11.5.4",
@@ -48,7 +49,8 @@
     "yup": "^1.2.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "expo-module-scripts": "^3.0.11"
   },
   "private": true
 }
