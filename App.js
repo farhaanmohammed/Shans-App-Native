@@ -25,7 +25,8 @@ import Enquiry from "./src/components/screens/ProductEnquiry";
 import SerialScanner from "./src/components/QrScanner/SerialScanner";
 import Jobs from "./src/components/screens/Jobs";
 import AddJob from "./src/components/screens/AddJob";
-import JobDetails from "./src/components/screens/JobDetails";
+import JobDetails from "./src/components/JobScreen/JobDetails";
+import ReAssign from "./src/components/JobScreen/Reassign";
 
 
 const Stack = createNativeStackNavigator();
@@ -44,7 +45,7 @@ import FullImageScreen from "./src/components/screens/FullImageScreen";
   1. Create the config
 */
 const toastConfig = {
- 
+
   success: (props) => (
     <BaseToast
       {...props}
@@ -114,6 +115,7 @@ const App = () => {
 
         })}>
           <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false, }} />
+          <Stack.Screen name="Reassign" component={ReAssign} options={{ headerShown: false, }} />
           <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false, }}  />
           <Stack.Screen name="PrivacyPolicy" component={Privacy}  options={{ headerStyle: { backgroundColor: '#ffa600', }, headerTintColor: "white", title: "Privacy Policy", headerLeft: null,}}/>
           <Stack.Screen name="ProductEnquiry" component={Enquiry}  options={{ headerStyle: { backgroundColor: '#ffa600', }, headerTintColor: "white", title: "New Product Enquiry", headerLeft: null,}}/>
