@@ -8,6 +8,7 @@ import { baseUrl } from "../../api/const";
 // import SignatureScreen from "react-native-signature-canvas";
 import Sign from "../Sign/Sign";
 import Toast from 'react-native-toast-message';
+import GoBack from "../NavGoBack/GoBack";
 
 
 
@@ -115,7 +116,7 @@ const NewCollection = () => {
 
     const fetchAdminDetails = async () => {
         try {
-            const adminDetailsStr = await AsyncStorage.getItem('userData');
+            const adminDetailsStr = await AsyncStorage.getItem('adminDetails');
             if (adminDetailsStr) {
                 const parsedAdminDetails = JSON.parse(adminDetailsStr);
                 setAdminDetails(parsedAdminDetails);
@@ -986,8 +987,13 @@ const NewCollection = () => {
     }
 
     return (
+        <View style={{flex:1}}>
+              
+                <GoBack title="New Colleciton" onPress={() => navigation.goBack()} />
+          
+
         <View style={styles.container}>
-            <ScrollView style={styles.scrollContainer} >
+            <ScrollView style={styles.scrollContainer}   showsVerticalScrollIndicator={false} >
                 <>
                     <View>
                         <Text style={styles.label}>Date:</Text>
@@ -1077,6 +1083,7 @@ const NewCollection = () => {
                 <Sign />
             </View>
             <CustomSubmitButton title="Submit" onPress={handleSubmit} />
+        </View>
         </View>
 
     )
@@ -1189,7 +1196,7 @@ const styles = StyleSheet.create({
 
     },
     scrollContainer: {
-        flex: 1,
+       flex: 1,
     }
 })
 

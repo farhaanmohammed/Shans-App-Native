@@ -1,8 +1,7 @@
-import { View, Text, StyleSheet, TouchableWithoutFeedback, TouchableOpacity, TextInput, Image, Button } from 'react-native'
+import { View, Text, StyleSheet, TouchableWithoutFeedback, TouchableOpacity, TextInput, Image } from 'react-native'
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { AntDesign } from "@expo/vector-icons"
-import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Voice from '@react-native-voice/voice';
 import { Dropdown } from 'react-native-element-dropdown';
@@ -10,6 +9,8 @@ import { baseUrl } from '../../api/const';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import { Audio } from 'expo-av';
+import GoBack from '../NavGoBack/GoBack';
+
 
 const dropDownData = [
   { label: 'HIGH', value: 'HIGH' },
@@ -25,20 +26,6 @@ const languageDropDownData = [
 const employeeUrl = `${baseUrl}/viewEmployees/employee_list/employee_dropdown`;
 const addTaskUrl = `${baseUrl}/createTaskManagment`
 
-
-
-const CustomButton = ({ title, onPress }) => {
-  return (
-    <TouchableWithoutFeedback onPress={onPress}>
-      <View style={styles.buttonContainer}>
-        <View style={styles.buttonContent}>
-          <AntDesign name="left" size={20} color="black" />
-          <Text style={styles.buttonText}>{title}</Text>
-        </View>
-      </View>
-    </TouchableWithoutFeedback>
-  );
-};
 
 
 const CustomSubmitButton = ({ title, onPress }) => {
@@ -65,15 +52,48 @@ const AddTask = () => {
   const [openTime, setOpenTime] = useState(false);
   const [employee, setEmployee] = useState([]);
   const [isFocus, setIsFocus] = useState(false);
+  const [adminData, setAdminData] = useState()
   const [selectedLanguage, setSelectedLanguage] = useState("en-IN")
   const [formData, setFormData] = useState({
     assignee: null, // Initialize with null or a default value
     priority: null, // Initialize with null or a default value
+    taskTitle: '', // Initialize with null or a default value
   });
-
   //Intiliaze recording state
   const [recording, setRecording] = useState();
   const [recordings, setRecordings] = useState([]);
+
+  //validation
+  const [errors, setErrors] = useState({})
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    // Validate the taskTitle field (example: required field)
+    if (!formData.taskTitle) {
+      newErrors.taskTitle = 'Task Title is required';
+    }
+
+    if (!formData.priority) {
+      newErrors.priority = 'Priority field is required';
+    }
+
+    if (!formData.assignee) {
+      newErrors.assignee = 'Assignee field is required';
+    }
+    if (!taskDetails) {
+      newErrors.taskDetails = 'Task Details field is required';
+    }
+    if (!selectedDate) {
+      newErrors.selectedDate = 'Select Date field is required';
+    }
+    if (!selectedTime) {
+      newErrors.selectedTime = 'Select Time field is required';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
 
   const startRecording = async () => {
@@ -122,8 +142,8 @@ const AddTask = () => {
           <Text style={styles.fill}>recording {index + 1} | {recordingLine.duration}</Text>
           {/* <Button onPress={() => recordingLine.sound.replayAsync()} title="Play" /> */}
           <TouchableOpacity onPress={() => recordingLine.sound.replayAsync()}>
-                  <Image source={require("../../../assets/addTask/play.png")} style={{ width: 30, height: 30, alignSelf: "center" }} />
-              </TouchableOpacity>
+            <Image source={require("../../../assets/addTask/play.png")} style={{ width: 30, height: 30, alignSelf: "center" }} />
+          </TouchableOpacity>
         </View>
       );
     });
@@ -157,6 +177,24 @@ const AddTask = () => {
       setEmployee(employeeArray)
     })
   }, [])
+
+
+  //fetching admin Data 
+  useEffect(() => {
+    const fetchAdminDetails = async () => {
+      try {
+        const adminDetails = await AsyncStorage.getItem('adminDetails');
+        if (adminDetails !== null) {
+          const parsedAdminDetails = JSON.parse(adminDetails);
+          setAdminData(parsedAdminDetails);
+        }
+      } catch (error) {
+        console.log("Error fetching admin details:", error);
+      }
+    };
+    fetchAdminDetails();
+  }, []);
+
   console.log("Employeee details ", employee)
 
 
@@ -202,43 +240,97 @@ const AddTask = () => {
 
   console.log("FormData: ", formData)
   console.log("taskDetails: ", taskDetails)
+  console.log("selectedDate", selectedDate)
+  console.log("selectedTime", selectedTime)
+  console.log("Admindata: ", adminData)
 
 
   //handle submiting
   const handleSubmit = async () => {
+    const isFormValid = validateForm();
+    if (!isFormValid) {
+      return
+    }
     try {
       console.log("Loading......")
+      const addTaskData = {
+        "title": formData.taskTitle,
+        "description": taskDetails,
+        // "start_date": "20-10-2023",
+        "due_date": selectedDate,
+        "estimated_time": selectedTime,
+        "priority": formData?.priority?.value || null,
+        "assignee_id": formData?.assignee?.id || null,
+        // "created_by_id": "63c914f880b82443459d6581",
+        "warehouse_id": adminData?.warehouse_id || null,
+        "is_scheduled": true,
+        "daily_scheduler": true,
+        "document": [],
+        "participants": [],
+        "watchers": [],
+        "assignee": []
+      }
 
+      // Check if there are any recorded audio files
+      if (recordings.length > 0) {
+        // Assume you want to use the URL of the first recorded audio file
+        const audioUrl = recordings[0].file;
+
+        // Add the audio URL to the task data
+        addTaskData.audio_url = audioUrl;
+      } else {
+        // If no audio recordings are available, you can set it to null or handle it as needed
+        addTaskData.audio_url = null; // or an appropriate default value
+      }
       const response = await axios.post(addTaskUrl, addTaskData)
+      console.log(response.data)
       if (response.data.success === 'true') {
         Toast.show({
-          type: 'invoiceSuccessToast',
+          type: 'invoiceSuccessToast', // Set the type to 'successToast' for success
           text1: 'Success',
           text2: 'Task Created Successfully',
           position: 'bottom',
-        })
+        });
       } else {
-        console.log(response)
+        Toast.show({
+          type: 'error', // Set the type to 'errorToast' for failure
+          text1: 'Error',
+          text2: 'Failed to create task',
+          position: 'bottom',
+        });
+        console.log(response);
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
+      Toast.show({
+        type: 'error', // Set the type to 'errorToast' for any other errors
+        text1: 'Error',
+        text2: 'An error occurred',
+        position: 'bottom',
+      });
     }
   }
-
-
-
 
   return (
     <View style={styles.container}>
       <View>
-        <CustomButton title="Add Task" onPress={() => navigation.goBack()} />
+        <GoBack title="Add Task" onPress={() => navigation.goBack()} />
       </View>
       <View style={styles.taskContainer}>
-
+        <Text style={styles.label}>Task Title:</Text>
+        <TextInput
+          multiline
+          numberOfLines={2}
+          style={[styles.input, errors.taskTitle && styles.errorInput]}
+          placeholder='Enter Task Title'
+          value={formData.taskTitle}
+          onChangeText={(text) => setFormData({ ...formData, taskTitle: text })}
+        />
+        {errors.taskTitle && <Text style={styles.errorText}>{errors.taskTitle}</Text>}
         {/* Dropdown select assignee */}
         <Text style={styles.label}>Assignee:</Text>
         <Dropdown
-          style={[styles.dropdown, isFocus && { borderColor: '#ffa600' }]}
+          style={[styles.dropdown,errors.assignee && styles.errorInput, isFocus && { borderColor: '#ffa600' }]}
           data={employee}
           search
           maxHeight={300}
@@ -253,6 +345,7 @@ const AddTask = () => {
             setFormData({ ...formData, assignee: { name, id } }); // Store the name and id in the assignee property
           }}
         />
+        {errors.assignee && <Text style={styles.errorText}>{errors.assignee}</Text>}
         <Text style={styles.label}>Language Support:</Text>
         <Dropdown
           style={[styles.dropdown, isFocus && { borderColor: '#ffa600' }]}
@@ -270,11 +363,13 @@ const AddTask = () => {
         <TextInput
           multiline
           numberOfLines={4}
-          style={styles.taskInput}
+          style={[styles.taskInput, errors.taskDetails && styles.errorInput]}
           placeholder='Enter Task Details'
           value={taskDetails}
           onChangeText={(text) => setTaskDetails(text)}
         />
+        {errors.taskDetails && <Text style={styles.errorText}>{errors.taskDetails}</Text>}
+
         <View style={styles.alignRight}>
           {/* {!started ? <TouchableOpacity onPress={startSpeechToText} >
             <MaterialIcons name="keyboard-voice" size={30} color="black" />
@@ -305,21 +400,21 @@ const AddTask = () => {
           {
             !recording ? (
               <TouchableOpacity onPress={startRecording}>
-                  <Image source={require("../../../assets/addTask/start-recorder.png")} style={{ width: 40, height: 40, alignSelf: "center" }} />
+                <Image source={require("../../../assets/addTask/start-recorder.png")} style={{ width: 40, height: 40, alignSelf: "center" }} />
               </TouchableOpacity>
-            ): 
-            (
-              <TouchableOpacity onPress={stopRecording}>
+            ) :
+              (
+                <TouchableOpacity onPress={stopRecording}>
                   <Image source={require("../../../assets/addTask/stop-recorder.png")} style={{ width: 40, height: 40, alignSelf: "center" }} />
-              </TouchableOpacity>
-            )
+                </TouchableOpacity>
+              )
           }
           {/* <Button title={recording ? 'Stop Recording' : 'Start Recording'} onPress={recording ? stopRecording : startRecording} /> */}
           {getRecordingLines()}
           {recordings.length > 0 && (
             <TouchableOpacity onPress={clearRecordings}>
-            <Image source={require("../../../assets/addTask/clear-recording.png")} style={{ width: 40, height: 40, alignSelf: "center" }} />
-        </TouchableOpacity>
+              <Image source={require("../../../assets/addTask/clear-recording.png")} style={{ width: 40, height: 40, alignSelf: "center" }} />
+            </TouchableOpacity>
           )}
         </View>
 
@@ -341,8 +436,8 @@ const AddTask = () => {
           </View>
         </View>
 
-        {/* open calendar when icon is press */}
 
+        {/* open calendar when icon is press */}
         {openDate && (
           <DateTimePicker
             testID="Assigned on date"
@@ -395,9 +490,8 @@ const AddTask = () => {
 
         />
       </View>
-
       {/* {results.map((result, index) => <Text key={index}>{result}</Text>)} */}
-      <CustomSubmitButton title="Submit" onPress={() => console.log("Pressed")} />
+      <CustomSubmitButton title="Submit" onPress={handleSubmit} />
     </View>
   )
 }
@@ -502,6 +596,13 @@ const styles = StyleSheet.create({
   fill: {
     flex: 1,
     fontSize: 16,
+  },
+  errorInput: {
+    borderColor: 'red',
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 3,
   },
 })
 

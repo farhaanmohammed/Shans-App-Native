@@ -86,7 +86,7 @@ const OptionScreen = () => {
 
                 {/* task manager in the below opacity */}
                 <TouchableOpacity
-                    onPress={() => navigation.navigate('AddTask')}>
+                    onPress={() => navigation.navigate('TaskManager')}>
 
                     <View style={[styles.boxDiffer, { backgroundColor: '#ebebeb' }]} >
                         <Image

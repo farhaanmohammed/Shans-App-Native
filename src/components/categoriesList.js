@@ -11,7 +11,10 @@ const CategoriesList = ({ item, contact }) => {
 
     const navigation = useNavigation();
 
-    const { categoryName, landingCost, imageUrl } = item
+    const { categoryName, landingCost, imageUrl, _id } = item
+
+    //assign _id in id variable
+    const id = _id
 
     const getShortcategoryName = (categoryName, maxLength) => {
         if (categoryName.length <= maxLength) {
@@ -26,7 +29,7 @@ const CategoriesList = ({ item, contact }) => {
     return (
         <View style={styles.container}>
 
-        <TouchableOpacity onPress={() => navigation.navigate('ProductScreen', { category: categoryName })}>
+        <TouchableOpacity onPress={() => navigation.navigate('ProductScreen', { category: id })}>
             <View style={[styles.box]} >
                 <Image
                     style={styles.tinyLogo}

@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { baseUrl } from '../../api/const';
+import GoBack from '../NavGoBack/GoBack';
 // import { useFonts } from 'expo-font';
 
 
@@ -64,7 +65,8 @@ const CashCollection = () => {
 
 
         <View style={styles.container}>
-            <ScrollView>
+            <GoBack title="Cash Collection" onPress={() => navigation.goBack()} />
+            <ScrollView style={{ marginHorizontal: 20, marginVertical: 20 }}>
                 {auditingList.length === 0 ? (
                     <Text style={styles.notFoundText}>No Collections found</Text>
                 ) : (
@@ -90,8 +92,8 @@ const CashCollection = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        marginHorizontal: 20,
-        marginVertical: 20,
+        // marginHorizontal: 20,
+        // marginVertical: 20,
     },
     fab: {
         position: 'absolute',

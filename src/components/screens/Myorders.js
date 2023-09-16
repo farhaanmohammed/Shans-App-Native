@@ -5,6 +5,7 @@ import { View, StyleSheet, Text, ScrollView, TouchableWithoutFeedback } from "re
 import axios from "axios";
 import { baseUrl } from "../../api/const";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import GoBack from "../NavGoBack/GoBack";
 
 
 
@@ -77,7 +78,7 @@ export default function MyOrdersScreen() {
 
   return (
     <View style={styles.navigationContainer}>
-      <CustomButton title="My Orders" onPress={() => navigation.goBack()} />
+      <GoBack title="My Orders" onPress={() => navigation.goBack()} />
       <ScrollView>
 
       {invoice.map((item, index) => {

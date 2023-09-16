@@ -2,23 +2,10 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet, View, TouchableWithoutFeedback, Text, FlatList } from "react-native";
 import { Searchbar, ActivityIndicator } from "react-native-paper";
 import axios from "axios";
-import { AntDesign } from "@expo/vector-icons"
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { baseUrl } from "../../api/const";
 import ProductList from "../productList";
-
-const CustomButton = ({ title, onPress }) => {
-    return (
-        <TouchableWithoutFeedback onPress={onPress}>
-            <View style={styles.buttonContainer}>
-                <View style={styles.buttonContent}>
-                    <AntDesign name="left" size={20} color="black" />
-                    <Text style={styles.buttonText}>{title}</Text>
-                </View>
-            </View>
-        </TouchableWithoutFeedback>
-    );
-};
+import GoBack from "../NavGoBack/GoBack";
 
 const searchUrl = `${baseUrl}/viewProducts?product_name=`;
 
@@ -60,7 +47,7 @@ const ProductScreen = () => {
     const navigation = useNavigation();
 
     const productUrl = category
-        ? `${baseUrl}/viewProducts?product_name=${category}`
+        ? `${baseUrl}/viewProducts?category_id=${category}`
         : `${baseUrl}/viewProducts`;
 
 
@@ -69,6 +56,8 @@ const ProductScreen = () => {
     useEffect(() => {
         fetchProducts()
     }, [offset])
+
+    
 
     const fetchProducts = () => {
         axios
@@ -115,7 +104,7 @@ const ProductScreen = () => {
         <View style={styles.container}>
 
             <View>
-                <CustomButton title="Products" onPress={() => navigation.goBack()} />
+                <GoBack title="Products" onPress={() => navigation.goBack()} />
             </View>
 
             <View style={styles.searchContainer}>
@@ -135,6 +124,7 @@ const ProductScreen = () => {
                     ListFooterComponent={renderLoader}
                     onEndReached={loadMoreItem}
                     onEndReachedThreshold={0}
+                    showsVerticalScrollIndicator={false}
                 />
             </View>
         </View>
@@ -152,21 +142,6 @@ const styles = StyleSheet.create({
         borderColor: '#ffa600',
         backgroundColor: "white",
         marginBottom: 10,
-    },
-    buttonContainer: {
-        backgroundColor: "#ffa600",
-    },
-    buttonContent: {
-        flexDirection: "row",
-        marginLeft: 10,
-        marginBottom: 12,
-        alignItems: "center"
-    },
-
-    buttonText: {
-        marginLeft: 34,
-        fontSize: 17,
-        color: "white"
     },
     searchContainer: {
         backgroundColor: "#ffa600",
