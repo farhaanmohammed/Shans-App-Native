@@ -129,8 +129,8 @@ const styles=StyleSheet.create({
         },
     
     form:{
-            marginVertical:5,
-            marginHorizontal:25,
+        marginVertical:5,
+        marginHorizontal:25,
             
             
     },

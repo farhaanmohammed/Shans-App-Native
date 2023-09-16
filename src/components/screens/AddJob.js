@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Text,View,StyleSheet,ScrollView,TextInput,Modal,Button,FlatList,TouchableOpacity,Image } from "react-native"
+import { Text,View,StyleSheet,ScrollView,TextInput,Modal,Button,FlatList,TouchableOpacity,Image,TouchableWithoutFeedback } from "react-native"
 import { Picker } from "@react-native-community/picker";
 import { Formik } from "formik";
 import { baseUrl } from "../../api/const";
@@ -15,6 +15,17 @@ import { Feather } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as Yup from 'yup';
 import { LogBox } from 'react-native';
+
+const CustomHeader = ({ title, onPress }) => {
+    return (
+        <TouchableWithoutFeedback onPress={onPress}>
+            <View style={styles.button}>
+            <AntDesign name="left" size={14} color="black" />
+            <Text style={styles.title}>{title}</Text>
+            </View>
+        </TouchableWithoutFeedback>
+        );
+    };
 
 
 const CustomButton = ({ title, onPress }) => {
@@ -253,7 +264,7 @@ export default function AddJob(){
                 assignee_name:item.assignee_name,
                 sales_person_id:item.sales_person_id,
                 sales_person_name:item.sales_person_name,
-                date:item.date,
+                date:item.date ? item.date.split("T")[0] : null,
 
             }))
             setJobs(jobArray);
@@ -375,12 +386,13 @@ export default function AddJob(){
 
 
     return(
-        <View style={{flex:1,}}>
+        <View style={{flex:1,backgroundColor:"white"}}>
+            <CustomHeader title="Job Registration"  onPress={() => navigation.goBack()} />
             
             <ScrollView style={styles.container}>
                 <Formik
                     initialValues={{ customer:'',customer_id:'',mobile:'',email:'',warehouse_name:'',consumer_model_id:'',consumer_model_name:'',device_id:'',device_name:'',
-                    brand_id:'',brand_name:'',jobbooking_id:'',jobbooking:'',sales_person_name:'',sales_person_id:'',
+                    brand_id:'',brand_name:'',jobbooking_id:'',jobbooking:'',sales_person_name:'',sales_person_id:'',incoming_date:'',
                     estimation:'',assignedOn: '',assignedto_name:'',assignedto_id:'',remarks:'',accessories:[], email:'',serial_no:scannedData,
                 }}
                     validationSchema={AddSchema}
@@ -389,7 +401,7 @@ export default function AddJob(){
                         const body= {
                             "date": formattedDate,
                             "invoice_date": null,
-                            "incoming_date": null,
+                            "incoming_date": values.incoming_date,
                             "internal_product_id": null,
                             "internal_product_name": null,
                             "product_description": null,
@@ -632,6 +644,43 @@ export default function AddJob(){
                             <Text style={styles.fieldtext}>
                                 Incoming date:
                             </Text>
+
+                            <View style={[styles.input,{flexDirection:'row',justifyContent:'space-between'}]}> 
+                                {/* <Text> {props.values.date}</Text> */}
+                                <TextInput
+                                    
+                                    placeholder="Select Date"
+                                    onChangeText={props.handleChange('incoming_date')}
+                                    value={props.values.incoming_date}
+                                    onBlur={props.handleBlur('incoming_date')}
+                                
+                                />
+                                
+                                <AntDesign name="calendar" size={24} color="black" onPress={()=>setOpenDate(true)} />
+                            </View>
+
+                            {openDate && (
+
+                                <DateTimePicker 
+
+                                    testID="Assigned on date"
+                                    value={new Date()}
+                                    mode="date"
+                                    onChange={(event, selectedDate) => {
+                                        if (selectedDate !== undefined) {
+                                            setOpenDate(false);
+                                            // setDate(selectedDate);
+                                            props.setFieldValue('incoming_date', selectedDate.toISOString().split('T')[0]);
+                                            console.log("Selected Date:", selectedDate);
+                                        }
+                                    }}
+                                    display="default" 
+                                    
+                                    
+
+
+                                />
+                            )}
 
                         </View>
                         <View>
@@ -1313,6 +1362,18 @@ const styles=StyleSheet.create({
         fontSize: 15,
         fontWeight: 'bold',
     },
+
+    button: {
+        flexDirection: "row",
+        alignItems: "center",
+        padding: 10,
+        backgroundColor: "#ffa600",
+        },
+    title: {
+        marginLeft: 34,
+        fontSize: 15,
+        color: "white"
+        },
 
 
 
