@@ -10,6 +10,7 @@ import { format } from 'date-fns';
 import GoBack from '../NavGoBack/GoBack';
 
 
+
 //formate estimated time
 const formatEstimatedTime = (estimatedTime) => {
     if (!estimatedTime || typeof estimatedTime !== 'string') {
@@ -72,29 +73,38 @@ const TaskManager = () => {
                 </View>
             ) : (
                 <ScrollView style={styles.taskListContainer}>
+
                     {taskData.map((task, index) => (
-                        <View style={styles.taskContainer} key={index}>
-                            <View style={styles.taskContent}>
-                                <View>
-                                    <Text style={styles.taskTitle}>{task.title}</Text>
-                                    <Text style={styles.taskLabel}>
-                                        Deadline{' '}:{' '}
-                                        <Text style={styles.deadlineText}>
-                                            {format(new Date(task.due_date), 'dd MMM yyyy h:mm a')}
+                        <TouchableOpacity
+                            key={index}
+                            onPress={() => {
+                                // Navigate to the TaskDetails screen with the task details
+                                navigation.navigate('TaskUpdate', { task });
+                            }}
+                        >
+                            <View style={styles.taskContainer} key={index}>
+                                <View style={styles.taskContent}>
+                                    <View>
+                                        <Text style={styles.taskTitle}>{task.title}</Text>
+                                        <Text style={styles.taskLabel}>
+                                            Deadline{' '}:{' '}
+                                            <Text style={styles.deadlineText}>
+                                                {format(new Date(task.due_date), 'dd MMM yyyy h:mm a')}
+                                            </Text>
                                         </Text>
-                                    </Text>
-                                    <Text style={styles.taskLabel}>
-                                        Estimated time{' '}:{' '}
-                                        <Text style={styles.estimatedTimeText}>
-                                            {formatEstimatedTime(task.estimated_time)}
+                                        <Text style={styles.taskLabel}>
+                                            Estimated time{' '}:{' '}
+                                            <Text style={styles.estimatedTimeText}>
+                                                {formatEstimatedTime(task.estimated_time)}
+                                            </Text>
                                         </Text>
-                                    </Text>
-                                </View>
-                                <View style={styles.arrowContainer}>
-                                    <AntDesign name="arrowright" size={24} color="black" />
+                                    </View>
+                                    <View style={styles.arrowContainer}>
+                                        <AntDesign name="arrowright" size={24} color="black" />
+                                    </View>
                                 </View>
                             </View>
-                        </View>
+                        </TouchableOpacity>
                     ))}
                 </ScrollView>
             )}
