@@ -541,46 +541,7 @@ export default function AddJob(){
                                 Return Job Number:
                             </Text>
 
-                            {/* <Picker
-                                style={styles.input}
-                                enabled={true}
-                                mode="dropdown"
-                                
-                                onValueChange={(item)=>{
-
-                                    console.log("itemssssssssssssssss=+=========",item)
-                                    
-                                    props.handleChange('jobbooking_id')
-                                    props.setFieldValue('assignedOn',item.create_date)
-                                    props.setFieldValue('serial_no',item.serial_no)
-                                    props.setFieldValue('brand_id',item.brand_id)
-                                    props.setFieldValue('device_id',item.device_id)
-                                    props.setFieldValue('consumer_model_id',item.consumer_model_id)
-                                    
-                                    
-                                    
-
-                                    
-                                }}
-                                selectedValue={props.values.jobbooking_id}
                             
-                            >
-                                <Picker.Item label="Select Job Number" value="" />
-                                {jobs.map((item)=>{
-                                    console.log("job item in picker============",item)
-                                    console.log("customer in jobs",props.values.customer_id)
-                                    if(item.customer_id===props.values.customer_id)
-                                        {
-                                            return(
-                                                <Picker.Item
-                                                    label={item.sequence_no.toString()}
-                                                    value={item.id}
-                                                    key={item.id}
-                                                />
-                                            )
-                                        }
-                                })}
-                            </Picker> */}
                             
                             <Dropdown
                                 style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
@@ -646,7 +607,7 @@ export default function AddJob(){
                             </Text>
 
                             <View style={[styles.input,{flexDirection:'row',justifyContent:'space-between'}]}> 
-                                {/* <Text> {props.values.date}</Text> */}
+                                
                                 <TextInput
                                     
                                     placeholder="Select Date"
@@ -692,28 +653,7 @@ export default function AddJob(){
                             <Text style={styles.fieldtext}>
                                 Device :
                             </Text>
-                            {/* <Picker
-                                style={styles.input}
-                                enabled={true}
-                                mode="dropdown"
-                                placeholder="Select Device"
-                                onValueChange={(value)=>{console.log("selected value in device:",value)
-                                                props.setFieldValue('device_id',value.model_id)
-                                                props.setFieldValue('device_name',value.model_name)
-                                                }}
-                                selectedValue={props.values.device_id}
                             
-                            >
-                                <Picker.Item label="Select Device" value="" />
-                                {device.map((item)=>(
-                                    <Picker.Item
-                                        label={item.model_name.toString()}
-                                        value={{model_id:item.id,model_name:item.model_name}}
-                                        key={item.id}
-                                    />
-                                ))}
-
-                            </Picker> */}
 
                             <Dropdown
                                 style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
@@ -745,32 +685,6 @@ export default function AddJob(){
                         <View style={styles.fieldmargin}>
                             <Text style={styles.fieldtext}>Brand:</Text>
 
-                            {/* <Picker
-                                style={styles.input}
-                                enabled={true}
-                                mode="dropdown"
-                                placeholder="Select Brand"
-                                onValueChange={(value)=>{console.log("selected value in brand:",value)
-                                                props.setFieldValue('brand_id',value.brand_id)
-                                                props.setFieldValue('brand_name',value.brand_name)
-                            
-                                                    }}
-                                selectedValue={props.values.brand_id}
-                            
-                            >
-                                <Picker.Item label="Select Brand" value="" />
-                                {brand.map((item)=>(
-
-                                    
-                                    
-                                    <Picker.Item
-                                        label={item.brand_name.toString()}
-                                        value={{brand_id:item.brand_id,brand_name:item.brand_name}}
-                                        key={item.brand_id}
-                                    />
-                                ))}
-
-                            </Picker> */}
 
                             <Dropdown
                                 style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
@@ -801,34 +715,7 @@ export default function AddJob(){
                         <View style={styles.fieldmargin}>
                             <Text style={styles.fieldtext}>Consumer Model:</Text>
 
-                            {/* <Picker
-                                style={styles.input}
-                                enabled={true}
-                                mode="dropdown"
-                                // placeholder="Select Model"
-                                onValueChange={(value)=>{console.log("selected value in consumer_model:",value)
-                                                props.setFieldValue('consumer_model_id',value.consumer_model_id)
-                                                props.setFieldValue('consumer_model_name',value.consumer_model_name)
                             
-                                                    }}
-                                selectedValue={props.values?.consumer_model_id}
-                            
-                            >
-                                <Picker.Item label="Select Consumer Model" value="" />
-                                {consumermodel.map((item)=>{
-                                    if(item.job_brand_id==props.values.brand_id && item.job_device_id==props.values.device_id){
-                                        return(
-                                            <Picker.Item
-                                                label={item.model_name.toString()}
-                                                value={{consumer_model_id:item.id,consumer_model_name:item.model_name}}
-                                                key={item.id}
-                                            />
-                                        )
-                                    }
-                                } 
-                                )}
-
-                            </Picker> */}
                             <Dropdown
                                 style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
                                 data={filterconsumer=consumermodel.filter(model=>model.job_device_id==props.values.device_id && model.job_brand_id==props.values.brand_id)}
@@ -932,7 +819,7 @@ export default function AddJob(){
                                 <Ionicons name="ios-add-circle" size={24} color="green"  />
 
                             </TouchableOpacity>
-                            {/* <Button title="open model" onPress={()=>setModal(true)}/> */}
+                            
 
                             {complaints.length > 0 && complaints.map((item,index)=>(
                                 <View key={index} style={styles.contentborder}>
@@ -988,32 +875,6 @@ export default function AddJob(){
                             </Text>
                             
 
-                            {/* <Picker
-                                style={styles.input}
-                                enabled={true}
-                                mode="dropdown"
-                                placeholder="Select Device"
-                                onValueChange={(item)=>
-                                    {
-                                        console.log("assignef=don+++++++++++",item)
-                                        // props.handleChange('assignedto')
-                                        props.setFieldValue('assignedto_id',item.assignedTo_id)
-                                        props.setFieldValue('assignedto_name',item.assignedTo_name)
-
-                                }}
-                                selectedValue={props.values.assignedto_id}
-                            
-                            >
-                                <Picker.Item label="Select Employee" value="" />
-                                {employee.map((item)=>(
-                                    <Picker.Item
-                                        label={item.name.toString()}
-                                        value={{assignedTo_id:item.id,assignedTo_name:item.name}}
-                                        key={item.id}
-                                    />
-                                ))}
-
-                            </Picker> */}
 
                             <Dropdown
                                 style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
