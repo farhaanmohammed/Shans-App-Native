@@ -6,6 +6,7 @@ import { AntDesign } from '@expo/vector-icons';
 import HorizontalCalendar from "../Calender/Calender";
 import { baseUrl } from "../../api/const";
 import axios from "axios";
+import WeekCalendar from "react-native-calendars/src/expandableCalendar/WeekCalendar";
 
 
 const CustomButton = ({ title, onPress }) => {
@@ -61,6 +62,7 @@ export default function Jobs({ navigation }) {
     return (
         <View style={styles.container}>
             <CustomButton title="Jobs"  onPress={() => navigation.goBack()} />
+            {/* <WeekCalendar/> */}
         
             {/* <HorizontalCalendar/> */}
             <ScrollView>

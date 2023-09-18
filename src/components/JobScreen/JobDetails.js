@@ -41,8 +41,8 @@ export default function JobDetails({navigation,route}){
                     <ScrollView>
                         <View style={styles.buttonarray}>
                             <Diagnosbutton title="start diagnosis" onPress={()=>{console.log("pressed")}}/>
-                            <Diagnosbutton title="ReAssign" onPress={()=>{navigation.navigate('Reassign')}}/>
-                            <Diagnosbutton title="Cancel Service" onPress={()=>{console.log("lol pressed")}}/>
+                            <Diagnosbutton title="ReAssign" onPress={()=>{navigation.navigate('Reassign',{job:item})}}/>
+                            <Diagnosbutton title="Cancel Service" onPress={()=>{navigation.navigate('Cancel',{job:item})}}/>
                         </View>
 
                     
