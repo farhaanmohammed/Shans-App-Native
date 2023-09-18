@@ -1,6 +1,8 @@
 import React from "react";
 import { View,Text,StyleSheet,TouchableWithoutFeedback, TouchableOpacity, ScrollView } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
+import { baseUrl } from "../../api/const";
+import axios, { all } from "axios";
 
 
 
@@ -32,7 +34,40 @@ export default function JobDetails({navigation,route}){
 
     const { item } = route.params;
 
+    const updateUrl=`${baseUrl}/updateJobRegistration`;
+
+    const[diagnosis,setDiagnosis]=React.useState(false);
+
     console.log("itemS+++++++++++",item)
+
+    // const fetchJobsData = React.useCallback(async () => {
+    //     try {
+    //         const response = await axios.get(updateUrl);
+    //         const updatedItem = response.data.data; // Assuming the response contains the updated item data
+    //         // Update the 'item' state with the updated data
+    //         setItem(updatedItem);
+    //     } catch (error) {
+    //         console.error("Error fetching data:", error);
+    //     }
+    // }, [updateUrl]);
+
+    // React.useEffect(() => {
+    //     fetchJobsData(); // Fetch data when the component mounts
+    // }, [fetchJobsData]);
+
+    // React.useEffect(() => {
+    //     const unsubscribe = navigation.addListener("focus", () => {
+    //         const shouldRefresh = route.params?.refresh;
+    //         if (shouldRefresh) {
+    //             // Add your refresh logic here
+    //             console.log("Refreshing Jobscreen...");
+    //             fetchJobsData(); // Fetch updated data
+    //             // Refresh logic: Fetch updated data, re-render components, etc.
+    //         }
+    //     });
+
+    //     return unsubscribe;
+    // }, [navigation, route.params, fetchJobsData]);
 
     return(
         
@@ -40,13 +75,34 @@ export default function JobDetails({navigation,route}){
                     <CustomButton title={`${item.sequence_no}`}  onPress={() => navigation.goBack()} />
                     <ScrollView>
                         <View style={styles.buttonarray}>
-                            <Diagnosbutton title="start diagnosis" onPress={()=>{console.log("pressed")}}/>
+                            {(diagnosis || item.job_stage==="under_diagnosis") ? (
+                                <Diagnosbutton title="Complete Diagnosis" onPress={()=>{console.log("Completessss")}}/>
+                            ):(
+                                <Diagnosbutton title="start diagnosis" onPress={()=>{
+                                    console.log("pressed")
+                                    setDiagnosis(true);
+                                    axios.put(updateUrl,{job_stage:"under_diagnosis",_id:item.id}).then(res=>{console.log("diagosis+++++++++",res.data)}).catch(err=>console.log(err));
+                                    }}/>
+                            )}
+                            
                             <Diagnosbutton title="ReAssign" onPress={()=>{navigation.navigate('Reassign',{job:item})}}/>
                             <Diagnosbutton title="Cancel Service" onPress={()=>{navigation.navigate('Cancel',{job:item})}}/>
                         </View>
 
-                    
-                        <Text style={styles.heading}>PENDING FOR SERVICE</Text>
+                        {(diagnosis || item.job_stage==="under_diagnosis")  && (
+                            <View  style={styles.editbutton}>
+                                <Diagnosbutton title="Edit" onPress={()=>{navigation.navigate('EditService',{job:item})}}/>
+                            </View>
+                        )
+                            
+
+                        }
+                        {(diagnosis || item.job_stage==="under_diagnosis") ? (
+                            <Text style={styles.heading}>Under Diagnosis</Text>
+                        ) :(
+                            <Text style={styles.heading}>PENDING FOR SERVICE</Text>
+                        )}
+                        
 
                         <View style={styles.itemborder}>
                             <View style={styles.sectionmargin}>
@@ -243,6 +299,12 @@ const styles=StyleSheet.create({
     buttontitle:{
         textAlign:'center',
         color: "white"
-    }
+    },
+    editbutton:{
+        flexDirection:'row',
+        marginHorizontal:15,
+        marginVertical:10,
+        justifyContent:'flex-end',
+    },
     }
 )

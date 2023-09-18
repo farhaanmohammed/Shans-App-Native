@@ -20,6 +20,16 @@ export const AddSchema = Yup.object().shape({
 
 })
 
+const CustomAddButton = ({ title, onPress }) => {
+    return (
+    <TouchableWithoutFeedback onPress={onPress}>
+        <View style={styles.addbutton}>
+        <Text style={styles.addtitle}>{title}</Text>
+        </View>
+    </TouchableWithoutFeedback>
+    );
+};
+
 
 
 
@@ -85,7 +95,7 @@ export default function ReAssign({navigation,route}){
                     console.log(body);
                     axios.put(updateUrl,body).then(res=>{
                         console.log("url message",res.data)
-                        navigation.goBack()
+                        navigation.goBack({ refresh: true })
                     }).catch(err=>console.log("urlerror",err))
                     }}
                 >
@@ -145,26 +155,26 @@ export default function ReAssign({navigation,route}){
                                     Assigned To:
                                 </Text>
                                 <Dropdown
-                                style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
-                                data={employee}
-                                search
-                                maxHeight={300}
-                                labelField="name"
-                                valueField="id"
-                                placeholder={props.values.assignedto_id ?props.values.assignedto_id : "Select employee"     }
-                                searchPlaceholder="Search Employees"
-                                value={props.values?.assignedto_id}
-                                onFocus={() => setIsFocus(true)}
-                                onBlur={() => setIsFocus(false)}
-                                onChange={item=>{
-                                    console.log("employee+++++",item)
-                                    // props.setFieldValue('customer',item)
-                                    props.setFieldValue('assignedto_id', item.id);
-                                    props.setFieldValue('assigned_to', item.name); // Set the customer ID
+                                    style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+                                    data={employee}
+                                    search
+                                    maxHeight={300}
+                                    labelField="name"
+                                    valueField="id"
+                                    placeholder={props.values.assignedto_id ?props.values.assignedto_id : "Select employee"     }
+                                    searchPlaceholder="Search Employees"
+                                    value={props.values?.assignedto_id}
+                                    onFocus={() => setIsFocus(true)}
+                                    onBlur={() => setIsFocus(false)}
+                                    onChange={item=>{
+                                        console.log("employee+++++",item)
+                                        // props.setFieldValue('customer',item)
+                                        props.setFieldValue('assignedto_id', item.id);
+                                        props.setFieldValue('assigned_to', item.name); // Set the customer ID
+                                        
                                     
-                                
-                                }}
-                            />
+                                    }}
+                                />
                             {props.touched.assignedto_id && props.errors.assignedto_id &&
                                 <Text style={styles.errorText}>{props.errors.assignedto_id}</Text>
                             }
@@ -172,7 +182,9 @@ export default function ReAssign({navigation,route}){
                         
             
                         {/* Add a submit button to submit the form */}
-                        <Button title="Submit" onPress={props.handleSubmit} />
+                        <View style={{marginTop:7,}}>
+                            <CustomAddButton title="Submit" onPress={props.handleSubmit}/>
+                        </View>
                     </View>
                     )}
                 </Formik>
@@ -239,5 +251,16 @@ const styles=StyleSheet.create({
         fontSize: 12,
         color: 'red',
         marginTop: 5,
+    },
+    addbutton: {
+        
+        padding: 10,
+        alignItems: "center",
+        backgroundColor: "#ffa600",
+        borderRadius: 13,
+    },
+    addtitle: {
+        fontSize: 15,
+        color: "white"
     },
 })

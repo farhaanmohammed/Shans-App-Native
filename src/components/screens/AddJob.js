@@ -662,9 +662,9 @@ export default function AddJob(){
                                 maxHeight={300}
                                 labelField="model_name"
                                 valueField="id"
-                                placeholder={props.values.device_id ?props.values.device_id : "Select Device"     }
+                                placeholder={props.values.device_name ?props.values.device_name : "Select Device"     }
                                 searchPlaceholder="Search Device"
-                                value={props.values?.device_id}
+                                value={props.values?.device_name}
                                 onFocus={() => setIsFocus(true)}
                                 onBlur={() => setIsFocus(false)}
                                 onChange={item=>{
@@ -693,9 +693,9 @@ export default function AddJob(){
                                 maxHeight={300}
                                 labelField="brand_name"
                                 valueField="brand_id"
-                                placeholder={props.values.brand_id ?props.values.brand_id : "Select Brand"     }
+                                placeholder={props.values.brand_name ?props.values.brand_name : "Select Brand"     }
                                 searchPlaceholder="Search Brand"
-                                value={props.values?.brand_id}
+                                value={props.values?.brand_name}
                                 onFocus={() => setIsFocus(true)}
                                 onBlur={() => setIsFocus(false)}
                                 onChange={item=>{
@@ -723,9 +723,9 @@ export default function AddJob(){
                                 maxHeight={300}
                                 labelField="model_name"
                                 valueField="id"
-                                placeholder={props.values.consumer_model_id ?props.values.consumer_model_id : "Select Consumer Model"     }
+                                placeholder={props.values.consumer_model_name ?props.values.consumer_model_name : "Select Consumer Model"     }
                                 searchPlaceholder="Search Model"
-                                value={props.values?.consumer_model_id}
+                                value={props.values?.consumer_model_name}
                                 onFocus={() => setIsFocus(true)}
                                 onBlur={() => setIsFocus(false)}
                                 onChange={item=>{

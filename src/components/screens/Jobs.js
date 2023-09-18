@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useEffect,useCallback } from "react"
 import { Text, View, StyleSheet, ScrollView,TouchableOpacity,TouchableWithoutFeedback,Image } from "react-native"
 import Calender from "../Calender/Calender";
 import { FAB } from 'react-native-paper';
@@ -21,9 +21,62 @@ const CustomButton = ({ title, onPress }) => {
     };
 
 
-export default function Jobs({ navigation }) {
+export default function Jobs({ navigation,route }) {
     const[jobs,setJobs]=React.useState([])
     const viewJobs= `${baseUrl}/viewJobRegistration`
+
+    const fetchJobsData = useCallback(() => {
+        axios
+        .get(viewJobs)
+        .then((res) => {
+            const jobArray = res.data.data.map((item) => ({
+                id:item._id,
+                sequence_no:item.sequence_no,
+                invoice_date:item.invoice_date,
+                created_on:item.created_on ? item.created_on.split("T")[0] : null,
+                created_date:item.created_date? item.created_date.split("T")[0] : null,
+                customer_id:item.customer_id,
+                customer_name:item.customer_name,
+                customer_mobile:item.customer_mobile,
+                customer_email:item.customer_email,
+                job_return_no:item.job_return_no,
+                warehouse_name:item.warehouse_name,
+                incoming_date:item.incoming_date ? item.incoming_date.split("T")[0] : null, 
+                warehouse_name:item.warehouse_name,
+                sales_person_name:item.sales_person_name,
+                device_name:item.device_name,
+                brand_name:item.brand_name,
+                consumer_model_name:item.consumer_model_name,
+                serial_no:item.serial_no, 
+                accessories:item.accessories.map((accessory) => accessory.accessory_name),
+                job_complaints_or_service_request:item.job_complaints_or_service_request.map((request)=>({complaint_type_name:request.complaint_type_name,remarks:request.remarks})),
+                assignee_name:item.assignee_name,
+                assigned_on:item.assigned_on ? item.assigned_on.split("T")[0] : null,
+                total_sale_estimation:item.total_sale_estimation,
+                job_stage:item.job_stage,
+            }));
+            setJobs(jobArray);
+        })
+        .catch((err) => console.log(err));
+    }, [viewJobs]);
+    
+    useEffect(() => {
+        fetchJobsData(); // Fetch data when the component mounts
+    }, [fetchJobsData]);
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+        const shouldRefresh = route.params?.refresh;
+        if (shouldRefresh) {
+            // Add your refresh logic here
+            console.log('Refreshing Jobscreen...');
+            fetchJobsData()
+            // Refresh logic: Fetch updated data, re-render components, etc.
+        }
+        });
+    
+        return unsubscribe;
+    }, [navigation, route.params]);
 
     useEffect(()=>{
         axios.get(viewJobs).then(res=>{

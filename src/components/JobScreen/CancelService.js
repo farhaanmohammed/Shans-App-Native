@@ -1,8 +1,9 @@
 import React from "react"
-import { Text,View,StyleSheet,TouchableWithoutFeedback,TextInput } from "react-native"
+import { Text,View,StyleSheet,TouchableWithoutFeedback,TextInput,Button } from "react-native"
 import { baseUrl } from "../../api/const"
 import { AntDesign } from "@expo/vector-icons";
 import { Formik } from "formik";
+import axios, { all } from "axios";
 
 const CustomButton = ({ title, onPress }) => {
     return (
@@ -15,7 +16,21 @@ const CustomButton = ({ title, onPress }) => {
         );
     };
 
+const CustomAddButton = ({ title, onPress }) => {
+        return (
+        <TouchableWithoutFeedback onPress={onPress}>
+            <View style={styles.addbutton}>
+            <Text style={styles.addtitle}>{title}</Text>
+            </View>
+        </TouchableWithoutFeedback>
+        );
+};
+
 export default function CancelService({navigation,route}){
+
+    const { job } = route.params;
+
+    const updateUrl=`${baseUrl}/updateJobRegistration`;
 
     return(
         <View style={styles.container}>
@@ -25,6 +40,18 @@ export default function CancelService({navigation,route}){
                 onSubmit={(values) => {
                 // Handle form submission here
                 console.log('Form values:', values);
+                const body={
+                    _id:job.id,
+                    job_stage_close_reason:values.remarks,
+                    job_stage:"cancelled",
+                    
+
+                }
+                console.log(body);
+                axios.put(updateUrl,body).then(res=>{
+                    console.log("url message",res.data)
+                    navigation.navigate('Jobscreen',{ refresh: true })
+                }).catch(err=>console.log("urlerror",err))
                 }}
             >
             {(props)=>(
@@ -45,6 +72,10 @@ export default function CancelService({navigation,route}){
                             />
 
                         </View>
+
+                    </View>
+                    <View style={{marginTop:7,}}>
+                            <CustomAddButton title="Submit" onPress={props.handleSubmit}/>
                     </View>
                 </View>
             )}
@@ -96,5 +127,16 @@ const styles=StyleSheet.create({
             borderRadius:6,
             maxWidth:350,
             
+        },
+        addbutton: {
+        
+            padding: 10,
+            alignItems: "center",
+            backgroundColor: "#ffa600",
+            borderRadius: 13,
+        },
+        addtitle: {
+            fontSize: 15,
+            color: "white"
         },
 })
