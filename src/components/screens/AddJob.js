@@ -107,7 +107,7 @@ export default function AddJob(){
             <View style={styles.item}>
                 {/* <CheckBox checked={isSelected} color="black" style={styles.checkbox} /> */}
                 <Text style={styles.selectedTextStyle}>{item.accessories_name}</Text>
-                <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
+                
             </View>
             );
         };
@@ -398,6 +398,13 @@ export default function AddJob(){
                     validationSchema={AddSchema}
                     onSubmit={(values)=> {console.log("values:",values)
                         console.log("Selected customer:");
+                        const selectedaccesories = values.accessories.flatMap(itemId => {
+                            const item = accessories.find(item => item.id === itemId);
+                            return {
+                                "accessory_id": itemId,
+                                "accessory_name": item ? item.accessories_name : ''
+                            };
+                        });
                         const body= {
                             "date": formattedDate,
                             "invoice_date": null,
@@ -443,7 +450,7 @@ export default function AddJob(){
                             "job_customer_id": null,
                             "job_customer_name": null,
                             "job_booking_id": values.jobbooking_id,
-                            "accessories": values.accessories,
+                            "accessories": selectedaccesories,
                             "warranty_date": null,
                             "warranty_type": null,
                             "complaint_or_service_request": complaints,
@@ -980,7 +987,7 @@ export default function AddJob(){
                                             // console.log("documents==============",document)
                                             <View key={index} style={{ flexDirection: 'row' }}>
                                                     <Image style={styles.tinyLogo} source={{uri: document.uri}}/>
-                                                <Text style={{ fontSize: 15, fontWeight: '700', }}>{document.name}</Text>
+                                                {/* <Text style={{ fontSize: 15, fontWeight: '700', }}>{document.name}</Text> */}
                                                 <Feather name="trash" size={24} color="black" onPress={() => removeImage(index)} />
 
                                                 </View>
@@ -994,7 +1001,10 @@ export default function AddJob(){
                                 <CustomButton title="Select Images" onPress={selectDoc} />
                             </View>
 
-                            <Button title="submit" onPress={props.handleSubmit}/>
+                        
+                            <TouchableOpacity style={styles.submitbutton} onPress={props.handleSubmit}>
+                                <Text style={styles.submitbuttonText}>Submit</Text>
+                            </TouchableOpacity>
 
                         </View>
 
@@ -1012,6 +1022,22 @@ export default function AddJob(){
 
 const styles=StyleSheet.create({
 
+    submitbutton: {
+        maxWidth: 350,
+        backgroundColor: '#ffa600',
+        borderRadius: 6,
+        paddingVertical: 7,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginVertical: 10,
+        marginHorizontal: 20,
+    },
+    submitbuttonText: {
+        color: 'white',
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+
     item: {
         padding: 17,
         flexDirection: 'row',
@@ -1021,7 +1047,9 @@ const styles=StyleSheet.create({
 
     selectedTextStyle: {
         fontSize: 14,
+        fontWeight:'500',
         color:"black",
+        padding:14,
     },
 
     dropdown: {
@@ -1155,6 +1183,10 @@ const styles=StyleSheet.create({
         
 
 
+    },
+    tinyLogo: {
+        width: 90,
+        height: 90,
     },
 
     errorText: {

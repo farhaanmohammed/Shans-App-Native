@@ -37,10 +37,13 @@ export default function EditService({navigation,route}){
 
     const[propaction,setPropaction]=React.useState([]);
     const[service,setService]=React.useState([]);
+    const[serviceRequired,setServiceRequired]=React.useState([])
     const [isFocus, setIsFocus] = React.useState(false);
+    const[spareparts,setSpareparts]=React.useState([])
 
     const proposedactionUrl=`${baseUrl}/viewProposedAction/proposed_action_list/proposed_action_dropdown`
     const servicetypeUrl=`${baseUrl}/viewServiceType/service_type_list/service_type_dropdown`
+    const servicerequiredUrl=`${baseUrl}/viewPartsOrServiceRequired/parts_or_service_required_list/parts_or_service_required_dropdown`
 
     React.useEffect(()=>{
         axios.get(proposedactionUrl).then(res=>{
@@ -60,21 +63,31 @@ export default function EditService({navigation,route}){
             }))
             setService(serviceArray);
         })
+        axios.get(servicerequiredUrl).then(res=>{
+            const service_requiredArray=res.data.data.map((item)=>({
+                id:item._id,
+                parts_or_service_required:item.parts_or_service_required
+                
+
+            }))
+            setServiceRequired(service_requiredArray);
+        })
     },[])
 
 
 
-    console.log("job in edi page---------------",job)
+    // console.log("job in edi page---------------",job)
 
     console.log("service++++++++++++++",service);
 
     console.log("propose-------------",propaction);
+    console.log("required+++++++++++++",serviceRequired);
 
     return(
         <View style={styles.container}>
             <CustomButton title={`${job.sequence_no}`} onPress={()=>{navigation.goBack()}}/>
             <Formik
-                initialValues={{action:'',action_id:'',service:'',service_id:'',service_charge:''}}
+                initialValues={{action:'',action_id:'',service:'',service_id:'',service_charge:'',parts_or_service_required:'',parts_or_service_required_id:''}}
                 onSubmit={(values)=>{
                     console.log("submit values",values)
                 }}
@@ -136,6 +149,31 @@ export default function EditService({navigation,route}){
                                 />
                             </View>
                             <View style={styles.fieldmargin}>
+                                <Text style={styles.fieldtext}>Parts/Service Required:</Text>
+
+                                <Dropdown
+                                    style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+                                    data={serviceRequired}
+                                    search
+                                    maxHeight={300}
+                                    labelField="parts_or_service_required"
+                                    valueField="id"
+                                    placeholder={props.values.parts_or_service_required ?props.values.parts_or_service_required : "Select Parts/Service Required"     }
+                                    searchPlaceholder="Search Parts/Service Required"
+                                    value={props.values?.parts_or_service_required}
+                                    onFocus={() => setIsFocus(true)}
+                                    onBlur={() => setIsFocus(false)}
+                                    onChange={item=>{
+                                        console.log("action????????",item)
+                                        // props.setFieldValue('customer',item)
+                                        props.setFieldValue('parts_or_service_required_id', item.id);
+                                        props.setFieldValue('parts_or_service_required', item.name); // Set the customer ID
+                                        
+                                    
+                                    }}
+                                />
+                            </View>
+                            <View style={styles.fieldmargin}>
                                 <Text style={styles.fieldtext}>Service Charge:</Text>
 
                                 <TextInput
@@ -146,6 +184,9 @@ export default function EditService({navigation,route}){
                                     keyboardType="numeric"
                                 />
 
+                            </View>
+                            <View>
+                                <Text style={styles.heading}>Under Diagnosis</Text>
                             </View>
                             
                             <View style={{marginTop:7,}}>

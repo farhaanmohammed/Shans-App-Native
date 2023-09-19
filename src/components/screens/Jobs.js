@@ -23,7 +23,13 @@ const CustomButton = ({ title, onPress }) => {
 
 export default function Jobs({ navigation,route }) {
     const[jobs,setJobs]=React.useState([])
+    
+    const [date, setDate] = React.useState(new Date());
+
+    const formattedDate = date.toISOString().slice(0, 10);
+
     const viewJobs= `${baseUrl}/viewJobRegistration`
+
 
     const fetchJobsData = useCallback(() => {
         axios
@@ -108,14 +114,14 @@ export default function Jobs({ navigation,route }) {
             }))
             setJobs(jobArray)
         }).catch(err=>console.log(err));
-    },[])
+    },[formattedDate])
 
-    // console.log("jobsssss_______",jobs)
+    console.log("jobsssss_______",jobs)
 
     return (
         <View style={styles.container}>
             <CustomButton title="Jobs"  onPress={() => navigation.goBack()} />
-            {/* <WeekCalendar/> */}
+            {/* <WeekCalendar date={date} onChange={(newDate) => setDate(newDate)} /> */}
         
             {/* <HorizontalCalendar/> */}
             <ScrollView>

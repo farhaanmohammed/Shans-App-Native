@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View,Text,StyleSheet,TouchableWithoutFeedback, TouchableOpacity, ScrollView } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { baseUrl } from "../../api/const";
 import axios, { all } from "axios";
+import { useIsFocused } from "@react-navigation/native";
 
 
 
@@ -32,13 +33,24 @@ const Diagnosbutton =({title,onPress})=>{
 
 export default function JobDetails({navigation,route}){
 
+    const isfocused=useIsFocused();
+
     const { item } = route.params;
+    const[detail,setDetail]=React.useState(item)
 
     const updateUrl=`${baseUrl}/updateJobRegistration`;
 
     const[diagnosis,setDiagnosis]=React.useState(false);
 
     console.log("itemS+++++++++++",item)
+
+    useEffect(()=>{
+        if(isfocused){
+            setDetail(item)
+        }
+
+    },[item,isfocused])
+    console.log("derails++++++++",detail);
 
     // const fetchJobsData = React.useCallback(async () => {
     //     try {
@@ -72,32 +84,32 @@ export default function JobDetails({navigation,route}){
     return(
         
             <View style={styles.container}>
-                    <CustomButton title={`${item.sequence_no}`}  onPress={() => navigation.goBack()} />
+                    <CustomButton title={`${detail?.sequence_no}`}  onPress={() => navigation.goBack()} />
                     <ScrollView>
                         <View style={styles.buttonarray}>
-                            {(diagnosis || item.job_stage==="under_diagnosis") ? (
+                            {(diagnosis || detail.job_stage==="under_diagnosis") ? (
                                 <Diagnosbutton title="Complete Diagnosis" onPress={()=>{console.log("Completessss")}}/>
                             ):(
                                 <Diagnosbutton title="start diagnosis" onPress={()=>{
                                     console.log("pressed")
                                     setDiagnosis(true);
-                                    axios.put(updateUrl,{job_stage:"under_diagnosis",_id:item.id}).then(res=>{console.log("diagosis+++++++++",res.data)}).catch(err=>console.log(err));
+                                    axios.put(updateUrl,{job_stage:"under_diagnosis",_id:detail.id}).then(res=>{console.log("diagosis+++++++++",res.data)}).catch(err=>console.log(err));
                                     }}/>
                             )}
                             
-                            <Diagnosbutton title="ReAssign" onPress={()=>{navigation.navigate('Reassign',{job:item})}}/>
-                            <Diagnosbutton title="Cancel Service" onPress={()=>{navigation.navigate('Cancel',{job:item})}}/>
+                            <Diagnosbutton title="ReAssign" onPress={()=>{navigation.navigate('Reassign',{job:detail})}}/>
+                            <Diagnosbutton title="Cancel Service" onPress={()=>{navigation.navigate('Cancel',{job:detail})}}/>
                         </View>
 
-                        {(diagnosis || item.job_stage==="under_diagnosis")  && (
+                        {(diagnosis || detail.job_stage==="under_diagnosis")  && (
                             <View  style={styles.editbutton}>
-                                <Diagnosbutton title="Edit" onPress={()=>{navigation.navigate('EditService',{job:item})}}/>
+                                <Diagnosbutton title="Edit" onPress={()=>{navigation.navigate('EditService',{job:detail})}}/>
                             </View>
                         )
                             
 
                         }
-                        {(diagnosis || item.job_stage==="under_diagnosis") ? (
+                        {(diagnosis || detail.job_stage==="under_diagnosis") ? (
                             <Text style={styles.heading}>Under Diagnosis</Text>
                         ) :(
                             <Text style={styles.heading}>PENDING FOR SERVICE</Text>
@@ -109,19 +121,19 @@ export default function JobDetails({navigation,route}){
                                 <Text style={{fontWeight:'700',}}>CUSTOMER INFORMATION</Text>
                                 <View style={styles.field}>
                                     <Text>Customer Name:</Text>
-                                    < Text style={styles.fielddata}>{item.customer_name || '--'}</Text>
+                                    < Text style={styles.fielddata}>{detail.customer_name || '--'}</Text>
                                 </View>
                                 <View style={styles.field}>
                                     <Text>Mobile:</Text>
-                                    <Text style={styles.fielddata}>{item.customer_mobile || '--'}</Text>
+                                    <Text style={styles.fielddata}>{detail.customer_mobile || '--'}</Text>
                                 </View>
                                 <View style={styles.field}>
                                     <Text>Email:</Text>
-                                    <Text style={styles.fielddata}>{item.customer_email || '--'}</Text>
+                                    <Text style={styles.fielddata}>{detail.customer_email || '--'}</Text>
                                 </View>
                                 <View style={styles.field}>
                                     <Text>Return Job Order Number:</Text>
-                                    <Text style={styles.fielddata}>{item.job_return_no || '--'}</Text>
+                                    <Text style={styles.fielddata}>{detail.job_return_no || '--'}</Text>
                                 </View>
                             </View>
 
@@ -132,19 +144,19 @@ export default function JobDetails({navigation,route}){
                                 <Text style={{fontWeight:'700',}}>JOB SHEET</Text>
                                 <View style={styles.field}>
                                     <Text>Warehouse/Shop:</Text>
-                                    < Text style={styles.fielddata}>{item.warehouse_name || '--'}</Text>
+                                    < Text style={styles.fielddata}>{detail.warehouse_name || '--'}</Text>
                                 </View>
                                 <View style={styles.field}>
                                     <Text>Incoming Date:</Text>
-                                    <Text style={styles.fielddata}>{item.incoming_date || '--'}</Text>
+                                    <Text style={styles.fielddata}>{detail.incoming_date || '--'}</Text>
                                 </View>
                                 <View style={styles.field}>
                                     <Text>Created On:</Text>
-                                    <Text style={styles.fielddata}>{item.created_on || '--'}</Text>
+                                    <Text style={styles.fielddata}>{detail.created_on || '--'}</Text>
                                 </View>
                                 <View style={styles.field}>
                                     <Text>Created By:</Text>
-                                    <Text style={styles.fielddata}>{item.sales_person_name   || '--'}</Text>
+                                    <Text style={styles.fielddata}>{detail.sales_person_name   || '--'}</Text>
                                 </View>
                             </View>
 
@@ -155,19 +167,19 @@ export default function JobDetails({navigation,route}){
                                 <Text style={{fontWeight:'700',}}>PRODUCT ATTRIBUTE</Text>
                                 <View style={styles.field}>
                                     <Text>Device:</Text>
-                                    < Text style={styles.fielddata}>{item.device_name || '--'}</Text>
+                                    < Text style={styles.fielddata}>{detail.device_name || '--'}</Text>
                                 </View>
                                 <View style={styles.field}>
                                     <Text>Brand:</Text>
-                                    <Text style={styles.fielddata}>{item.brand_name || '--'}</Text>
+                                    <Text style={styles.fielddata}>{detail.brand_name || '--'}</Text>
                                 </View>
                                 <View style={styles.field}>
                                     <Text>Consumer Model:</Text>
-                                    <Text style={styles.fielddata}>{ item.consumer_model_name|| '--'}</Text>
+                                    <Text style={styles.fielddata}>{ detail.consumer_model_name|| '--'}</Text>
                                 </View>
                                 <View style={styles.field}>
                                     <Text>Serial No:</Text>
-                                    <Text style={styles.fielddata}>{   item.serial_no || '--'}</Text>
+                                    <Text style={styles.fielddata}>{   detail.serial_no || '--'}</Text>
                                 </View>
                             </View>
 
@@ -177,7 +189,7 @@ export default function JobDetails({navigation,route}){
                                 <Text style={{fontWeight:'700',}}>ACCESSORIES</Text>
                                 <View style={styles.field}>
                                         <Text>Accessories:</Text>
-                                        {item.accessories.map((item,index)=>(
+                                        {detail.accessories.map((item,index)=>(
                                             < Text key={index} style={styles.fielddata}>{index > 0 ? ", " : ""}{item || '--'}</Text>
                                 ))}
                                 </View>
@@ -187,7 +199,7 @@ export default function JobDetails({navigation,route}){
 
                         <Text style={styles.heading}>COMPLAINTS/SERVICE REQUESTS</Text>
 
-                        {item.job_complaints_or_service_request.map((item,index)=>(
+                        {detail.job_complaints_or_service_request.map((item,index)=>(
                             <View key={index} style={styles.itemborder}>
                                 <View style={styles.sectionmargin}>
                                     <View style={styles.field}>
