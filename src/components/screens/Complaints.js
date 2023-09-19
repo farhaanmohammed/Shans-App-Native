@@ -22,7 +22,7 @@ export default function Complaints({onSubmitted,Closebutton}){
             <View style={styles.item}>
                 {/* <CheckBox checked={isSelected} color="black" style={styles.checkbox} /> */}
                 <Text style={styles.selectedTextStyle}>{item.complaint_name}</Text>
-                <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
+            
             </View>
             );
         };
@@ -76,7 +76,7 @@ export default function Complaints({onSubmitted,Closebutton}){
                                         const submitObjects={
                                             complaint_type_name:selectedComplaintType_name,
                                             complaint_type_id:values.complaint_request_type,
-                                            complaint_request_ids:selectedComplaintRequest_names,
+                                            complaints_request_ids:selectedComplaintRequest_names,
                                             remarks:values.remarks
 
                                         }
@@ -94,26 +94,7 @@ export default function Complaints({onSubmitted,Closebutton}){
                 <View style={styles.container}>
                     <View style={styles.fieldmargin}>
                         <Text style={styles.fieldtext}>Complaints/Service Request type:</Text>
-                        {/* <Picker
-                            style={styles.input}
-                            enabled={true}
-                            mode="dropdown"
-                            placeholder="Select Request Type"
-                            onValueChange={props.handleChange('complaint_request_type')}
-                            selectedValue={props.values.complaint_request_type}
-                        >
-                            <Picker.Item label="Select Request Type" value="" />
-                            {complaint_type.map((item) => (
-                                <Picker.Item
-                                    label={item.complaint_type_name.toString()}
-                                    key={item.id}
-                                    value={item.id}
-
-
-
-                                />
-                            ))}
-                        </Picker> */}
+                        
                         <Dropdown
                                 style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
                                 data={complaint_type}
@@ -141,37 +122,6 @@ export default function Complaints({onSubmitted,Closebutton}){
                     <View style={styles.fieldmargin}>
                         <Text style={styles.fieldtext}>Complaints/Service Request:</Text>
 
-                        {/* <Picker
-                            style={styles.input}
-                            enabled={true}
-                            mode="dropdown"
-                            placeholder="Select Request Type"
-                            onValueChange={props.handleChange('complaint_request')}
-                            selectedValue={props.values.complaint_request}
-                        >
-
-                            <Picker.Item label="Select Request" value="" />
-
-                            {complaint_request.map((item) => {
-                                if (item.complaint_type_id == props.values.complaint_request_type) {
-                                    return (
-
-                                        <Picker.Item
-                                            label={item.complaint_name.toString()}
-                                            key={item.id}
-                                            value={item.id}
-
-
-
-                                        />
-                                    )
-                                }
-
-                            })}
-
-
-
-                        </Picker> */}
                         <MultiSelect 
                                 style={styles.dropdown}
                                 // placeholderStyle={styles.placeholderStyle}
@@ -315,6 +265,12 @@ const styles = StyleSheet.create({
     textSelectedStyle: {
         marginRight: 5,
         fontSize: 16,
+    },
+    selectedTextStyle: {
+        fontSize: 14,
+        fontWeight:'500',
+        color:"black",
+        padding:14,
     },
     }
 

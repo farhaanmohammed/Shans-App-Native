@@ -25,7 +25,10 @@ import Enquiry from "./src/components/screens/ProductEnquiry";
 import SerialScanner from "./src/components/QrScanner/SerialScanner";
 import Jobs from "./src/components/screens/Jobs";
 import AddJob from "./src/components/screens/AddJob";
-import JobDetails from "./src/components/screens/JobDetails";
+import JobDetails from "./src/components/JobScreen/JobDetails";
+import ReAssign from "./src/components/JobScreen/Reassign";
+import CancelService from "./src/components/JobScreen/CancelService";
+import EditService from "./src/components/JobScreen/EditService";
 
 
 const Stack = createNativeStackNavigator();
@@ -115,18 +118,19 @@ const App = () => {
 
         })}>
           <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false, }} />
-          <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false, }} />
-          <Stack.Screen name="PrivacyPolicy" component={Privacy} options={{ headerStyle: { backgroundColor: '#ffa600', }, headerTintColor: "white", title: "Privacy Policy", headerLeft: null, }} />
-          <Stack.Screen name="ProductEnquiry" component={Enquiry} options={{ headerStyle: { backgroundColor: '#ffa600', }, headerTintColor: "white", title: "New Product Enquiry", headerLeft: null, }} />
+          <Stack.Screen name="Reassign" component={ReAssign} options={{ headerShown: false, }} />
+          <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false, }}  />
+          <Stack.Screen name="PrivacyPolicy" component={Privacy}  options={{ headerStyle: { backgroundColor: '#ffa600', }, headerTintColor: "white", title: "Privacy Policy", headerLeft: null,}}/>
+          <Stack.Screen name="ProductEnquiry" component={Enquiry}  options={{ headerStyle: { backgroundColor: '#ffa600', }, headerTintColor: "white", title: "New Product Enquiry", headerLeft: null,headerShown: false}}/>
           <Stack.Screen name="RegistrationScreen" component={RegistrationScreen} />
-          <Stack.Screen name="Drawer" component={BottomDrawer} options={{ headerShown: false, }} />
+          <Stack.Screen name="Drawer" component={BottomDrawer} options={{ headerShown: false, }}/>
           <Stack.Screen name="Homenav" component={Home} options={{ headerShown: false, }} />
-          <Stack.Screen name="JobDetail" component={JobDetails} options={{ headerStyle: { backgroundColor: '#ffa600', }, headerTintColor: "white", title: "Job details", headerShown: false }} />
-          <Stack.Screen name="Jobscreen" component={Jobs} options={{ headerStyle: { backgroundColor: '#ffa600', }, headerTintColor: "white", title: "Jobs", headerShown: false, }} />
-          <Stack.Screen name="AddJobscreen" component={AddJob} options={{ headerStyle: { backgroundColor: '#ffa600', }, headerTintColor: "white", title: "Add Job" }} />
-          <Stack.Screen name="Contactsviewnav" component={Contacts} options={{ headerStyle: { backgroundColor: '#ffa600', }, headerTintColor: "white", title: "Contacts" }} />
-          <Stack.Screen name="Contactdetails" component={ContactDetails} options={{ headerStyle: { backgroundColor: '#ffa600' }, headerTintColor: "white", title: "Order Summery" }} />
-          <Stack.Screen name="addcontacts" component={Addcontact} options={{ headerStyle: { backgroundColor: '#ffa600', }, headerTintColor: "white", title: "Add Contacts" }} />
+          <Stack.Screen name="JobDetail" component={JobDetails} options={{ headerStyle: { backgroundColor: '#ffa600', }, headerTintColor: "white", title: "Job details", headerShown: false}}/>
+          <Stack.Screen name="Jobscreen" component={Jobs} options={{ headerStyle: { backgroundColor: '#ffa600', }, headerTintColor: "white", title: "Jobs",headerShown: false,}}/>
+          <Stack.Screen name="AddJobscreen" component={AddJob} options={{ headerStyle: { backgroundColor: '#ffa600', }, headerTintColor: "white", title: "Add Job"}}/>
+          <Stack.Screen name="Contactsviewnav" component={Contacts} options={{ headerStyle: { backgroundColor: '#ffa600', }, headerTintColor: "white", title: "Contacts",headerShown: false, }} />
+          <Stack.Screen name="Contactdetails" component={ContactDetails} options={{ headerStyle: { backgroundColor: '#ffa600' }, headerTintColor: "white", title: "Order Summery",headerShown: false, }} />
+          <Stack.Screen name="addcontacts" component={Addcontact} options={{ headerStyle: { backgroundColor: '#ffa600', }, headerTintColor: "white", title: "Add Contacts" ,headerShown: false,}} />
           <Stack.Screen name="OptionScreen" component={OptionScreen} options={{ headerStyle: { backgroundColor: '#ffa600' }, headerShown: false, headerTintColor: "white", title: "Options" }} />
           <Stack.Screen name="ProductScreen" component={ProductScreen} options={{ headerStyle: { backgroundColor: '#ffa600' }, headerShown: false, title: "Products Screen" }} />
           <Stack.Screen name="ProductDetails" component={ProductDetails} options={{ headerStyle: { backgroundColor: '#ffa600' }, headerShown: false, title: "Product Details" }} />
@@ -142,6 +146,8 @@ const App = () => {
           <Stack.Screen name="BarCode" component={BarCode} options={{ headerStyle: { backgroundColor: '#ffa600' }, headerShown: false, title: "Bar Code" }} />
           <Stack.Screen name="FullImage" component={FullImageScreen} options={{ headerShown: false }} />
           <Stack.Screen name="TaskUpdate" component={TasksUpdate} options={{ headerStyle: { backgroundColor: '#ffa600' }, headerShown: false, title: "Task Update" }} />
+          <Stack.Screen name="Cancel" component={CancelService} options={{ headerShown: false, }}/>
+          <Stack.Screen name="EditService" component={EditService} options={{ headerShown: false, }}/>
         </Stack.Navigator>
         <Toast config={toastConfig} />
       </View>

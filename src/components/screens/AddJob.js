@@ -1,9 +1,8 @@
 import React, { useEffect } from "react";
-import { Text,View,StyleSheet,ScrollView,TextInput,Modal,Button,FlatList,TouchableOpacity,Image } from "react-native"
-
+import { Text,View,StyleSheet,ScrollView,TextInput,Modal,Button,FlatList,TouchableOpacity,Image,TouchableWithoutFeedback } from "react-native"
 import { Formik } from "formik";
 import { baseUrl } from "../../api/const";
-import axios, { all } from "axios";
+import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Complaints from "./Complaints";
 import { AntDesign } from '@expo/vector-icons';
@@ -15,6 +14,17 @@ import { Feather } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as Yup from 'yup';
 import { LogBox } from 'react-native';
+
+const CustomHeader = ({ title, onPress }) => {
+    return (
+        <TouchableWithoutFeedback onPress={onPress}>
+            <View style={styles.button}>
+            <AntDesign name="left" size={14} color="black" />
+            <Text style={styles.title}>{title}</Text>
+            </View>
+        </TouchableWithoutFeedback>
+        );
+    };
 
 
 const CustomButton = ({ title, onPress }) => {
@@ -96,7 +106,7 @@ export default function AddJob(){
             <View style={styles.item}>
                 {/* <CheckBox checked={isSelected} color="black" style={styles.checkbox} /> */}
                 <Text style={styles.selectedTextStyle}>{item.accessories_name}</Text>
-                <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
+                
             </View>
             );
         };
@@ -253,7 +263,7 @@ export default function AddJob(){
                 assignee_name:item.assignee_name,
                 sales_person_id:item.sales_person_id,
                 sales_person_name:item.sales_person_name,
-                date:item.date,
+                date:item.date ? item.date.split("T")[0] : null,
 
             }))
             setJobs(jobArray);
@@ -375,21 +385,29 @@ export default function AddJob(){
 
 
     return(
-        <View style={{flex:1,}}>
+        <View style={{flex:1,backgroundColor:"white"}}>
+            <CustomHeader title="Job Registration"  onPress={() => navigation.goBack()} />
             
             <ScrollView style={styles.container}>
                 <Formik
                     initialValues={{ customer:'',customer_id:'',mobile:'',email:'',warehouse_name:'',consumer_model_id:'',consumer_model_name:'',device_id:'',device_name:'',
-                    brand_id:'',brand_name:'',jobbooking_id:'',jobbooking:'',sales_person_name:'',sales_person_id:'',
+                    brand_id:'',brand_name:'',jobbooking_id:'',jobbooking:'',sales_person_name:'',sales_person_id:'',incoming_date:'',
                     estimation:'',assignedOn: '',assignedto_name:'',assignedto_id:'',remarks:'',accessories:[], email:'',serial_no:scannedData,
                 }}
                     validationSchema={AddSchema}
                     onSubmit={(values)=> {console.log("values:",values)
                         console.log("Selected customer:");
+                        const selectedaccesories = values.accessories.flatMap(itemId => {
+                            const item = accessories.find(item => item.id === itemId);
+                            return {
+                                "accessory_id": itemId,
+                                "accessory_name": item ? item.accessories_name : ''
+                            };
+                        });
                         const body= {
                             "date": formattedDate,
                             "invoice_date": null,
-                            "incoming_date": null,
+                            "incoming_date": values.incoming_date,
                             "internal_product_id": null,
                             "internal_product_name": null,
                             "product_description": null,
@@ -431,7 +449,7 @@ export default function AddJob(){
                             "job_customer_id": null,
                             "job_customer_name": null,
                             "job_booking_id": values.jobbooking_id,
-                            "accessories": values.accessories,
+                            "accessories": selectedaccesories,
                             "warranty_date": null,
                             "warranty_type": null,
                             "complaint_or_service_request": complaints,
@@ -529,46 +547,7 @@ export default function AddJob(){
                                 Return Job Number:
                             </Text>
 
-                            {/* <Picker
-                                style={styles.input}
-                                enabled={true}
-                                mode="dropdown"
-                                
-                                onValueChange={(item)=>{
-
-                                    console.log("itemssssssssssssssss=+=========",item)
-                                    
-                                    props.handleChange('jobbooking_id')
-                                    props.setFieldValue('assignedOn',item.create_date)
-                                    props.setFieldValue('serial_no',item.serial_no)
-                                    props.setFieldValue('brand_id',item.brand_id)
-                                    props.setFieldValue('device_id',item.device_id)
-                                    props.setFieldValue('consumer_model_id',item.consumer_model_id)
-                                    
-                                    
-                                    
-
-                                    
-                                }}
-                                selectedValue={props.values.jobbooking_id}
                             
-                            >
-                                <Picker.Item label="Select Job Number" value="" />
-                                {jobs.map((item)=>{
-                                    console.log("job item in picker============",item)
-                                    console.log("customer in jobs",props.values.customer_id)
-                                    if(item.customer_id===props.values.customer_id)
-                                        {
-                                            return(
-                                                <Picker.Item
-                                                    label={item.sequence_no.toString()}
-                                                    value={item.id}
-                                                    key={item.id}
-                                                />
-                                            )
-                                        }
-                                })}
-                            </Picker> */}
                             
                             <Dropdown
                                 style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
@@ -633,6 +612,43 @@ export default function AddJob(){
                                 Incoming date:
                             </Text>
 
+                            <View style={[styles.input,{flexDirection:'row',justifyContent:'space-between'}]}> 
+                                
+                                <TextInput
+                                    
+                                    placeholder="Select Date"
+                                    onChangeText={props.handleChange('incoming_date')}
+                                    value={props.values.incoming_date}
+                                    onBlur={props.handleBlur('incoming_date')}
+                                
+                                />
+                                
+                                <AntDesign name="calendar" size={24} color="black" onPress={()=>setOpenDate(true)} />
+                            </View>
+
+                            {openDate && (
+
+                                <DateTimePicker 
+
+                                    testID="Assigned on date"
+                                    value={new Date()}
+                                    mode="date"
+                                    onChange={(event, selectedDate) => {
+                                        if (selectedDate !== undefined) {
+                                            setOpenDate(false);
+                                            // setDate(selectedDate);
+                                            props.setFieldValue('incoming_date', selectedDate.toISOString().split('T')[0]);
+                                            console.log("Selected Date:", selectedDate);
+                                        }
+                                    }}
+                                    display="default" 
+                                    
+                                    
+
+
+                                />
+                            )}
+
                         </View>
                         <View>
                             <Text style={styles.headingtext}>
@@ -643,28 +659,7 @@ export default function AddJob(){
                             <Text style={styles.fieldtext}>
                                 Device :
                             </Text>
-                            {/* <Picker
-                                style={styles.input}
-                                enabled={true}
-                                mode="dropdown"
-                                placeholder="Select Device"
-                                onValueChange={(value)=>{console.log("selected value in device:",value)
-                                                props.setFieldValue('device_id',value.model_id)
-                                                props.setFieldValue('device_name',value.model_name)
-                                                }}
-                                selectedValue={props.values.device_id}
                             
-                            >
-                                <Picker.Item label="Select Device" value="" />
-                                {device.map((item)=>(
-                                    <Picker.Item
-                                        label={item.model_name.toString()}
-                                        value={{model_id:item.id,model_name:item.model_name}}
-                                        key={item.id}
-                                    />
-                                ))}
-
-                            </Picker> */}
 
                             <Dropdown
                                 style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
@@ -673,9 +668,9 @@ export default function AddJob(){
                                 maxHeight={300}
                                 labelField="model_name"
                                 valueField="id"
-                                placeholder={props.values.device_id ?props.values.device_id : "Select Device"     }
+                                placeholder={props.values.device_name ?props.values.device_name : "Select Device"     }
                                 searchPlaceholder="Search Device"
-                                value={props.values?.device_id}
+                                value={props.values?.device_name}
                                 onFocus={() => setIsFocus(true)}
                                 onBlur={() => setIsFocus(false)}
                                 onChange={item=>{
@@ -696,32 +691,6 @@ export default function AddJob(){
                         <View style={styles.fieldmargin}>
                             <Text style={styles.fieldtext}>Brand:</Text>
 
-                            {/* <Picker
-                                style={styles.input}
-                                enabled={true}
-                                mode="dropdown"
-                                placeholder="Select Brand"
-                                onValueChange={(value)=>{console.log("selected value in brand:",value)
-                                                props.setFieldValue('brand_id',value.brand_id)
-                                                props.setFieldValue('brand_name',value.brand_name)
-                            
-                                                    }}
-                                selectedValue={props.values.brand_id}
-                            
-                            >
-                                <Picker.Item label="Select Brand" value="" />
-                                {brand.map((item)=>(
-
-                                    
-                                    
-                                    <Picker.Item
-                                        label={item.brand_name.toString()}
-                                        value={{brand_id:item.brand_id,brand_name:item.brand_name}}
-                                        key={item.brand_id}
-                                    />
-                                ))}
-
-                            </Picker> */}
 
                             <Dropdown
                                 style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
@@ -730,9 +699,9 @@ export default function AddJob(){
                                 maxHeight={300}
                                 labelField="brand_name"
                                 valueField="brand_id"
-                                placeholder={props.values.brand_id ?props.values.brand_id : "Select Brand"     }
+                                placeholder={props.values.brand_name ?props.values.brand_name : "Select Brand"     }
                                 searchPlaceholder="Search Brand"
-                                value={props.values?.brand_id}
+                                value={props.values?.brand_name}
                                 onFocus={() => setIsFocus(true)}
                                 onBlur={() => setIsFocus(false)}
                                 onChange={item=>{
@@ -752,34 +721,7 @@ export default function AddJob(){
                         <View style={styles.fieldmargin}>
                             <Text style={styles.fieldtext}>Consumer Model:</Text>
 
-                            {/* <Picker
-                                style={styles.input}
-                                enabled={true}
-                                mode="dropdown"
-                                // placeholder="Select Model"
-                                onValueChange={(value)=>{console.log("selected value in consumer_model:",value)
-                                                props.setFieldValue('consumer_model_id',value.consumer_model_id)
-                                                props.setFieldValue('consumer_model_name',value.consumer_model_name)
                             
-                                                    }}
-                                selectedValue={props.values?.consumer_model_id}
-                            
-                            >
-                                <Picker.Item label="Select Consumer Model" value="" />
-                                {consumermodel.map((item)=>{
-                                    if(item.job_brand_id==props.values.brand_id && item.job_device_id==props.values.device_id){
-                                        return(
-                                            <Picker.Item
-                                                label={item.model_name.toString()}
-                                                value={{consumer_model_id:item.id,consumer_model_name:item.model_name}}
-                                                key={item.id}
-                                            />
-                                        )
-                                    }
-                                } 
-                                )}
-
-                            </Picker> */}
                             <Dropdown
                                 style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
                                 data={filterconsumer=consumermodel.filter(model=>model.job_device_id==props.values.device_id && model.job_brand_id==props.values.brand_id)}
@@ -787,9 +729,9 @@ export default function AddJob(){
                                 maxHeight={300}
                                 labelField="model_name"
                                 valueField="id"
-                                placeholder={props.values.consumer_model_id ?props.values.consumer_model_id : "Select Consumer Model"     }
+                                placeholder={props.values.consumer_model_name ?props.values.consumer_model_name : "Select Consumer Model"     }
                                 searchPlaceholder="Search Model"
-                                value={props.values?.consumer_model_id}
+                                value={props.values?.consumer_model_name}
                                 onFocus={() => setIsFocus(true)}
                                 onBlur={() => setIsFocus(false)}
                                 onChange={item=>{
@@ -883,7 +825,7 @@ export default function AddJob(){
                                 <Ionicons name="ios-add-circle" size={24} color="green"  />
 
                             </TouchableOpacity>
-                            {/* <Button title="open model" onPress={()=>setModal(true)}/> */}
+                            
 
                             {complaints.length > 0 && complaints.map((item,index)=>(
                                 <View key={index} style={styles.contentborder}>
@@ -939,32 +881,6 @@ export default function AddJob(){
                             </Text>
                             
 
-                            {/* <Picker
-                                style={styles.input}
-                                enabled={true}
-                                mode="dropdown"
-                                placeholder="Select Device"
-                                onValueChange={(item)=>
-                                    {
-                                        console.log("assignef=don+++++++++++",item)
-                                        // props.handleChange('assignedto')
-                                        props.setFieldValue('assignedto_id',item.assignedTo_id)
-                                        props.setFieldValue('assignedto_name',item.assignedTo_name)
-
-                                }}
-                                selectedValue={props.values.assignedto_id}
-                            
-                            >
-                                <Picker.Item label="Select Employee" value="" />
-                                {employee.map((item)=>(
-                                    <Picker.Item
-                                        label={item.name.toString()}
-                                        value={{assignedTo_id:item.id,assignedTo_name:item.name}}
-                                        key={item.id}
-                                    />
-                                ))}
-
-                            </Picker> */}
 
                             <Dropdown
                                 style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
@@ -1070,7 +986,7 @@ export default function AddJob(){
                                             // console.log("documents==============",document)
                                             <View key={index} style={{ flexDirection: 'row' }}>
                                                     <Image style={styles.tinyLogo} source={{uri: document.uri}}/>
-                                                <Text style={{ fontSize: 15, fontWeight: '700', }}>{document.name}</Text>
+                                                {/* <Text style={{ fontSize: 15, fontWeight: '700', }}>{document.name}</Text> */}
                                                 <Feather name="trash" size={24} color="black" onPress={() => removeImage(index)} />
 
                                                 </View>
@@ -1084,7 +1000,10 @@ export default function AddJob(){
                                 <CustomButton title="Select Images" onPress={selectDoc} />
                             </View>
 
-                            <Button title="submit" onPress={props.handleSubmit}/>
+                        
+                            <TouchableOpacity style={styles.submitbutton} onPress={props.handleSubmit}>
+                                <Text style={styles.submitbuttonText}>Submit</Text>
+                            </TouchableOpacity>
 
                         </View>
 
@@ -1102,6 +1021,22 @@ export default function AddJob(){
 
 const styles=StyleSheet.create({
 
+    submitbutton: {
+        maxWidth: 350,
+        backgroundColor: '#ffa600',
+        borderRadius: 6,
+        paddingVertical: 7,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginVertical: 10,
+        marginHorizontal: 20,
+    },
+    submitbuttonText: {
+        color: 'white',
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+
     item: {
         padding: 17,
         flexDirection: 'row',
@@ -1111,7 +1046,9 @@ const styles=StyleSheet.create({
 
     selectedTextStyle: {
         fontSize: 14,
+        fontWeight:'500',
         color:"black",
+        padding:14,
     },
 
     dropdown: {
@@ -1246,6 +1183,10 @@ const styles=StyleSheet.create({
 
 
     },
+    tinyLogo: {
+        width: 90,
+        height: 90,
+    },
 
     errorText: {
         fontSize: 12,
@@ -1313,6 +1254,18 @@ const styles=StyleSheet.create({
         fontSize: 15,
         fontWeight: 'bold',
     },
+
+    button: {
+        flexDirection: "row",
+        alignItems: "center",
+        padding: 10,
+        backgroundColor: "#ffa600",
+        },
+    title: {
+        marginLeft: 34,
+        fontSize: 15,
+        color: "white"
+        },
 
 
 

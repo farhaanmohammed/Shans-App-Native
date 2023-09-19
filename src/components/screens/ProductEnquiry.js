@@ -22,7 +22,7 @@ export const AddSchema = Yup.object().shape({
 
 
 
-const CustomButton = ({ title, onPress }) => {
+const SelectButton = ({ title, onPress }) => {
 
     return (
         <TouchableOpacity style={[styles.buttonContainer]} onPress={onPress}>
@@ -32,6 +32,17 @@ const CustomButton = ({ title, onPress }) => {
         </TouchableOpacity>
     );
 };
+
+const CustomButton = ({ title, onPress }) => {
+    return (
+        <TouchableWithoutFeedback onPress={onPress}>
+            <View style={styles.button}>
+            <AntDesign name="left" size={14} color="black" />
+            <Text style={styles.headertitle}>{title}</Text>
+            </View>
+        </TouchableWithoutFeedback>
+        );
+    };
 
 const CustomAddButton = ({ title, onPress }) => {
     return (
@@ -155,10 +166,11 @@ export default function Enquiry() {
 
     return (
         <View style={styles.container}>
-
-            <Formik
-                initialValues={{ date: '', details: '', customer: '', }}
-                validationSchema={AddSchema}
+            <CustomButton title="Product Enquiry"  onPress={() => navigation.goBack()} />
+            
+                <Formik 
+                    initialValues={{ date:'',details:'',customer:'',}}
+                    validationSchema={AddSchema}
 
                 onSubmit={(values) => {
                     console.log(values)
@@ -293,10 +305,10 @@ export default function Enquiry() {
                                     <Feather name="trash" size={24} color="black" onPress={removeImage} />
                                 </View>
                             ) : (
-                                <Text>No document selected</Text>
-                            )}
-                            <CustomButton title="Select Images" onPress={selectDoc} />
-                        </View>
+                                    <Text>No document selected</Text>
+                                )}
+                                <SelectButton title="Select Images" onPress={selectDoc} />
+                            </View>
 
                         <View style={{ marginTop: 7, }}>
                             <CustomAddButton title="Submit" onPress={props.handleSubmit} />
@@ -390,5 +402,17 @@ const styles = StyleSheet.create({
         color: 'red',
         marginTop: 5,
     },
+    button: {
+        flexDirection: "row",
+        alignItems: "center",
+        padding: 10,
+        backgroundColor: "#ffa600",
+        },
+    headertitle: {
+        marginLeft: 34,
+        fontSize: 15,
+        color: "white"
+        },
+    
 
 });

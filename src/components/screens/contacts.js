@@ -1,11 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, StatusBar, FlatList } from "react-native";
+import { StyleSheet, Text, View, StatusBar, FlatList,TouchableWithoutFeedback } from "react-native";
 import { Searchbar } from "react-native-paper";
 import { FAB, ActivityIndicator } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
 import axios from "axios";
 import ContactItem from "../contactitem";
 import { baseUrl } from "../../api/const";
+import { AntDesign } from '@expo/vector-icons';
+
+
+const CustomButton = ({ title, onPress }) => {
+  return (
+      <TouchableWithoutFeedback onPress={onPress}>
+          <View style={styles.button}>
+          <AntDesign name="left" size={14} color="black" />
+          <Text style={styles.title}>{title}</Text>
+          </View>
+      </TouchableWithoutFeedback>
+      );
+  };
 
 export default function Contacts({ navigation }) {
   const contacturl = `${baseUrl}/viewCustomers`;
@@ -83,6 +96,7 @@ export default function Contacts({ navigation }) {
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#ffa600" />
+      <CustomButton title="Contacts"  onPress={() => navigation.goBack()} />
 
       <Searchbar
         placeholder="Search contacts"
@@ -109,7 +123,8 @@ export default function Contacts({ navigation }) {
       <FAB
         style={styles.fab}
         icon={() => <MaterialIcons name="add" size={24} color="white" />}
-        onPress={() => navigation.navigate('addcontacts')}
+        // onPress={() => navigation.navigate('addcontacts')}
+        onPress={() => console.log("pressed")}
       />
     </View>
   );
@@ -137,4 +152,15 @@ const styles = StyleSheet.create({
     marginTop: 10,
     alignItems: 'center',
   },
+  button: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+    backgroundColor: "#ffa600",
+    },
+title: {
+    marginLeft: 34,
+    fontSize: 15,
+    color: "white"
+    },
 });
