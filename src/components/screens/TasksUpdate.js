@@ -1,13 +1,19 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, Modal, Button } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import GoBack from '../NavGoBack/GoBack';
+import { format } from 'date-fns';
+import { baseUrl } from '../../api/const';
+import axios from 'axios';
+import { BottomSubmitButton } from '../CustomButton/BottomSubmitButton';
+import * as DocumentPicker from 'expo-document-picker';
+import { ActivityIndicator } from "react-native-paper";
 
 const dropDownState = [
     { label: 'Closed', value: 'Closed' },
     { label: 'Resolved', value: 'Resolved' },
-    { label: 'In Progress..', value: 'In Progress' },
+    { label: 'In Progress', value: 'In Progress' },
     { label: 'Hold', value: 'Hold' },
     { label: 'New', value: 'New' }, // hold resolved closed
 ];
@@ -18,7 +24,12 @@ const dropDownPriority = [
     { label: 'LOW', value: 'LOW' },
 ];
 
+
+const employeeUrl = `${baseUrl}/viewEmployees/employee_list/employee_dropdown`;
+const imageUploadUrl = `${baseUrl}/fileUpload?folder_name=products`;
+
 const TasksUpdate = ({ navigation, route }) => {
+
     const { task } = route.params;
 
     const [isFocus, setIsFocus] = useState(false);
@@ -29,6 +40,8 @@ const TasksUpdate = ({ navigation, route }) => {
     const [selectedDueDate, setSelectedDueDate] = useState(null);
     const [selectedDueTime, setSelectedDueTime] = useState(null);
     const [openTime, setOpenTime] = useState(false);
+    const [employee, setEmployee] = useState([]);
+    const [formData, setFormData] = useState({ assignee: null, })
 
     console.log("Task Updating Details ......:", task);
 
@@ -39,15 +52,122 @@ const TasksUpdate = ({ navigation, route }) => {
     const [priority, setPriority] = useState('');
     const [remarks, setRemarks] = useState('');
     const [description, setDescription] = useState('')
+    const [taskStartDateAndTime, setTaskDateAndTime] = useState();
+    const [taskDueDateAndTime, setTaskDueDateAndTime] = useState();
+
+    //modal
+    const [isModalVisible, setIsModalVisible] = useState(false);
+
+    // loadingIndicator
+    const [isLoading, setIsLoading] = useState(false)
+
+
+    // const [isModalVisible, setModalVisible] = useState(false);
+    const [updates, setUpdates] = useState('');
+    const [selectedImage, setSelectedImage] = useState(null);
+
+    // const toggleModal = () => {
+    //   setModalVisible(!isModalVisible);
+    // };
+
+    const handleSave = () => {
+        // Save your data here (updates, selectedImage)
+        // You can use this information to update your state or send it to a server.
+        // Remember to implement validation and handling for selectedImage.
+        console.log('Updates:', updates);
+        console.log('Selected Image:', selectedImage);
+
+        // Close the modal
+        toggleModal();
+    };
+
+    // Step 3: Function to open and close the modal
+    const toggleModal = () => {
+        setIsModalVisible(!isModalVisible);
+    };
+
+
+    const selectDoc = async () => {
+        try {
+            setIsLoading(true); // Set loading to true when fetching starts
+
+            const doc = await DocumentPicker.getDocumentAsync({ multiple: false, type: 'image/*' });
+
+            if (!doc.canceled) {
+                const fileUri = doc.assets[0].uri;
+                const fileName = fileUri.split('/').pop();
+                const contentType = `image/${fileName.split('.').pop()}`;
+
+                const fileData = {
+                    uri: fileUri,
+                    type: contentType,
+                    name: fileName,
+                };
+
+                const formData = new FormData();
+                formData.append('file', fileData);
+
+                const config = {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                };
+
+                const response = await axios.post(imageUploadUrl, formData, config);
+
+                if (response.data && response.data.data) {
+                    const uploadUrl = response.data.data;
+                    setSelectedImage(uploadUrl);
+                    console.log('Upload successful. API response:', uploadUrl);
+                } else {
+                    console.log('Upload failed. Unexpected API response:', response.data);
+                }
+            }
+        } catch (error) {
+            console.log("Error:", error);
+        } finally {
+            setIsLoading(false); // Set loading to false when fetching is done
+        }
+    };
+
+
+
+
+
     // Set initial state values based on the task details
     useEffect(() => {
-        //   setStatus(task.status); // Set Status based on task.status
+        // Parse create_date string into a Date object
+        const createDate = new Date(task.create_date);
+        const dueDate = new Date(task.due_date)
+
+        // Format the date as yyyy-MM-dd HH:mm
+        const formattedCreateDate = format(createDate, 'yyyy-MM-dd HH:mm');
+
+        //format the due date as yyyy-MM-dd HH:mm
+        const formattedDueDate = format(dueDate, 'yyyy-MM-dd HH:mm');
+
+        // Set the formatted date as the initial value of Start Date
+        setTaskDateAndTime(formattedCreateDate);
+        setTaskDueDateAndTime(formattedDueDate)
+
+        //setStatus(task.status); // Set Status based on task.status
         setTaskTitle(task.title); // Set Task Title based on task.title
         setPriority(task.priority); // Set Priority based on task.priority
         //   setRemarks(task.description); // Set Remarks based on task.description
         setDescription(task.description)
 
     }, [task]);
+    //fetching employee details
+    useEffect(() => {
+        axios.get(employeeUrl).then((res) => {
+
+            const employeeArray = res.data.data.map((item) => ({
+                id: item._id,
+                name: item.name
+            }))
+            setEmployee(employeeArray)
+        })
+    }, [])
 
     // Memoize the onFocus and onBlur event handlers
     const handleFocus = useCallback(() => {
@@ -57,6 +177,19 @@ const TasksUpdate = ({ navigation, route }) => {
     const handleBlur = useCallback(() => {
         setIsFocus(false);
     }, []);
+
+
+    //handling submit 
+    const handleSubmit = () => {
+        try {
+            console.log('Loading.....')
+            const updateData = {
+
+            }
+        } catch (error) {
+
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -74,15 +207,78 @@ const TasksUpdate = ({ navigation, route }) => {
                             onBlur={handleBlur}
                             labelField="label"
                             valueField="value"
+                            onChange={(item) => setStatus(item.value)}
                         />
                     </View>
                     <View style={styles.addButtonContainer}>
                         <TouchableOpacity
                             style={styles.addButton}
+                            onPress={toggleModal}
                         >
                             <Text style={styles.addButtonLabel}>Add{'  '}+</Text>
                         </TouchableOpacity>
                     </View>
+                    <Modal visible={isModalVisible} transparent animationType="slide">
+                        <View style={styles.modalContainer}>
+
+                            <View style={styles.modalContent}>
+                                <Text style={styles.modalLabel}>Add Updates</Text>
+
+                                <TextInput
+                                    placeholder="Enter your updates"
+                                    value={updates}
+                                    onChangeText={(text) => setUpdates(text)}
+                                    multiline
+                                    style={[styles.input, styles.textArea]}
+                                />
+                                <TouchableOpacity onPress={selectDoc}>
+                                    {isLoading ? ( // Check if isLoading is true
+                                        <ActivityIndicator size="medium" color="#ffa600" />
+                                    ) : (
+                                        <Image
+                                            source={
+                                                selectedImage
+                                                    ? { uri: selectedImage }
+                                                    : require('../../../assets/updateTask/image.png')
+                                            }
+                                            style={{
+                                                width: 100,
+                                                height: 100,
+                                                marginTop: 5,
+                                                marginBottom: 10
+                                            }}
+                                        />
+                                    )}
+                                </TouchableOpacity>
+
+
+                                {/* Add image selection here */}
+                                {/* Example: <ImagePicker setSelectedImage={setSelectedImage} /> */}
+                                {/* ... (image selection code) */}
+
+                                <View style={styles.buttonContainer}>
+                                    <View style={styles.roundedButton}>
+                                        <Button
+                                            title="Cancel"
+                                            onPress={toggleModal}
+                                            color="#FF5733" // Change button color
+                                            // style={{ width: 100, height: 40 }} // Change button width and height
+                                            titleStyle={{ fontSize: 16 }} // Change button title style
+                                        />
+                                    </View>
+                                    <View style={styles.roundedButton}>
+                                        <Button
+                                            title="Save"
+                                            onPress={handleSave}
+                                            color="#4CAF50" // Change button color
+                                            // style={{ width: 100, height: 40 }} // Change button width and height
+                                            titleStyle={{ fontSize: 16 }} // Change button title style
+                                        />
+                                    </View>
+                                </View>
+                            </View>
+                        </View>
+                    </Modal>
                 </View>
                 <Text style={styles.label}>Task Title:</Text>
                 <TextInput
@@ -93,10 +289,28 @@ const TasksUpdate = ({ navigation, route }) => {
                     value={taskTitle}
                     onChange={setTaskTitle}
                 />
+
+                <Text style={styles.label}>Assignee:</Text>
+                <Dropdown
+                    style={[styles.dropdown, isFocus && { borderColor: '#ffa600' }]}
+                    data={employee}
+                    search
+                    maxHeight={300}
+                    labelField="name"
+                    valueField="id"
+                    placeholder="Select Assignee"
+                    searchPlaceholder="Search Customers"
+                    onFocus={() => setIsFocus(true)}
+                    onBlur={() => setIsFocus(false)}
+                    onChange={(item) => {
+                        const { name, id } = item; // Destructure the selected item
+                        setFormData({ ...formData, assignee: { name, id } }); // Store the name and id in the assignee property
+                    }}
+                />
                 <Text style={styles.label}>Start Date:</Text>
                 <View style={[styles.input, { flexDirection: 'row', justifyContent: 'space-between' }]}>
                     <Text>
-                        {selectedStartDate ? selectedStartDate.toDateString() : 'Select Start date'}
+                        {selectedStartDate ? selectedStartDate.toDateString() : taskStartDateAndTime}
                         {selectedStartTime ? ` - ${selectedStartTime.toLocaleTimeString()}` : ''}{' '}
                     </Text>
                     <View style={{ flexDirection: 'row', alignSelf: "flex-end" }}>
@@ -147,7 +361,7 @@ const TasksUpdate = ({ navigation, route }) => {
                 <Text style={styles.label}>Due Date:</Text>
                 <View style={[styles.input, { flexDirection: 'row', justifyContent: 'space-between' }]}>
                     <Text>
-                        {selectedDueDate ? selectedDueDate.toDateString() : 'Select Due date'}
+                        {selectedDueDate ? selectedDueDate.toDateString() : taskDueDateAndTime}
                         {selectedDueTime ? ` - ${selectedDueTime.toLocaleTimeString()}` : ''}{' '}
                     </Text>
                     <View style={{ flexDirection: 'row', alignSelf: "flex-end" }}>
@@ -212,8 +426,8 @@ const TasksUpdate = ({ navigation, route }) => {
                     numberOfLines={4}
                     style={[styles.longText]}
                     placeholder='Enter Remarks'
-                value={remarks}
-                onChangeText={(text) => setRemarks(text)}
+                    value={remarks}
+                    onChangeText={(text) => setRemarks(text)}
                 />
                 <Text style={styles.label}>Description:</Text>
                 <TextInput
@@ -224,8 +438,8 @@ const TasksUpdate = ({ navigation, route }) => {
                     value={description}
                     onChange={(e) => setDescription(e)}
                 />
-
             </View>
+            <BottomSubmitButton title="Update" onPress={() => console.log("pressed")} />
         </View>
     );
 }
@@ -277,7 +491,7 @@ const styles = StyleSheet.create({
         width: "65%",
     },
     addButtonContainer: {
-        width: "25%", // Add some space between Status and Add button
+        width: "20%", // Add some space between Status and Add button
         marginTop: 20,
     },
     dropdown: {
@@ -295,6 +509,62 @@ const styles = StyleSheet.create({
         fontSize: 13,
         color: "black",
         fontWeight: "600",
+    },
+    modalContainer: {
+        // padding: 50,
+        marginVertical: 100,
+        marginHorizontal: 25,
+        borderRadius: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: "white"
+    },
+    modalHeader: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 20,
+    },
+    textArea: {
+        height: 100,
+    },
+
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Add a semi-transparent background
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 10,
+        width: '90%',
+        // height: "40%"
+    },
+    // modalContent: {
+    //     backgroundColor: 'white',
+    //     padding: 20,
+    //     borderRadius: 10,
+    //     alignSelf: 'center', // Center horizontally
+    //     justifyContent: 'center', // Center vertically
+    //     width: '90%', // Adjust the width as needed
+    //   },
+    modalLabel: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        borderRadius: 30,
+        justifyContent: 'space-between',
+        marginTop: 10
+    },
+    roundedButton: {
+        flex: 1,
+        borderRadius: 10, // Adjust this value to control border radius
+        overflow: 'hidden', // This is important to clip the button's content
+        marginHorizontal: 5, // Adjust this for spacing between buttons
     },
 });
 
