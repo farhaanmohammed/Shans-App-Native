@@ -19,6 +19,7 @@ export const BottomSubmitButton = ({ title, onPress }) => {
         alignItems: "center",
         backgroundColor: "#ffa600",
         borderRadius: 13,
+        marginHorizontal: 10
       },
       submitButtonTitle: {
         fontSize: 15,
@@ -26,7 +27,7 @@ export const BottomSubmitButton = ({ title, onPress }) => {
       },
       submitButtonContainer: {
         position: 'absolute',
-        bottom: 30,
+        bottom: 20,
         left: 10,
         right: 10,
       },

@@ -2,6 +2,8 @@ import React from "react";
 import { ScrollView } from "react-native";
 import { Text, View, StyleSheet, TouchableOpacity, } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import GoBack from "../NavGoBack/GoBack";
+
 
 const CustomButton = ({ title, onPress }) => {
     return (
@@ -44,9 +46,13 @@ export default function Privacy() {
 
     return (
 
-        <ScrollView>
 
-            <View style={styles.container}>
+        <View style={styles.container}>
+            <GoBack title="Privacy Policy" onPress={() => navigation.goBack()} />
+            <ScrollView style={{
+                marginTop: 10,
+                marginHorizontal: 20
+            }}>
                 {/* <Text style={styles.heading}>GENERAL INSTRUCTIONS</Text>
             <Text>1	SALES IN CHARGE</Text>
             <Text>2 CREDIT COLLECTION</Text>
@@ -383,22 +389,20 @@ export default function Privacy() {
                     <CustomButtonExit title="Reject" onPress={() => { if (updateCheckedState) { updateCheckedState(false) } navigation.goBack() }} />
 
                 </View>
+            </ScrollView>
 
 
 
 
-            </View>
-        </ScrollView>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        marginTop: 10,
-        // marginLeft: 14,
-        marginHorizontal: 20
     },
+
 
     heading: {
         fontWeight: 'bold',

@@ -85,10 +85,10 @@ const AddTask = () => {
       newErrors.taskDetails = 'Task Details field is required';
     }
     if (!selectedDate) {
-      newErrors.selectedDate = 'Select Date field is required';
+      newErrors.selectedDate = 'Select Date';
     }
     if (!selectedTime) {
-      newErrors.selectedTime = 'Select Time field is required';
+      newErrors.selectedTime = 'Time field is required';
     }
 
     setErrors(newErrors);
@@ -419,9 +419,9 @@ const AddTask = () => {
         </View>
 
         <Text style={styles.label}>Due Date & Time:</Text>
-        <View style={[styles.input, { flexDirection: 'row', justifyContent: 'space-between' }]}>
+        <View style={[styles.input, errors.selectedDate && errors.selectedTime && styles.errorInput, { flexDirection: 'row', justifyContent: 'space-between' }]}>
           <Text>
-            {selectedDate ? selectedDate.toDateString() : 'Select a date'}
+            {selectedDate ? selectedDate.toDateString() : 'Select a date & Time'}
             {selectedTime ? ` - ${selectedTime.toLocaleTimeString()}` : ''}{' '}
           </Text>
           <View style={{ flexDirection: 'row', alignSelf: "flex-end" }}>
@@ -435,7 +435,7 @@ const AddTask = () => {
             </TouchableOpacity>
           </View>
         </View>
-
+        {errors.selectedDate && errors.selectedTime && <Text style={styles.errorText}>{errors.selectedDate}{' '}&{' '}{errors.selectedTime}</Text>}
 
         {/* open calendar when icon is press */}
         {openDate && (
@@ -474,7 +474,7 @@ const AddTask = () => {
         )}
         <Text style={styles.label}>Priority:</Text>
         <Dropdown
-          style={styles.dropdown}
+          style={[styles.dropdown, errors.priority && styles.errorInput, isFocus && { borderColor: '#ffa600' }]}
           placeholderStyle={styles.placeholderStyle}
           selectedTextStyle={styles.selectedTextStyle}
           data={dropDownData}
@@ -489,6 +489,7 @@ const AddTask = () => {
           }}
 
         />
+        {errors.priority && <Text style={styles.errorText}>{errors.priority}</Text>}
       </View>
       {/* {results.map((result, index) => <Text key={index}>{result}</Text>)} */}
       <CustomSubmitButton title="Submit" onPress={handleSubmit} />
@@ -518,7 +519,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 16,
     marginBottom: 2,
-    marginVertical: 15
+    marginVertical: 10
   },
   input: {
     borderWidth: 0.9,
@@ -602,7 +603,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: 'red',
-    marginBottom: 3,
+    marginBottom: 1,
   },
 })
 

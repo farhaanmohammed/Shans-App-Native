@@ -11,6 +11,7 @@ import WritingPad from "../../WritingPad/WritingPad";
 import { useNavigation, useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Yup from 'yup';
+import GoBack from "../NavGoBack/GoBack";
 
 export const AddSchema = Yup.object().shape({
     details: Yup.string().required('Please enter Product Details'),
@@ -155,7 +156,7 @@ export default function Enquiry() {
 
     return (
         <View style={styles.container}>
-
+<GoBack title="New Product Enquiry" onPress={() => navigation.goBack()}/>
             <Formik
                 initialValues={{ date: '', details: '', customer: '', }}
                 validationSchema={AddSchema}
