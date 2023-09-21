@@ -127,7 +127,7 @@ const App = () => {
           <Stack.Screen name="Homenav" component={Home} options={{ headerShown: false, }} />
           <Stack.Screen name="JobDetail" component={JobDetails} options={{ headerStyle: { backgroundColor: '#ffa600', }, headerTintColor: "white", title: "Job details", headerShown: false}}/>
           <Stack.Screen name="Jobscreen" component={Jobs} options={{ headerStyle: { backgroundColor: '#ffa600', }, headerTintColor: "white", title: "Jobs",headerShown: false,}}/>
-          <Stack.Screen name="AddJobscreen" component={AddJob} options={{ headerStyle: { backgroundColor: '#ffa600', }, headerTintColor: "white", title: "Add Job"}}/>
+          <Stack.Screen name="AddJobscreen" component={AddJob} options={{ headerStyle: { backgroundColor: '#ffa600', }, headerTintColor: "white", title: "Add Job",headerShown: false,}}/>
           <Stack.Screen name="Contactsviewnav" component={Contacts} options={{ headerStyle: { backgroundColor: '#ffa600', }, headerTintColor: "white", title: "Contacts",headerShown: false, }} />
           <Stack.Screen name="Contactdetails" component={ContactDetails} options={{ headerStyle: { backgroundColor: '#ffa600' }, headerTintColor: "white", title: "Order Summery",headerShown: false, }} />
           <Stack.Screen name="addcontacts" component={Addcontact} options={{ headerStyle: { backgroundColor: '#ffa600', }, headerTintColor: "white", title: "Add Contacts" ,headerShown: false,}} />

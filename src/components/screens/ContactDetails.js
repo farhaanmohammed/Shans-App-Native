@@ -86,7 +86,7 @@ export default function ContactDetails({ route, navigation }) {
   const CreateinvoiceUrl = `${baseUrl}/createQuotation`
 
   const [totalPrice, setTotalprice] = useState([]);
-  const [currency, setCurrency] = useState("AED")
+  const [currency, setCurrency] = useState("QAR")
   const [tax, setTax] = useState([]);
   
   
@@ -391,20 +391,20 @@ export default function ContactDetails({ route, navigation }) {
               <>
                 <View style={{ flexDirection: "column" }}>
                   <Text style={styles.productLabel}>Total Quantity: {addedProducts.length}</Text>
-                  <View style={{ flexDirection: "row" }}>
+                  {/* <View style={{ flexDirection: "row" }}>
                     <Text style={styles.productLabel}>Untaxed Amount:  </Text>
                     <Text style={styles.productText}> {totalPriceSum} {currency}</Text>
                   </View>
                   <View style={{ flexDirection: "row" }}>
                     <Text style={styles.productLabel}>Tax Amount:  </Text>
                     <Text style={styles.productText}> {totalTax} {currency}</Text>
-                  </View>
-                  <View style={{ flexDirection: "row" }}>
+                  </View> */}
+                  <View style={{ flexDirection: "row", }}>
                     <Text style={styles.productLabel}>Total Amount:  </Text>
-                    <Text style={styles.productText}> {totalPriceSum+totalTax} {currency}</Text>
+                    <Text style={styles.productText}> {totalPriceSum} {currency}</Text>
                   </View>
                 </View>
-                <View style={{marginTop:15,}}>
+                <View style={styles.submitButtonContainer}>
                   <CustomSubmitButton
                     title="Place Order"
                     onPress={handlesubmit}

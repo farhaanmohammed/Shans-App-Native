@@ -90,8 +90,8 @@ const OrderDetails = () => {
                 </View> */}
 
                 <View style={styles.columnContainer}>
-                    <Text style={styles.label}>Date & Time:</Text>
-                    <Text style={styles.text}>{formattedTime} {formattedDate}</Text>
+                    <Text style={styles.label}>Date:</Text>
+                    <Text style={styles.text}> {formattedDate}</Text>
                 </View>
                 <View style={styles.columnContainer}>
                     <Text style={styles.label}>Total Amount:</Text>
