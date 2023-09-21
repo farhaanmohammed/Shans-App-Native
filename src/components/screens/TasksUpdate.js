@@ -11,6 +11,7 @@ import * as DocumentPicker from 'expo-document-picker';
 import { ActivityIndicator } from "react-native-paper";
 import { Audio } from 'expo-av';
 import { AntDesign } from '@expo/vector-icons';
+import Toast from 'react-native-toast-message';
 
 const dropDownState = [
     { label: 'Closed', value: 'Closed' },
@@ -30,6 +31,9 @@ const dropDownPriority = [
 const employeeUrl = `${baseUrl}/viewEmployees/employee_list/employee_dropdown`;
 const imageUploadUrl = `${baseUrl}/fileUpload?folder_name=addTaskUpdates`;
 const addTaskUpdatesUrl = `${baseUrl}/updateTaskManagment`;
+
+
+
 const TasksUpdate = ({ navigation, route }) => {
 
     const { task } = route.params;
@@ -74,6 +78,8 @@ const TasksUpdate = ({ navigation, route }) => {
     //update container data
     const [taskAddUpdates, setTaskAddUpdates] = useState([]);
 
+
+
     // const toggleModal = () => {
     //   setModalVisible(!isModalVisible);
     // };
@@ -82,6 +88,11 @@ const TasksUpdate = ({ navigation, route }) => {
     // Define a state variable to hold the audio object
     const [audio, setAudio] = useState(null);
 
+    console.log("Status", status)
+    console.log("TaskTitle", taskTitle)
+    // console.log("Assignee", formData.assignee._id)
+    console.log("FormData: ", formData)
+console.log("Remarks", remarks)
     // Function to play the audio from the provided URI
     const playAudio = async () => {
         if (audio) {
@@ -133,9 +144,26 @@ const TasksUpdate = ({ navigation, route }) => {
             try {
                 const response = await axios.put(addTaskUpdatesUrl, addTaskUpdatesData);
                 console.log("API Response:", response.data);
+                if (response.data.status === 'true') {
+                    Toast.show({
+                        type: 'success', // Set the type to 'successToast' for success
+                        text1: 'Success',
+                        text2: 'Add Updates Created',
+                        position: 'top',
+                    });
+                } else {
+                    Toast.show({
+                        type: 'error', // Set the type to 'errorToast' for failure
+                        text1: 'Error',
+                        text2: 'Failed to create task',
+                        position: 'bottom',
+                    });
+                    console.log(response);
+                }
+
 
             } catch (error) {
-                console.error("Axios Error:", error);
+                console.log("Axios Error:", error);
                 // Handle the error, e.g., display an error message to the user
             } finally {
                 fetchAddUpdatesData();
@@ -225,9 +253,8 @@ const TasksUpdate = ({ navigation, route }) => {
         setPriority(task.priority); // Set Priority based on task.priority you can also use this line on placeholder other wise you can set priority in this useEffect 
         //   setRemarks(task.description); // Set Remarks based on task.description
         setDescription(task.description) //
-
-
-
+        setStatus(task?.status || "Select Status")
+        setRemarks(task?.remarks || "Enter Remarks")
     }, [task]);
     //fetching employee details
     useEffect(() => {
@@ -252,13 +279,48 @@ const TasksUpdate = ({ navigation, route }) => {
 
 
     //handling submit 
-    const handleSubmit = () => {
+    const handleTaskUpdateSubmit = async () => {
         try {
             console.log('Loading.....')
             const updateData = {
-
+                "task_managment_id": id,
+                "title": taskTitle,
+                "description": description,
+                "start_date": selectedStartDate,
+                "due_date": selectedDueDate,
+                "estimated_time": selectedDueTime,
+                "status": status,
+                "priority": priority,
+                "assignee_id": formData?.assignee?.id || null,
+                "assignee": formData?.assignee?.id || null,
+                "remarks":remarks,
+                "is_scheduled": true,
+                "daily_scheduler": true,
+                "weakly_scheduler": [],
+                "monthly_scheduler": [],
             }
+            console.log("Update Task Data:", updateData)
+            const response = await axios.put(addTaskUpdatesUrl, updateData)
+            if (response.data.status === 'true') {
+                Toast.show({
+                    type: 'success', // Set the type to 'successToast' for success
+                    text1: 'Success',
+                    text2: 'Task Updated Successfully',
+                    position: 'bottom',
+                });
+            } else {
+                Toast.show({
+                    type: 'error', // Set the type to 'errorToast' for failure
+                    text1: 'Error',
+                    text2: 'Failed to create task',
+                    position: 'bottom',
+                });
+                console.log(response);
+            }
+            console.log(response.data)
+            console.log("API Response: ", response.data)
         } catch (error) {
+            console.log(error)
 
         }
     }
@@ -277,13 +339,18 @@ const TasksUpdate = ({ navigation, route }) => {
                                 style={[styles.dropdown, isFocus && { borderColor: '#ffa600' }]}
                                 data={dropDownState}
                                 maxHeight={300}
-                                placeholder="Select State"
+                                placeholder={status}
                                 onFocus={handleFocus}
                                 onBlur={handleBlur}
                                 labelField="label"
                                 valueField="value"
-                                onChange={(item) => setStatus(item.value)}
+                                value={status}
+                                onChange={(item) => {
+                                    setStatus(item.value);
+                                    // validateStatus(item.value); // Validate the selected status
+                                }}
                             />
+
                         </View>
                         <View style={styles.addButtonContainer}>
                             <TouchableOpacity
@@ -376,7 +443,9 @@ const TasksUpdate = ({ navigation, route }) => {
                         style={[styles.input]}
                         placeholder='Enter Task Title'
                         value={taskTitle}
-                        onChange={setTaskTitle}
+
+                        onChangeText={setTaskTitle}
+
                     />
 
                     <Text style={styles.label}>Assignee:</Text>
@@ -526,7 +595,9 @@ const TasksUpdate = ({ navigation, route }) => {
                         style={[styles.longText]}
                         placeholder='Enter Task Title'
                         value={description}
-                        onChange={(e) => setDescription(e)}
+
+                        onChangeText={(text) => setDescription(text)}
+
                     />
                     <Text style={styles.label}>Audio Play Back</Text>
                     <TouchableOpacity onPress={playAudio}>
@@ -554,7 +625,12 @@ const TasksUpdate = ({ navigation, route }) => {
 
                 </View>
             </ScrollView>
-            <BottomSubmitButton title="Update" onPress={() => console.log("pressed")} />
+            <BottomSubmitButton
+                title="Update"
+                onPress={handleTaskUpdateSubmit}
+
+            />
+
         </View>
     );
 }
@@ -700,7 +776,6 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         fontSize: 16,
         paddingBottom: 15
-
     },
     updateCard: {
         paddingHorizontal: 10,

@@ -66,6 +66,7 @@ const AddTask = () => {
   //validation
   const [errors, setErrors] = useState({})
 
+
   const validateForm = () => {
     const newErrors = {};
 
@@ -268,7 +269,9 @@ const AddTask = () => {
         "document": [],
         "participants": [],
         "watchers": [],
-        "assignee": []
+        "assignee": [
+          formData?.assignee?.id || null,
+        ]
       }
 
       // Check if there are any recorded audio files
@@ -330,7 +333,7 @@ const AddTask = () => {
         {/* Dropdown select assignee */}
         <Text style={styles.label}>Assignee:</Text>
         <Dropdown
-          style={[styles.dropdown,errors.assignee && styles.errorInput, isFocus && { borderColor: '#ffa600' }]}
+          style={[styles.dropdown, errors.assignee && styles.errorInput, isFocus && { borderColor: '#ffa600' }]}
           data={employee}
           search
           maxHeight={300}
@@ -419,7 +422,7 @@ const AddTask = () => {
         </View>
 
         <Text style={styles.label}>Due Date & Time:</Text>
-        <View style={[styles.input, errors.selectedDate && errors.selectedTime && styles.errorInput, { flexDirection: 'row', justifyContent: 'space-between' }]}>
+        <View style={[styles.input, errors.selectedDate && styles.errorInput, errors.selectedTime && styles.errorInput, { flexDirection: 'row', justifyContent: 'space-between' }]}>
           <Text>
             {selectedDate ? selectedDate.toDateString() : 'Select a date & Time'}
             {selectedTime ? ` - ${selectedTime.toLocaleTimeString()}` : ''}{' '}
@@ -435,7 +438,11 @@ const AddTask = () => {
             </TouchableOpacity>
           </View>
         </View>
-        {errors.selectedDate && errors.selectedTime && <Text style={styles.errorText}>{errors.selectedDate}{' '}&{' '}{errors.selectedTime}</Text>}
+        {errors.selectedDate || errors.selectedTime ? (
+          <Text style={styles.errorText}>Date & time are required</Text>
+        ) : null}
+
+
 
         {/* open calendar when icon is press */}
         {openDate && (

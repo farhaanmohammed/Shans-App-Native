@@ -50,7 +50,7 @@ export default function Privacy() {
         <View style={styles.container}>
             <GoBack title="Privacy Policy" onPress={() => navigation.goBack()} />
             <ScrollView style={{
-                marginTop: 10,
+                marginTop: 20,
                 marginHorizontal: 20
             }}>
                 {/* <Text style={styles.heading}>GENERAL INSTRUCTIONS</Text>
@@ -421,7 +421,6 @@ const styles = StyleSheet.create({
     },
     buttonContent: {
         flexDirection: "row",
-
         // marginLeft: 10,
         // marginBottom: 12,
         alignItems: "center",
@@ -441,7 +440,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: "#ffa600",
         // width: "80%",
-
     },
     exitText: {
         fontWeight: "bold"
