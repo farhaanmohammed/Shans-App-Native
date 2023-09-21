@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { baseUrl } from '../../api/const';
 import GoBack from '../NavGoBack/GoBack';
+import { useIsFocused } from '@react-navigation/native';
 // import { useFonts } from 'expo-font';
 
 
@@ -40,24 +41,28 @@ const CashCollection = () => {
 
     // const auditingList = dummyAuditingList
     const [auditingList, setAuditingList] = useState([]);
+    const isFocused = useIsFocused();
 
     useEffect(() => {
-        axios.get(listAuditingUrl)
-            .then((res) => {
-                console.log(res.data.data);
-                const customerDetails = res.data.data.map((item) => ({
-                    id: item._id,
-                    sequenceNum: item.sequence_no,
-                    date: item.date,
-                    customerName: item.customer_name,
-                    totalAmount: item.amount,
-                }));
-                setAuditingList(customerDetails);
-            })
-            .catch((error) => {
-                console.error("Error fetching invoice:", error);
-            });
-    }, []);
+        if (isFocused) {
+
+            axios.get(listAuditingUrl)
+                .then((res) => {
+                    console.log(res.data.data);
+                    const customerDetails = res.data.data.map((item) => ({
+                        id: item._id,
+                        sequenceNum: item.sequence_no,
+                        date: item.date,
+                        customerName: item.customer_name,
+                        totalAmount: item.amount,
+                    }));
+                    setAuditingList(customerDetails);
+                })
+                .catch((error) => {
+                    console.error("Error fetching invoice:", error);
+                });
+        }
+    }, [isFocused]);
 
     const navigation = useNavigation();
 

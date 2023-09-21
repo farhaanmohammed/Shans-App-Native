@@ -66,6 +66,7 @@ const AddTask = () => {
   //validation
   const [errors, setErrors] = useState({})
 
+
   const validateForm = () => {
     const newErrors = {};
 
@@ -85,10 +86,10 @@ const AddTask = () => {
       newErrors.taskDetails = 'Task Details field is required';
     }
     if (!selectedDate) {
-      newErrors.selectedDate = 'Select Date field is required';
+      newErrors.selectedDate = 'Select Date';
     }
     if (!selectedTime) {
-      newErrors.selectedTime = 'Select Time field is required';
+      newErrors.selectedTime = 'Time field is required';
     }
 
     setErrors(newErrors);
@@ -261,14 +262,16 @@ const AddTask = () => {
         "estimated_time": selectedTime,
         "priority": formData?.priority?.value || null,
         "assignee_id": formData?.assignee?.id || null,
-        // "created_by_id": "63c914f880b82443459d6581",
+        "created_by_id": adminData?.related_profile?._id,
         "warehouse_id": adminData?.warehouse_id || null,
         "is_scheduled": true,
         "daily_scheduler": true,
         "document": [],
         "participants": [],
         "watchers": [],
-        "assignee": []
+        "assignee": [
+          formData?.assignee?.id || null,
+        ]
       }
 
       // Check if there are any recorded audio files
@@ -330,7 +333,7 @@ const AddTask = () => {
         {/* Dropdown select assignee */}
         <Text style={styles.label}>Assignee:</Text>
         <Dropdown
-          style={[styles.dropdown,errors.assignee && styles.errorInput, isFocus && { borderColor: '#ffa600' }]}
+          style={[styles.dropdown, errors.assignee && styles.errorInput, isFocus && { borderColor: '#ffa600' }]}
           data={employee}
           search
           maxHeight={300}
@@ -419,9 +422,9 @@ const AddTask = () => {
         </View>
 
         <Text style={styles.label}>Due Date & Time:</Text>
-        <View style={[styles.input, { flexDirection: 'row', justifyContent: 'space-between' }]}>
+        <View style={[styles.input, errors.selectedDate && styles.errorInput, errors.selectedTime && styles.errorInput, { flexDirection: 'row', justifyContent: 'space-between' }]}>
           <Text>
-            {selectedDate ? selectedDate.toDateString() : 'Select a date'}
+            {selectedDate ? selectedDate.toDateString() : 'Select a date & Time'}
             {selectedTime ? ` - ${selectedTime.toLocaleTimeString()}` : ''}{' '}
           </Text>
           <View style={{ flexDirection: 'row', alignSelf: "flex-end" }}>
@@ -435,6 +438,10 @@ const AddTask = () => {
             </TouchableOpacity>
           </View>
         </View>
+        {errors.selectedDate || errors.selectedTime ? (
+          <Text style={styles.errorText}>Date & time are required</Text>
+        ) : null}
+
 
 
         {/* open calendar when icon is press */}
@@ -474,7 +481,7 @@ const AddTask = () => {
         )}
         <Text style={styles.label}>Priority:</Text>
         <Dropdown
-          style={styles.dropdown}
+          style={[styles.dropdown, errors.priority && styles.errorInput, isFocus && { borderColor: '#ffa600' }]}
           placeholderStyle={styles.placeholderStyle}
           selectedTextStyle={styles.selectedTextStyle}
           data={dropDownData}
@@ -489,6 +496,7 @@ const AddTask = () => {
           }}
 
         />
+        {errors.priority && <Text style={styles.errorText}>{errors.priority}</Text>}
       </View>
       {/* {results.map((result, index) => <Text key={index}>{result}</Text>)} */}
       <CustomSubmitButton title="Submit" onPress={handleSubmit} />
@@ -518,7 +526,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 16,
     marginBottom: 2,
-    marginVertical: 15
+    marginVertical: 10
   },
   input: {
     borderWidth: 0.9,
@@ -602,7 +610,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: 'red',
-    marginBottom: 3,
+    marginBottom: 1,
   },
 })
 
