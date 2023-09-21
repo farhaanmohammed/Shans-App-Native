@@ -183,35 +183,35 @@ export default function ContactDetails({ route, navigation }) {
   //   "return_quantity": 0
   // }))
 
-  // const orderItems = addedProducts.map((product, index) => ({
-  //   "product_id": product.productID,
-  //   "tax_type_id": "648d9b8fef9cd868dfbfa37f",
-  //   "tax_value": 0,
-  //   "uom_id": null,
-  //   "uom": '',
-  //   "qty": prquantity[index],
-  //   "discount_percentage": 0,
-  //   "unit_price": product.productCost,
-  //   "remarks": '',
-  //   "total": prquantity[index] * product.productCost,
-  // }))
-  // // for qatar
-
-  
   const orderItems = addedProducts.map((product, index) => ({
     "product_id": product.productID,
-    "tax_type_id": "648d9b54ef9cd868dfbfa37b",
-    "tax_value": 0.05,
+    "tax_type_id": "648d9b8fef9cd868dfbfa37f",
+    "tax_value": 0,
     "uom_id": null,
     "uom": '',
     "qty": prquantity[index],
     "discount_percentage": 0,
     "unit_price": product.productCost,
     "remarks": '',
-    "total": prquantity[index] * product.productCost,   
+    "total": prquantity[index] * product.productCost,
   }))
+  // for qatar
 
-  // for Dubai
+  
+  // const orderItems = addedProducts.map((product, index) => ({
+  //   "product_id": product.productID,
+  //   "tax_type_id": "648d9b54ef9cd868dfbfa37b",
+  //   "tax_value": 0.05,
+  //   "uom_id": null,
+  //   "uom": '',
+  //   "qty": prquantity[index],
+  //   "discount_percentage": 0,
+  //   "unit_price": product.productCost,
+  //   "remarks": '',
+  //   "total": prquantity[index] * product.productCost,   
+  // }))
+
+  // // for Dubai
 
   console.log("ordersummery", orderItems);
 
