@@ -262,7 +262,7 @@ const AddTask = () => {
         "estimated_time": selectedTime,
         "priority": formData?.priority?.value || null,
         "assignee_id": formData?.assignee?.id || null,
-        // "created_by_id": "63c914f880b82443459d6581",
+        "created_by_id": adminData?.related_profile?._id,
         "warehouse_id": adminData?.warehouse_id || null,
         "is_scheduled": true,
         "daily_scheduler": true,
