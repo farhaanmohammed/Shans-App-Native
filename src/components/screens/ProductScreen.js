@@ -19,12 +19,17 @@ const ProductScreen = () => {
 
 
     const renderLoader = () => {
+        if (!loadingMore) {
+            return null; // Hide the loader when not loading more
+        }
+
         return (
             <View style={styles.loaderStyle}>
                 <ActivityIndicator size="large" color="#ffa600" />
             </View>
         );
     };
+
 
     const loadMoreItem = () => {
         console.log("y first u load : ", loadingMore)
@@ -60,8 +65,12 @@ const ProductScreen = () => {
     
 
     const fetchProducts = () => {
+        const apiUrl = category
+            ? `${productUrl}&offset=${offset}&limit=20`
+            : `${productUrl}?offset=${offset}&limit=20`;
+    
         axios
-            .get(`${productUrl}?offset=${offset}&limit=20`)
+            .get(apiUrl)
             .then((res) => {
                 const productNamesArr = res.data.data.map((item) => ({
                     _id: item._id,
@@ -72,9 +81,10 @@ const ProductScreen = () => {
                 setProductNames((prevProductNames) => [...prevProductNames, ...productNamesArr]);
                 setLoadingMore(false);
             })
-            .catch((err) => console.log(err));
+            .catch((err) => console.log(err))
+            // .finally(setLoadingMore(false))
     };
-
+    
 
     useEffect(() => {
         if (searchQuery !== "") {
@@ -123,7 +133,7 @@ const ProductScreen = () => {
                     numColumns={numColumns}
                     ListFooterComponent={renderLoader}
                     onEndReached={loadMoreItem}
-                    onEndReachedThreshold={0}
+                    onEndReachedThreshold={0.1}
                     showsVerticalScrollIndicator={false}
                 />
             </View>
