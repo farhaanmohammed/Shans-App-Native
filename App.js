@@ -52,7 +52,7 @@ const toastConfig = {
   success: (props) => (
     <BaseToast
       {...props}
-      style={{ borderLeftColor: 'pink' }}
+      style={{ borderLeftColor: 'green' }}
       contentContainerStyle={{ paddingHorizontal: 15 }}
       text1Style={{
         fontSize: 15,
@@ -60,6 +60,7 @@ const toastConfig = {
       }}
     />
   ),
+
 
   error: (props) => (
     <ErrorToast
@@ -84,7 +85,7 @@ const toastConfig = {
     <View style={{ padding: 5, flex: 1, backgroundColor: 'red', marginVertical: 15, width: '70%', borderRadius: 12, borderLeftWidth: 3.5, borderWidth: 0.9, borderColor: "white", marginVertical: "50%" }}>
       <View style={{ marginHorizontal: 5, alignContent: "center" }}>
         <Text style={{ fontSize: 12, fontWeight: "bold", color: "white" }}>{text1} !!!</Text>
-        <Text style={{ fontSize: 18, fontWeight: "bold", color: "white" }}>{text2}</Text>
+        <Text style={{ fontSize: 15, fontWeight: "bold", color: "white" }}>{text2}</Text>
       </View>
     </View>
   ),
@@ -92,8 +93,9 @@ const toastConfig = {
   invoiceSuccessToast: ({ text1, text2 }) => (
     <View style={{ padding: 5, flex: 1, backgroundColor: 'white', marginVertical: 10, width: '80%', borderRadius: 10, borderBottomWidth: 4.5, borderBottomColor: "green", marginVertical: "50%" }}>
       <View style={{ marginHorizontal: 5, marginVertical: 10, alignContent: "center" }}>
-        <Text style={{ fontSize: 12, fontWeight: "bold", color: "green" }}>{text1}</Text>
-        <Text style={{ fontSize: 18, fontWeight: "bold", color: "black" }}>{text2}</Text>
+        <Text style={{ fontSize: 15,
+        fontWeight: '400', color: "green" }}>{text1}</Text>
+        <Text style={{ fontSize: 15, fontWeight: "400", color: "black" }}>{text2}</Text>
       </View>
     </View>
   )

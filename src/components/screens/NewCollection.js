@@ -20,7 +20,7 @@ const salesReturnUrl = `${baseUrl}/viewReturn?sequence_no=`
 const purchaseReturnUrl = `${baseUrl}/viewReturn?sequence_no=`
 const capitalPaymentUrl = `${baseUrl}/viewCapitalPayment?sequence_no=`
 const jobInvoiceUrl = `${baseUrl}/viewJobInvoice?sequence_no`
-const sparePartsIssueUrl = `${baseUrl}/viewSparePartsIssue/auditing/spare_parts_issue_details?sequence_no=`
+const sparePartsIssueUrl = `${baseUrl}/viewSparePartsIssue?sequence_no=`
 const pettyCashAllotmentUrl = `${baseUrl}/viewPettyCashAllotement?sequence_no=`
 const pettyCashExpenseUrl = `${baseUrl}/viewPettyCashExpence?sequence_no=`
 const capitalReceiptsUrl = `${baseUrl}/viewCapital?sequence_no=`
@@ -465,7 +465,6 @@ const NewCollection = () => {
                     type: 'requireToast',
                     text1: 'Field is required',
                     text2: 'Company is required.',
-
                 });
                 // alert('Company is required.');
                 return;
@@ -852,48 +851,42 @@ const NewCollection = () => {
                     "service_product_amount": null
                 }
             }
-            //  else if (bill == "Spare Issue") {
-            //     auditingData = {
-            //         "date": formattedDate,
-            //         "amount": customer?.totalAmount ?? 0,
-            //         "un_taxed_amount": null,
-            //         "customer_vendor_signature": uploadUrl ?? null,
-            //         "cashier_signature": "",
-            //         "remarks": remarks || "",
-            //         "attachments": [null],
-            //         "warehouse_id": adminDetails?.warehouse_id ?? null,
-            //         "warehouse_name": adminDetails?.warehouse?.warehouse_name ?? null,
-            //         "sales_person_id": customerDataAPI?.sales_person_id ?? null,
-            //         "sales_person_name": adminDetails?.related_profile?.name ?? null,
-            //         "supplier_id": null,
-            //         "supplier_name": null,
-            //         "collection_type_id": collectionType?._id ?? null,
-            //         "collection_type_name": collectionType?.collection_type_name ?? null,
-            //         "company_id": adminDetails?.company.company_id ?? null,
-            //         "company_name": adminDetails?.company?.name ?? null,
-            //         "customer_id": adminDetails?.company?.company_id ?? null,
-            //         "customer_name": customer?.customerName ?? null,
-            //         "invoice_id": customerDataAPI?.job_crm_product_lines[0]?.invoice_id ?? null,
-            //         "inv_sequence_no": customer?.invoiceNumber ?? null,
-            //         "register_payment_id": customerDataAPI?.register_payments[0]._id ?? null,
-            //         // "register_payment_sequence_no": "rp_seq_1",
-            //         "chq_no": customerDataAPI?.register_payments[0]?.chq_no ?? null,
-            //         "chq_date": customerDataAPI?.register_payments[0]?.chq_date ?? null,
-            //         "chq_type": customerDataAPI?.register_payments[0]?.chq_type ?? null,
-            //         "cheque_transaction_type": customerDataAPI?.register_payments[0]?.type,
-            //         "chart_of_accounts_id": "",
-            //         "chart_of_accounts_name": "",
-            //         "ledger_name": null,
-            //         "ledger_type": null,
-            //         "ledger_id": "",
-            //         "ledger_display_name": null,
-            //         "employee_ledger_id": assigned?.employee_id,
-            //         "employee_ledger_name": assigned?.employee_name,
-            //         "employee_ledger_display_name": null,
-            //         "service_amount": null,
-            //         "service_product_amount": null
-            //     }
-            else if (bill == "JobInvoice") {
+            else if (bill == "Spare Issue") {
+                auditingData = {
+                    "date": formattedDate,
+                    "amount": null,
+                    "un_taxed_amount": null,
+                    "customer_vendor_signature": uploadUrl ?? null,
+                    "cashier_signature": "",
+                    "remarks": remarks || "",
+                    "attachments": [null],
+                    "warehouse_id": adminDetails?.warehouse_id ?? null,
+                    "warehouse_name": adminDetails?.warehouse?.warehouse_name ?? null,
+                    "sales_person_id": adminDetails?.related_profile?._id ?? null,
+                    "sales_person_name": adminDetails?.related_profile?.name ?? null,
+                    "supplier_id": null,
+                    "supplier_name": null,
+                    "collection_type_id": null,
+                    "collection_type_name": null,
+                    "company_id": adminDetails?.company.company_id ?? null,
+                    "company_name": adminDetails?.company?.name ?? null,
+                    "customer_id": adminDetails?.company?.company_id ?? null,
+                    "customer_name": customer?.customerName ?? null,
+                    "invoice_id": null,
+                    "inv_sequence_no": customer?.invoiceNumber ?? null,
+                    "register_payment_id": null,
+                    "ledger_name": null,
+                    "ledger_type": null,
+                    "ledger_id": "",
+                    "ledger_display_name": null,
+                    "employee_ledger_id": null,
+                    "employee_ledger_name": null,
+                    "employee_ledger_display_name": null,
+                    "service_amount": null,
+                    "service_product_amount": null
+                }
+
+            } else if (bill == "JobInvoice") {
                 console.log("hiii entered the jobinvoice")
                 auditingData = {
                     "date": formattedDate,
@@ -910,13 +903,13 @@ const NewCollection = () => {
                     "supplier_id": null,
                     "supplier_name": null,
                     "collection_type_id": collectionType?._id ?? null,
-                    "collection_type_name": collectionType?.collection_type_name ?? null, 
+                    "collection_type_name": collectionType?.collection_type_name ?? null,
                     "company_id": adminDetails?.company.company_id ?? null,
                     "company_name": adminDetails?.company?.name ?? null,
                     "customer_id": adminDetails?.company?.company_id ?? null,
-                    "customer_name": customer?.customerName ?? null, 
+                    "customer_name": customer?.customerName ?? null,
                     "invoice_id": customerDataAPI?.job_crm_product_lines[0]?.invoice_id ?? null,
-                    "inv_sequence_no": customer?.invoiceNumber ?? null, 
+                    "inv_sequence_no": customer?.invoiceNumber ?? null,
                     "register_payment_id": customerDataAPI?.register_payments[0]._id ?? null,
                     "register_payment_sequence_no": customerDataAPI?.register_payments[0].sequence_no ?? null,
                     "chq_no": customerDataAPI?.register_payments[0]?.chq_no ?? null,
@@ -986,103 +979,103 @@ const NewCollection = () => {
     }
 
     return (
-        <View style={{flex:1}}>
-              
-                <GoBack title="New Colleciton" onPress={() => navigation.goBack()} />
-          
+        <View style={{ flex: 1 }}>
 
-        <View style={styles.container}>
-            <ScrollView style={styles.scrollContainer}   showsVerticalScrollIndicator={false} >
-                <>
-                    <View>
-                        <Text style={styles.label}>Date:</Text>
-                        <TextInput
-                            value={formattedDate}
-                            style={styles.input}
-                            editable={false}
-                        />
+            <GoBack title="New Colleciton" onPress={() => navigation.goBack()} />
 
-                        {/* sales Person */}
-                        {/* <Text style={styles.label}>Sales Person:</Text>
+
+            <View style={styles.container}>
+                <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false} >
+                    <>
+                        <View>
+                            <Text style={styles.label}>Date:</Text>
+                            <TextInput
+                                value={formattedDate}
+                                style={styles.input}
+                                editable={false}
+                            />
+
+                            {/* sales Person */}
+                            {/* <Text style={styles.label}>Sales Person:</Text>
                         <TextInput
                             value={adminDetails.related_profile?.name}
                             style={styles.input}
                             editable={false}
                         /> */}
-                        {/* <Text style={styles.label}>Shop:</Text>
+                            {/* <Text style={styles.label}>Shop:</Text>
                         <TextInput
                             value={adminDetails.warehouse?.warehouse_name}
                             style={styles.input}
                             editable={false}
                         /> */}
-                        <Text style={styles.label}>Branch:</Text>
-                        <TextInput
-                            value={adminDetails.company?.name}
-                            style={styles.input}
-                            editable={false}
-                        />
-                        <Text style={styles.label}>Collection Type:</Text>
-                    </View>
-                    <View style={styles.dropdown}>
-                        {/* Dropdown collection type */}
+                            <Text style={styles.label}>Branch:</Text>
+                            <TextInput
+                                value={adminDetails.company?.name}
+                                style={styles.input}
+                                editable={false}
+                            />
+                            <Text style={styles.label}>Collection Type:</Text>
+                        </View>
                         <View style={styles.dropdown}>
-                            <TextInput
-                                value={collectionType ? collectionType.collection_type_name : null}
-                                style={styles.input}
-                                editable={false}
-                                placeholder='Collection Type'
-                            />
-                        </View>
-
-                    </View>
-                    <View style={styles.customerBorder}>
-                        <View style={styles.customerContent}>
-                            <Text style={styles.label}>Customer: </Text>
-                            <TextInput
-                                value={customer.customerName}
-                                style={styles.input}
-                                editable={false}
-                                placeholder='Enter Customer Name'
-                            />
-                            <Text style={styles.label}>Invoice Number :</Text>
-                            <TextInput
-                                value={customer.invoiceNumber}
-                                style={styles.input}
-                                editable={false}
-                                placeholder='Enter Invoice No'
-                            />
-                            <Text style={styles.label}>AMT :</Text>
-                            <TextInput
-                                value={customer.totalAmount}
-                                style={styles.input}
-                                editable={false}
-                                placeholder='Enter Total Amount'
-                            />
-                            <View style={styles.customerBottom}>
-                                <Text style={styles.qrLabel}>Update from Qr code?</Text>
-                                <CustomButton title="Scan" onPress={() => navigation.navigate('Scanner')} />
+                            {/* Dropdown collection type */}
+                            <View style={styles.dropdown}>
+                                <TextInput
+                                    value={collectionType ? collectionType.collection_type_name : null}
+                                    style={styles.input}
+                                    editable={false}
+                                    placeholder='Collection Type'
+                                />
                             </View>
+
                         </View>
+                        <View style={styles.customerBorder}>
+                            <View style={styles.customerContent}>
+                                <Text style={styles.label}>Customer: </Text>
+                                <TextInput
+                                    value={customer.customerName}
+                                    style={styles.input}
+                                    editable={false}
+                                    placeholder='Enter Customer Name'
+                                />
+                                <Text style={styles.label}>Invoice Number :</Text>
+                                <TextInput
+                                    value={customer.invoiceNumber}
+                                    style={styles.input}
+                                    editable={false}
+                                    placeholder='Enter Invoice No'
+                                />
+                                <Text style={styles.label}>AMT :</Text>
+                                <TextInput
+                                    value={customer.totalAmount}
+                                    style={styles.input}
+                                    editable={false}
+                                    placeholder='Enter Total Amount'
+                                />
+                                <View style={styles.customerBottom}>
+                                    <Text style={styles.qrLabel}>Update from Qr code?</Text>
+                                    <CustomButton title="Scan" onPress={() => navigation.navigate('Scanner')} />
+                                </View>
+                            </View>
 
-                    </View>
-                    <Text style={styles.label}>Remarks :</Text>
-                    <TextInput
-                        style={styles.inputRemarks}
-                        // editable={false}
-                        placeholder='Enter Remarks'
-                        onChangeText={(text) => setRemarks(text)}
-                    />
-                </>
-                {/* <Text style={styles.selectedValue}>Selected Value: {selectedValue}</Text> */}
+                        </View>
+                        <Text style={styles.label}>Remarks :</Text>
+                        <TextInput
+                            style={styles.inputRemarks}
+                            // editable={false}
+                            placeholder='Enter Remarks'
+                            onChangeText={(text) => setRemarks(text)}
+                        />
+                    </>
+                    {/* <Text style={styles.selectedValue}>Selected Value: {selectedValue}</Text> */}
 
-            </ScrollView>
-            <Text style={styles.label}>Customer/Vendor Signature</Text>
-            {/* <CustomButton title="sign" onPress={() => navigation.navigate('Sign')} />  */}
-            <View style={styles.signatureContainer}>
-                <Sign />
+                </ScrollView>
+                <Text style={styles.label}>Customer/Vendor Signature</Text>
+                {/* <CustomButton title="sign" onPress={() => navigation.navigate('Sign')} />  */}
+                <View style={styles.signatureContainer}>
+                    <Sign />
+                </View>
+                <CustomSubmitButton title="Submit" onPress={handleSubmit} />
             </View>
-            <CustomSubmitButton title="Submit" onPress={handleSubmit} />
-        </View>
         </View>
 
     )
@@ -1195,7 +1188,7 @@ const styles = StyleSheet.create({
 
     },
     scrollContainer: {
-       flex: 1,
+        flex: 1,
     }
 })
 

@@ -3326,6 +3326,11 @@ charenc@0.0.2, charenc@~0.0.1:
   resolved "https://registry.yarnpkg.com/charenc/-/charenc-0.0.2.tgz#c0a1d2f3a7092e03774bfa83f14c0fc5790a8667"
   integrity sha512-yrLQ/yVUFXkzg7EDQsPieE/53+0RlaWTs+wBrvW36cyilJ2SaDWfl4Yj7MtLTXleV9uEKefbAGUPv2/iWSooRA==
 
+check@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/check/-/check-1.0.0.tgz#3ecf5f0c861eb9bae78ced297239083acf181ab9"
+  integrity sha512-A73IxSAZKTXjde4ZwPliMH1kWbtr8wMM4sxOGvucxhgu12aQeQHYTsfxSNFtdL2dvZMuHKq3cH9bGew6j0rGiw==
+
 chokidar@^3.4.0:
   version "3.5.3"
   resolved "https://registry.yarnpkg.com/chokidar/-/chokidar-3.5.3.tgz#1cf37c8707b932bd1af1ae22c0432e2acd1903bd"
